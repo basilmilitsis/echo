@@ -28,7 +28,7 @@ export const addToSubCommand_generate = (command: commander.Command): void => {
     command
         .command('generate')
         .description('generate domain file(s)')
-        .action((name, aggregate, options) => {
+        .action((options) => {
             ensureCurrentInProjectRoot();
 
             const aggregates = listFolders('./src/domain');

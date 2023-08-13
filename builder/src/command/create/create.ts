@@ -15,10 +15,8 @@ export const addToSubCommand_create = (command: commander.Command): void => {
     command
         .command('create')
         .description('create a new command')
-        .argument('<name>', 'command name')
+        .argument('<command>', 'command name')
         .argument('<aggregate>', 'aggregate of command')
-        // .option('--first', 'display just the first substring')
-        // .option('-s, --separator <char>', 'separator character', ',')
         .action((name, aggregate, options) => {
             ensureCurrentInProjectRoot();
             ensureFolderDoesNotExist('TBD');
