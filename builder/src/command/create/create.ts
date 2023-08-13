@@ -3,13 +3,7 @@ import path from 'node:path';
 import ejs from 'ejs';
 import * as voca from 'voca';
 import commander from 'commander';
-import { ensureCurrentInProjectRoot } from '@root/common';
-import { ensureFolderDoesNotExist } from '@root/common/ensureFolderDoesNotExist';
-
-export const loadTemplate = (loadFrom: string, relativePath: string): string => {
-    const finalPath = path.join(loadFrom, relativePath);
-    return fs.readFileSync(finalPath, 'utf-8');
-};
+import { ensureCurrentlyInProjectRoot, ensureFolderDoesNotExist, loadTemplate } from '@root/common';
 
 export const addToSubCommand_create = (command: commander.Command): void => {
     command
@@ -18,13 +12,13 @@ export const addToSubCommand_create = (command: commander.Command): void => {
         .argument('<command>', 'command name')
         .argument('<aggregate>', 'aggregate of command')
         .action((name, aggregate, options) => {
-            ensureCurrentInProjectRoot();
-            ensureFolderDoesNotExist('TBD');
+            ensureCurrentlyInProjectRoot();
 
             const outputFolder = path.join(
                 process.env.PWD,
                 `src/domain/${voca.camelCase(aggregate)}/${voca.camelCase(name)}`
             );
+            ensureFolderDoesNotExist(outputFolder);
 
             fs.mkdirSync(outputFolder);
             fs.writeFileSync(

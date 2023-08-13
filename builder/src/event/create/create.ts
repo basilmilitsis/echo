@@ -3,13 +3,8 @@ import path from 'node:path';
 import ejs from 'ejs';
 import * as voca from 'voca';
 import commander from 'commander';
-import { ensureCurrentInProjectRoot } from '@root/common';
-import { ensureFolderExists } from '@root/common/ensureFolderExists';
-
-export const loadTemplate = (loadFrom: string, relativePath: string): string => {
-    const finalPath = path.join(loadFrom, relativePath);
-    return fs.readFileSync(finalPath, 'utf-8');
-};
+import { ensureCurrentlyInProjectRoot, ensureFolderExists, loadTemplate } from '@root/common';
+import { ensureFileDoesNotExist } from '@root/common/ensureFileDoesNotExist';
 
 export const addToSubCommand_create = (command: commander.Command): void => {
     command
@@ -19,16 +14,25 @@ export const addToSubCommand_create = (command: commander.Command): void => {
         .argument('<command>', 'command raising event')
         .argument('<aggregate>', 'aggregate of command raising event')
         .action((event, command, aggregate, options) => {
-            ensureCurrentInProjectRoot();
-            ensureFolderExists('TBD');
+            ensureCurrentlyInProjectRoot();
 
             const outputFolder = path.join(
                 process.env.PWD,
                 `src/domain/${voca.camelCase(aggregate)}/${voca.camelCase(command)}`
             );
+            ensureFolderExists(outputFolder);
 
+            const buildFilePath = `${outputFolder}/${voca.titleCase(event)}_v1.build.ts`;
+            ensureFileDoesNotExist(buildFilePath)
+            const eventFilePath = `${outputFolder}/${voca.titleCase(event)}_V1.event.ts`;
+            ensureFileDoesNotExist(eventFilePath)
+            const evolveFilePath = `${outputFolder}/${voca.titleCase(event)}_V1.evolve.ts`;
+            ensureFileDoesNotExist(evolveFilePath)
+            const isFilePath = `${outputFolder}/${voca.titleCase(event)}_V1.is.ts`;
+            ensureFileDoesNotExist(isFilePath)
+            
             fs.writeFileSync(
-                `${outputFolder}/${voca.titleCase(event)}_v1.build.ts`,
+                buildFilePath,
                 ejs.render(loadTemplate(__dirname, `./templates/build.ts.ejs`), {
                     functionName: `build${voca.titleCase(event)}V1`,
                     eventDataTypeName: `${voca.titleCase(event)}Data_V1`,
@@ -39,7 +43,7 @@ export const addToSubCommand_create = (command: commander.Command): void => {
             );
 
             fs.writeFileSync(
-                `${outputFolder}/${voca.titleCase(event)}_V1.event.ts`,
+                eventFilePath,
                 ejs.render(loadTemplate(__dirname, `./templates/event.ts.ejs`), {
                     eventDataTypeName: `${voca.titleCase(event)}Data_V1`,
                     eventTypeName: `${voca.titleCase(event)}_V1`,
@@ -48,7 +52,7 @@ export const addToSubCommand_create = (command: commander.Command): void => {
             );
 
             fs.writeFileSync(
-                `${outputFolder}/${voca.titleCase(event)}_V1.evolve.ts`,
+                evolveFilePath,
                 ejs.render(loadTemplate(__dirname, `./templates/evolve.ts.ejs`), {
                     aggregateName: `${voca.titleCase(aggregate)}`,
                     aggregateFileName: `${voca.titleCase(aggregate)}`,
@@ -59,7 +63,7 @@ export const addToSubCommand_create = (command: commander.Command): void => {
             );
 
             fs.writeFileSync(
-                `${outputFolder}/${voca.titleCase(event)}_V1.is.ts`,
+                isFilePath,
                 ejs.render(loadTemplate(__dirname, `./templates/is.ts.ejs`), {
                     eventTypeName: `${voca.titleCase(event)}_V1`,
                     eventFilename: `${voca.titleCase(event)}_V1.event`,
