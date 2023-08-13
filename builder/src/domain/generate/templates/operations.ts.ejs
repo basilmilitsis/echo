@@ -1,0 +1,37 @@
+import { EventStream } from '@root/common';
+import { handleCommand } from '../../../common/handleCommand';
+import { CommandEventEvolver } from "../../../common/evolve";
+
+
+//--------------------------------
+import { <%= aggregateTypeName %> } from '../<%= aggregateFileName %>';
+
+<% evolvers.forEach(function (evolver) { %>
+import { <%= evolver.evolverFunctionName %> } from "../<%= evolver.command %>/<%= evolver.evolverFileName %>";
+<% }) %>
+
+export const commandEventEvolvers: CommandEventEvolver<<%= aggregateTypeName %>>[] = [
+    <% evolvers.forEach(function (evolver) { %>
+    <%= evolver.evolverFunctionName %>,
+    <% }) %>    
+];
+
+
+//--------------------------------
+const eventStream: EventStream = new EventStream();
+
+
+
+<% commands.forEach(function (command) { %>
+
+//--------------------------------
+
+import { <%= command.commandTypeName %> } from '../<%= command.commandFolderName %>/<%= command.commandFileName %>';
+import { <%= command.handleFunctionName %> } from '../<%= command.commandFolderName %>/<%= command.handleFileName %>';
+
+export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>) => handleCommand('<%= aggregateTypeName %>', command, commandEventEvolvers, <%= command.handleFunctionName %>, eventStream);
+
+
+<% }) %>    
+
+

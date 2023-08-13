@@ -1,0 +1,8 @@
+import { Id } from '@root/common';
+import { EventType, <%= eventDataTypeName %>, <%= eventTypeName %> } from './<%= eventFilename %>';
+
+export const <%= functionName %> = (id: Id, data: <%= eventDataTypeName %>): <%= eventTypeName %> => ({
+    id: id,
+    type: EventType.<%= eventEnumFieldName %>,
+    data: data,
+});

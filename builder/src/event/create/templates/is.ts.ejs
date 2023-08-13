@@ -1,0 +1,8 @@
+import { DomainEvent } from '@root/common';
+import { EventType, <%= eventTypeName %> } from './<%= eventFilename %>';
+
+export const <%= isFunctionName %> = (
+    event: DomainEvent<string, unknown>
+): event is DomainEvent<string, <%= eventTypeName %>> => {
+    return event.type === EventType.<%= eventEnumFieldName %>;
+};

@@ -1,0 +1,13 @@
+import { DomainEvent } from '@root/common';
+import { <%= aggregateName %> } from '../<%= aggregateFileName %>';
+import { <%= isFunctionName %> } from './<%= isFunctionFileName %>';
+
+export const <%= evolveFunctionName %> = (post: Post | undefined, event: DomainEvent<string, unknown>): Post | undefined => {
+    if (<%= isFunctionName %>(event)) {
+        // return {
+        //     id: event.id,
+        // };
+        throw new Error('Not implemented');
+    }
+    return undefined;
+};

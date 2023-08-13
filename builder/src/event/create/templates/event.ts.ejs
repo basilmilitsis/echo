@@ -1,0 +1,13 @@
+import { CommandEvent, CommandEventData } from '@root/common';
+
+export enum EventType {
+    <%= eventEnumFieldName %> = '<%= eventEnumFieldName %>',
+}
+
+export interface <%= eventDataTypeName %> extends CommandEventData {
+}
+
+export interface <%= eventTypeName %> extends CommandEvent<<%= eventDataTypeName %>> {
+    type: EventType.<%= eventEnumFieldName %>;
+    data: <%= eventDataTypeName %>;
+}

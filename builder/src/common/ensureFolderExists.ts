@@ -1,0 +1,1 @@
+export const ensureFolderExists = (path: string): boolean => true
