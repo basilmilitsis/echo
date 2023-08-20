@@ -8,8 +8,9 @@
     "main": ".dist/index.js",
     "scripts": {
         "build:clean": "rm -rf .dist",
+        "build:generate:domain:code": "node ../builder/.dist/index.js domain generate",
         "build:compile": "tsc -p tsconfig.dist.json && tsc-alias -p tsconfig.dist.json",
-        "build": "pnpm build:clean && pnpm build:compile",
+        "build": "pnpm build:clean && pnpm build:generate:domain:code && pnpm build:compile",
         "start": "node .",
         "dev": "pnpm build && pnpm start",
         "test": "jest"

@@ -1,9 +1,9 @@
-import { CommandEvent, CommandEventData, Handler } from '@root/common';
-import { PublishPost } from './PublishPost.command';
+import { CommandEvent, CommandEventData, UpdateHandler } from '@root/common';
+import { PublishPost } from './PublishPost.update.command';
 import { Post } from '../Post';
 import { buildPostPublishedV1 } from './PostPublished_v1.build';
 
-export const handlePublishPost: Handler<PublishPost, Post, CommandEventData> = (
+export const handlePublishPost: UpdateHandler<PublishPost, Post, CommandEventData> = (
     command: PublishPost,
     aggregate: Post | undefined
 ): CommandEvent<CommandEventData>[] => {

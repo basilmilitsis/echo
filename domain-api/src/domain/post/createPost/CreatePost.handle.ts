@@ -1,12 +1,10 @@
 import { CommandEvent } from '@root/common/CommandEvent';
-import { CreatePost } from './CreatePost.command';
+import { CreatePost } from './CreatePost.create.command';
 import { buildPostCreated_v1 } from './PostCreated_V1.build';
-import { CommandEventData, Handler } from '@root/common';
-import { Post } from '../Post';
+import { CommandEventData, CreateHandler } from '@root/common';
 
-export const handleCreatePost: Handler<CreatePost, Post, CommandEventData> = (
-    command: CreatePost,
-    aggregate: Post | undefined
+export const handleCreatePost: CreateHandler<CreatePost, CommandEventData> = (
+    command: CreatePost
 ): CommandEvent<CommandEventData>[] => {
     return [
         buildPostCreated_v1(command.id, {

@@ -9,18 +9,27 @@ import {
 import { DomainEvent } from './DomainEvent';
 import { CommandEventData } from './CommandEvent';
 
-// export class EventStream {
-//     private events: DomainEvent<string, unknown>[];
+export interface EventStream {
+    findEvents(streamName: string, aggregateId: string): Promise<DomainEvent<string, unknown>[]>
+    addEvents(streamName: string,
+        aggregateId: string,
+        events: DomainEvent<string, CommandEventData>[]): Promise<void>
+}
 
-//     findEvents(aggregateId: string): DomainEvent<string, unknown>[] {
-//         return this.events.filter(x => x.aggregateId === aggregateId);
-//     }
-//     addEvents(events: DomainEvent<string, unknown>[]) {
-//         this.events = events;
-//     }
-// }
+export class MockEventStream implements EventStream {
+    private events: DomainEvent<string, unknown>[] = [];
 
-export class EventStream {
+    async findEvents(streamName: string, aggregateId: string): Promise<DomainEvent<string, unknown>[]> {
+        return this.events.filter(x => x.aggregateId === aggregateId);
+    }
+    async addEvents(streamName: string,
+        aggregateId: string,
+        events: DomainEvent<string, CommandEventData>[]): Promise<void> {
+        this.events = events;
+    }
+}
+
+export class DefaultEventStream implements EventStream {
     private client: EventStoreDBClient;
     constructor() {
         console.log('........ connecting.....');
