@@ -1,8 +1,8 @@
 import { Aggregate } from './Aggregate';
 import { Command } from './Command';
-import { CommandEvent, CommandEventData } from './CommandEvent';
+import { CommandEvent } from './CommandEvent';
 
-export type UpdateHandler<C extends Command, A extends Aggregate, CED extends CommandEventData> = (
+export type UpdateHandler<C extends Command, A extends Aggregate> = (
     command: C,
-    aggregate: A | undefined
-) => CommandEvent<CED>[];
+    aggregate: A
+) => CommandEvent[];

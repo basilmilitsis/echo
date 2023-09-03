@@ -1,13 +1,13 @@
 import { CommandEvent, CommandEventData, UpdateHandler } from '@root/common';
 import { PublishPost } from './PublishPost.update.command';
 import { Post } from '../Post';
-import { buildPostPublishedV1 } from './PostPublished_v1.build';
+import { buildPostPublishedV1 } from './PostPublished_V1.build';
 
-export const handlePublishPost: UpdateHandler<PublishPost, Post, CommandEventData> = (
+export const handlePublishPost: UpdateHandler<PublishPost, Post> = (
     command: PublishPost,
-    aggregate: Post | undefined
-): CommandEvent<CommandEventData>[] => {
-    if (aggregate.state == 'unpublished') {
+    aggregate: Post
+): CommandEvent[] => {
+    if (aggregate?.state == 'unpublished') {
         return [buildPostPublishedV1(aggregate.id, {})];
     }
 

@@ -4,41 +4,9 @@ import ejs from 'ejs';
 import * as voca from 'voca';
 import commander from 'commander';
 import { ensureCurrentlyInProjectRoot, listFilesIn, listFoldersIn, loadTemplate } from '@root/common';
-
-const domainFolder = (): string => `./src/domain`;
-const aggregateFolder = (aggregate: string): string => `${domainFolder()}/${voca.camelCase(aggregate)}`;
-const commandFolder = (aggregate: string, command: string): string =>
-    `${aggregateFolder(aggregate)}/${voca.camelCase(command)}`;
-
-const createCommandFile = (aggregate: string, command: string): string =>
-    `${commandFolder(aggregate, command)}/${voca.titleCase(command)}.create.command.ts`;
-const updateCommandFile = (aggregate: string, command: string): string =>
-    `${commandFolder(aggregate, command)}/${voca.titleCase(command)}.update.command.ts`;
-
-const commandRulesFolder = (aggregate: string, command: string): string =>
-    `${commandFolder(aggregate, command)}/commandRules`;
-const commandIndexRulesFolder = (aggregate: string, command: string): string =>
-    `${commandFolder(aggregate, command)}/indexRules`;
-const commandAggregateRulesFolder = (aggregate: string, command: string): string =>
-    `${commandFolder(aggregate, command)}/aggregateRules`;
-
-const validatorFile = (aggregate: string, command: string): string =>
-    `${commandFolder(aggregate, command)}/${voca.titleCase(command)}.validate.ts`;
-
-type CommandFile = {
-    functionName: string;
-    importName: string;
-};
-type CommandStructure = {
-    command: string;
-    commandType: 'create' | 'update';
-    validator?: CommandFile;
-    commandRules: CommandFile[];
-    commandIndexRules: CommandFile[];
-    commandAggregateRules: CommandFile[];
-    evolvers: string[];
-};
-
+import { CommandStructure, buildCommandStructures } from './buildCommandStructures';
+import { PathTo } from './PathTo';
+import { EventStructure, buildEventStructures } from './buildEventStructures';
 
 // TODO: refactor and simplify this
 export const addToSubCommand_generate = (command: commander.Command): void => {
@@ -48,65 +16,27 @@ export const addToSubCommand_generate = (command: commander.Command): void => {
         .action((options) => {
             ensureCurrentlyInProjectRoot();
 
-            const aggregates = listFoldersIn(domainFolder());
+            const aggregates = listFoldersIn(PathTo.domainFolder());
             aggregates.forEach((aggregate) => {
-                const outputFolder = path.join(process.env.PWD, `${aggregateFolder(aggregate)}/_generated`);
+
+                const outputFolder = path.join(process.env.PWD, `${PathTo.aggregateFolder(aggregate)}/_generated`);
                 if (!fs.existsSync(outputFolder)) {
                     fs.mkdirSync(outputFolder);
                 }
 
-                const commands = listFoldersIn(aggregateFolder(aggregate)).filter((x) => !x.startsWith('_'));
+                //-- Get all command names
+                const commands = listFoldersIn(PathTo.aggregateFolder(aggregate)).filter((x) => !x.startsWith('_'));
 
                 //-- extract command structures
-                const commandStructures: CommandStructure[] = [];
-                for (let i = 0; i < commands.length; i++) {
-                    const command = commands[i];
+                const commandStructures: CommandStructure[] = buildCommandStructures(commands, aggregate);
 
-                    const isCreateCommand = fs.existsSync(createCommandFile(aggregate, command));
-                    const isupdateCommand = fs.existsSync(updateCommandFile(aggregate, command));
-                    if (!isCreateCommand && !isupdateCommand) {
-                        throw new Error(`Unknown command type for command: ${command}`);
-                    }
-                    commandStructures.push({
-                        command: command,
-                        commandType: isCreateCommand ? 'create' : 'update',
-                        validator: fs.existsSync(validatorFile(aggregate, command))
-                            ? {
-                                  functionName: `validate${voca.titleCase(command)}`,
-                                  importName: `${voca.titleCase(command)}.validate`,
-                              }
-                            : undefined,
-                        commandRules:
-                            listFilesIn(commandRulesFolder(aggregate, command))
-                                .filter((x) => x.endsWith('.commandRule.ts'))
-                                .map((x) => ({
-                                    functionName: x.replace('.commandRule.ts', ''),
-                                    importName: x.replace('.ts', ''),
-                                })) || [],
-                        commandIndexRules:
-                            listFilesIn(commandIndexRulesFolder(aggregate, command))
-                                .filter((x) => x.endsWith('.indexRule.ts'))
-                                .map((x) => ({
-                                    functionName: x.replace('.indexRule.ts', ''),
-                                    importName: x.replace('.ts', ''),
-                                })) || [],
-                        commandAggregateRules:
-                            listFilesIn(commandAggregateRulesFolder(aggregate, command))
-                                .filter((x) => x.endsWith('.aggregateRule.ts'))
-                                .map((x) => ({
-                                    functionName: x.replace('.aggregateRule.ts', ''),
-                                    importName: x.replace('.ts', ''),
-                                })) || [],
-                        evolvers: listFilesIn(commandFolder(aggregate, command))
-                            .filter((x) => x.endsWith('.event.ts'))
-                            .map((x) => x.replace('.event.ts', '')),
-                    });
-                }
+                //-- extract event structures
+                const eventStructures: EventStructure[] = buildEventStructures(commands, aggregate);
 
                 //-- extract evolvers
                 const evolversPerCommand = commands.map((c) => ({
                     command: c,
-                    evolvers: listFilesIn(commandFolder(aggregate, c)).filter((x) => x.endsWith('.event.ts')),
+                    evolvers: listFilesIn(PathTo.commandFolder(aggregate, c)).filter((x) => x.endsWith('.event.ts')),
                 }));
                 const evolverSets = evolversPerCommand.flatMap((x) =>
                     x.evolvers.map((e) => ({ command: x.command, evolver: e.replace('.event.ts', '') }))
@@ -123,6 +53,8 @@ export const addToSubCommand_generate = (command: commander.Command): void => {
                         command: `${voca.camelCase(evolverSet.command)}`,
                     })),
 
+                    events: eventStructures,
+
                     commands: commandStructures.map((com) => ({
                         commandType: com.commandType,
                         commandTypeName: voca.titleCase(com.command),
@@ -130,9 +62,7 @@ export const addToSubCommand_generate = (command: commander.Command): void => {
                         handleFunctionName: `handle${voca.titleCase(com.command)}`,
                         handleFileName: `${voca.titleCase(com.command)}.handle`,
                         commandFolderName: `${voca.camelCase(com.command)}`,
-
                         operationFunctionName: voca.camelCase(com.command),
-
                         validator: com.validator
                             ? {
                                   functionName: com.validator.functionName,
@@ -144,19 +74,13 @@ export const addToSubCommand_generate = (command: commander.Command): void => {
                                 functionName: x.functionName,
                                 importName: x.importName,
                             })) || [],
-                        commandRuleFunctionNames:
-                            com.commandRules
-                                .map((x) => x.functionName)
-                                .join(',') || '',
+                        commandRuleFunctionNames: com.commandRules.map((x) => x.functionName).join(',') || '',
                         commandIndexRules:
                             com.commandIndexRules.map((x) => ({
                                 functionName: x.functionName,
                                 importName: x.importName,
                             })) || [],
-                        commandIndexRuleFunctionNames:
-                            com.commandIndexRules
-                                .map((x) => x.functionName)
-                                .join(',') || '',
+                        commandIndexRuleFunctionNames: com.commandIndexRules.map((x) => x.functionName).join(',') || '',
                         commandAggregateRules:
                             com.commandAggregateRules.map((x) => ({
                                 functionName: x.functionName,

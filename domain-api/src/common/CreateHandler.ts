@@ -1,6 +1,6 @@
 import { Command } from './Command';
 import { CommandEvent, CommandEventData } from './CommandEvent';
 
-export type CreateHandler<C extends Command, CED extends CommandEventData> = (
+export type CreateHandler<C extends Command> = (
     command: C,
-) => CommandEvent<CED>[];
+) => CommandEvent[];

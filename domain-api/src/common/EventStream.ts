@@ -10,21 +10,27 @@ import { DomainEvent } from './DomainEvent';
 import { CommandEventData } from './CommandEvent';
 
 export interface EventStream {
-    findEvents(streamName: string, aggregateId: string): Promise<DomainEvent<string, unknown>[]>
-    addEvents(streamName: string,
-        aggregateId: string,
-        events: DomainEvent<string, CommandEventData>[]): Promise<void>
+    findEvents(
+        streamName: string,
+        aggregateId: string
+    ): Promise<DomainEvent<string>[]>;
+    addEvents(streamName: string, aggregateId: string, events: DomainEvent<string>[]): Promise<void>;
 }
 
 export class MockEventStream implements EventStream {
-    private events: DomainEvent<string, unknown>[] = [];
+    private events: DomainEvent<string>[] = [];
 
-    async findEvents(streamName: string, aggregateId: string): Promise<DomainEvent<string, unknown>[]> {
-        return this.events.filter(x => x.aggregateId === aggregateId);
+    async findEvents(
+        streamName: string,
+        aggregateId: string
+    ): Promise<DomainEvent<string>[]> {
+        return this.events.filter((x) => x.aggregateId === aggregateId);
     }
-    async addEvents(streamName: string,
+    async addEvents(
+        streamName: string,
         aggregateId: string,
-        events: DomainEvent<string, CommandEventData>[]): Promise<void> {
+        events: DomainEvent<string>[]
+    ): Promise<void> {
         this.events = events;
     }
 }
@@ -44,7 +50,10 @@ export class DefaultEventStream implements EventStream {
         console.log('........ CONNECTED!!!.....');
     }
 
-    async findEvents(streamName: string, aggregateId: string): Promise<DomainEvent<string, unknown>[]> {
+    async findEvents(
+        streamName: string,
+        aggregateId: string
+    ): Promise<DomainEvent<string>[]> {
         console.log('====> reading events...');
         const stream = this.client.readStream<JSONEventType>(
             `${streamName}-${aggregateId}`,
@@ -56,16 +65,19 @@ export class DefaultEventStream implements EventStream {
             {}
         );
         console.log('====> reading events... have stream');
-        const events: DomainEvent<string, unknown>[] = [];
+        const events: DomainEvent<string>[] = [];
 
         try {
             for await (const resolvedEvent of stream) {
                 console.log('====> reading events... adding event');
+                if (!resolvedEvent.event) {
+                    throw new Error('No event found');
+                }
                 events.push({
                     id: resolvedEvent.event.id,
                     type: resolvedEvent.event.type,
                     aggregateId: resolvedEvent.event.streamId.replace(`${streamName}-`, ''),
-                    data: resolvedEvent.event?.data,
+                    data: resolvedEvent.event?.data as unknown as CommandEventData,
                     meta: {}, // TODO resolvedEvent.event.metadata
                 });
                 //console.log(resolvedEvent.event?.data);
@@ -84,7 +96,7 @@ export class DefaultEventStream implements EventStream {
     async addEvents(
         streamName: string,
         aggregateId: string,
-        events: DomainEvent<string, CommandEventData>[]
+        events: DomainEvent<string>[]
     ): Promise<void> {
         console.log('====> adding events');
         await this.client.appendToStream(

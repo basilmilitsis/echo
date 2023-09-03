@@ -7,7 +7,7 @@ export enum EventType {
 export interface PostPublishedData_V1 extends CommandEventData {
 }
 
-export interface PostPublished_V1 extends CommandEvent<PostPublishedData_V1> {
+export interface PostPublished_V1 extends CommandEvent {
     type: EventType.PostPublished_V1;
     data: PostPublishedData_V1;
 }

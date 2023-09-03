@@ -1,5 +1,5 @@
-import { Aggregate, Command, CommandEvent, CommandEventData, CreateHandler, DomainEvent, EventStream, UpdateHandler } from '@root/common';
-import { CommandEventEvolver, evolve } from './evolve';
+import { Aggregate, Command, CommandEvent, CreateHandler, DomainEvent, EventStream, UpdateHandler } from '@root/common';
+import { EvolverSetsForAggregate, evolve } from './evolve';
 import { ValidationError, Validator } from './Validator';
 import { CommandRule, CommandRuleError } from './CommandRule';
 import { CommandIndexRule, CommandIndexRuleError } from './CommandIndexRule';
@@ -15,6 +15,7 @@ const doValdiation = <C extends Command>(command: C, validator: Validator<C> | u
         throw new ValidationError('ERROR: Validation Failed', validationErrors);
     }
 };
+
 const doCommandRules = <C extends Command>(command: C, commandRules: CommandRule<C>[] | undefined): void => {
     if (!commandRules) {
         return;
@@ -29,6 +30,7 @@ const doCommandRules = <C extends Command>(command: C, commandRules: CommandRule
         }
     }
 };
+
 const doCommandIndexRules = async <C extends Command>(
     command: C,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
@@ -47,18 +49,20 @@ const doCommandIndexRules = async <C extends Command>(
         }
     }
 };
+
 const loadAggregate = async <C extends Command, A extends Aggregate>(
     command: C,
     aggregateName: string,
     eventStream: EventStream,
-    evolvers: CommandEventEvolver<A>[],
+    evolvers: EvolverSetsForAggregate<A>[],
 ): Promise<A> => {
     const aggregateEvents = await eventStream.findEvents(aggregateName, command.id);
     console.log('======> found events: ', JSON.stringify(aggregateEvents, null, 4));
-    const aggregate: A = evolve(aggregateEvents, evolvers);
+    const aggregate: A = evolve(aggregateName, aggregateEvents, evolvers);
     console.log('======> aggregate ', JSON.stringify(aggregate, null, 4));
     return aggregate;
 };
+
 const doCommandAggregateRules = <C extends Command, A extends Aggregate>(
     command: C,
     aggregate: A,
@@ -77,18 +81,19 @@ const doCommandAggregateRules = <C extends Command, A extends Aggregate>(
         }
     }
 };
-const raiseEvents = async <C extends Command, A extends Aggregate, CED extends CommandEventData>(
+const raiseEvents = async <C extends Command, A extends Aggregate>(
     command: C,
     aggregateName: string,
-    commandEvents: CommandEvent<CED>[],
+    commandEvents: CommandEvent[],
     eventStream: EventStream,
     generateUuid: () => string
 ): Promise<void> => {
     console.log('======> handled events ', JSON.stringify(commandEvents, null, 4));
-    const domainEvents: DomainEvent<string, CommandEventData>[] = commandEvents.map(
-        (x): DomainEvent<string, CommandEventData> => ({
+    const domainEvents: DomainEvent<string>[] = commandEvents.map(
+        (x): DomainEvent<string> => ({
             id: generateUuid(),
             type: x.type,
+            //kind: DomainEventKind.Create,
             aggregateId: x.id,
             data: x.data,
             meta: {
@@ -104,10 +109,10 @@ const raiseEvents = async <C extends Command, A extends Aggregate, CED extends C
 
 
 
-export const handleCreateCommand = async <C extends Command, A extends Aggregate, CED extends CommandEventData>(
+export const handleCreateCommand = async <C extends Command, A extends Aggregate>(
     aggregateName: string,
     command: C,
-    handle: CreateHandler<C, CED>,
+    handle: CreateHandler<C>,
     validator: Validator<C> | undefined,
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
@@ -134,11 +139,11 @@ export const handleCreateCommand = async <C extends Command, A extends Aggregate
     console.log('========================================================================');
 };
 
-export const handleUpdateCommand = async <C extends Command, A extends Aggregate, CED extends CommandEventData>(
+export const handleUpdateCommand = async <C extends Command, A extends Aggregate>(
     aggregateName: string,
     command: C,
-    evolvers: CommandEventEvolver<A>[],
-    handle: UpdateHandler<C, A, CED>,
+    evolvers: EvolverSetsForAggregate<A>[],
+    handle: UpdateHandler<C, A>,
     validator: Validator<C> | undefined,
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
