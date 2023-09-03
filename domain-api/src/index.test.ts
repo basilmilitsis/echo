@@ -26,7 +26,7 @@ describe('pipeline works', () => {
             {
                 id: 'abcde',
                 aggregateId: '12345',
-                type: CreatedEventType.PostCreated_v1,
+                type: CreatedEventType.PostCreated_V1,
                 data: {
                     text: 'some text',
                     images: [],
@@ -80,7 +80,7 @@ describe('pipeline returns error', () => {
             {
                 id: 'abcde',
                 aggregateId: '12345',
-                type: CreatedEventType.PostCreated_v1,
+                type: CreatedEventType.PostCreated_V1,
                 data: {
                     text: 'some text',
                     images: [],
@@ -112,7 +112,7 @@ describe('pipeline returns error', () => {
             {
                 id: 'abcde',
                 aggregateId: '12345',
-                type: CreatedEventType.PostCreated_v1,
+                type: CreatedEventType.PostCreated_V1,
                 data: {
                     text: 'some text',
                     images: [],

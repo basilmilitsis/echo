@@ -1,5 +1,5 @@
 import commander, { Command } from 'commander';
-import { addToSubCommand_create } from './create/create';
+import { addToSubCommand_create } from './add/add';
 
 export const subCommand_command = (): Command => {
     const command = new commander.Command('command');

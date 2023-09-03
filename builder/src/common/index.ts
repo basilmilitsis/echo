@@ -1,3 +1,4 @@
+export * from './detectCreateOrUpdateCommand';
 export * from './ensureFolderDoesNotExist';
 export * from './ensureFolderExists';
 export * from './ensureCurrentlyInProjectRoot';

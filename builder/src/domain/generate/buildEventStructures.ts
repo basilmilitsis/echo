@@ -16,6 +16,8 @@ export type EventStructure = {
     eventKind: 'create' | 'update';
     evolveFunction: string;
     evolveFilename: string;
+    isFileName: string;
+    isFunctionName: string;
 };
 
 export const buildEventStructures = (commands: string[], aggregate: string): EventStructure[] => {
@@ -40,7 +42,9 @@ export const buildEventStructures = (commands: string[], aggregate: string): Eve
                 commandFolder: voca.camelCase(command),
                 eventKind: isCreateCommand ? 'create' : 'update',
                 evolveFunction:  `evolve${eventName}`,
-                evolveFilename: `${eventName}.evolve`
+                evolveFilename: `${eventName}.evolve`,
+                isFileName: `${eventName}.is`,
+                isFunctionName: `is${eventName}`,
             });
         }
     }

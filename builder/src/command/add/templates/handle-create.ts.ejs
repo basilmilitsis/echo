@@ -1,0 +1,9 @@
+import { CommandEvent, CreateHandler } from '@root/common';
+import { <%= commandTypeName %> } from './<%= commandFileName %>';
+import { <%= aggregateTypeName %> } from '../<%= aggregateFileName %>';
+
+export const <%= functionName %>: CreateHandler<<%= commandTypeName %>> = (
+    command: <%= commandTypeName %>
+): CommandEvent[] => {
+    return [];
+};

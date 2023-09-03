@@ -1,4 +1,4 @@
-import { EventStream, CommandContext } from '@root/common';
+import { CommandContext, DomainEvent } from '@root/common';
 import { handleCreateCommand, handleUpdateCommand } from '../../../common/handleCommand';
 import { EvolverSetsForAggregate } from "../../../common/evolve";
 
@@ -14,6 +14,7 @@ import { <%= aggregateTypeName %> } from '../<%= aggregateFileName %>';
 
 <% events.forEach(function (event) { %>
 import { <%= event.evolveFunction %> } from "../<%= event.commandFolder %>/<%= event.evolveFilename %>";
+import { <%= event.isFunctionName %> } from "../<%= event.commandFolder %>/<%= event.isFileName %>";
 <% }) %>
 
 export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName %>>[] = [
@@ -23,7 +24,10 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
             <% events.filter(e => e.eventKind === 'create').forEach(function (event) { %>
             {
                 eventName: '<%= event.eventType %>',
-                evolver: <%= event.evolveFunction %>,
+                evolver: (event: DomainEvent<string>) => {
+                    if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
+                    return <%= event.evolveFunction %>(event)
+                },
             },
             <% }) %>
         ],
@@ -31,7 +35,10 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
             <% events.filter(e => e.eventKind === 'update').forEach(function (event) { %>
             {
                 eventName: '<%= event.eventType %>',
-                evolver: <%= event.evolveFunction %>,
+                evolver: (state: <%= aggregateTypeName %>, event: DomainEvent<string>) => {
+                    if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
+                    return <%= event.evolveFunction %>(state, event)
+                },
             },
             <% }) %>
         ],

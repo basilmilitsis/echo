@@ -7,7 +7,7 @@ export enum EventType {
 export interface <%= eventDataTypeName %> extends CommandEventData {
 }
 
-export interface <%= eventTypeName %> extends CommandEvent<<%= eventDataTypeName %>> {
+export interface <%= eventTypeName %> extends CommandEvent {
     type: EventType.<%= eventEnumFieldName %>;
     data: <%= eventDataTypeName %>;
 }
