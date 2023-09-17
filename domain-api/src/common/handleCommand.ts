@@ -4,6 +4,7 @@ import { ValidationError, Validator } from './Validator';
 import { CommandRule, CommandRuleError } from './CommandRule';
 import { CommandIndexRule, CommandIndexRuleError } from './CommandIndexRule';
 import { CommandAggregateRule, CommandAggregateRuleError } from './CommandAggregateRule';
+import { AggregatLoadError } from './AggregateLoadError';
 
 const doValdiation = <C extends Command>(command: C, validator: Validator<C> | undefined): void => {
     if (!validator) {
@@ -165,7 +166,7 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
     //-- load aggregate
     const aggregate: A = await loadAggregate(command, aggregateName, eventStream, evolvers);
     if(!aggregate) {
-        throw new Error('ERROR: Aggregate not found');
+        throw new AggregatLoadError('ERROR: Aggregate not found');
     }
 
     //-- command aggregate rules
