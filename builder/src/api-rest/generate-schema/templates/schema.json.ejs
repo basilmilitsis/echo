@@ -1,0 +1,37 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "???????",
+      "version": "???????"
+    },
+    "paths": {
+      <% operations.forEach(function (operation) { %>
+      "/<%= operation.apiName %>": {
+        "<%= operation.apiMethod %>": {
+          "summary": "????",
+          "operationId": "<%= operation.operationId %>",
+          "requestBody": {
+            "description": "???????",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": <%- operation.input %>
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Success"
+            },
+            "400": {
+              "description": "Invalid request body"
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      },
+      <% }) %>
+    }
+}

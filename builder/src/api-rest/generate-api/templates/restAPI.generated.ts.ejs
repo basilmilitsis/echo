@@ -1,0 +1,78 @@
+import { v4 as uuidv4 } from 'uuid';
+import OpenAPIBackend, { UnknownParams, Context, Document } from 'openapi-backend';
+import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
+
+import { DefaultEventStream, EventStream, CommandContext } from '@root/common';
+import { interpretAsApiRestError } from '@root/common-api-rest';
+
+//---------------------------
+
+<% operationImports.forEach(function (operation) { %>
+import { 
+    <% operation.operationFunctions.forEach(function (operationFunction) { %>
+    <%=operationFunction%>, 
+    <% }) %>
+} from '@root/_generated/<%=operation.operationsFile%>';  
+<% }) %>
+
+//---------------------------
+
+<% commandImports.forEach(function (command) { %>
+import { <%=command.commandType%> } from '@root/domain/<%=command.aggregateFolder%>/<%=command.commandFolder%>/<%=command.commandFile%>';
+<% }) %>
+
+//---------------------------
+
+const eventStream: EventStream = new DefaultEventStream();
+const context: CommandContext = { eventStream, generateUuid: uuidv4 };
+
+//---------------------------
+
+const api = new OpenAPIBackend({
+    definition: './src/_generated/schema.json', // TODO: move
+    handlers: {
+
+        // TODO
+        validationFail: async (c, req: ExpressReq, res: ExpressRes) =>
+            res.status(400).json({ err: c.validation.errors }),
+        // TODO
+        notFound: async (c, req: ExpressReq, res: ExpressRes) => res.status(404).json({ err: 'not found' }),
+        // TODO
+        notImplemented: async (c, req: ExpressReq, res: ExpressRes) => {
+            const { status, mock } = c.api.mockResponseForOperation(
+                '' //c.operation.operationId
+            );
+            return res.status(status).json(mock);
+        },
+
+        <% operationHandlers.forEach(function (operation) { %>
+        <%=operation.operationId%>: async (
+            c: Context<<%= operation.commandType %>, UnknownParams, UnknownParams, UnknownParams, UnknownParams, Document>,
+            req: ExpressReq<any, <%= operation.commandType %>, any, any, any>,
+            res: ExpressRes
+        ) => {
+            try {
+                console.log('<%=operation.operationId%>, body : ', JSON.stringify(req.body, null, 4));
+                await <%= operation.operationFunctionName %>(req.body, context);
+                return res.status(200).json({ result: 'ok' });
+            } catch (err) {
+                return res.status(500).json(interpretAsApiRestError(err));
+            }
+        },
+        <% }) %>
+    },
+});
+
+
+//---------------------------
+// initalize the backend
+api.init();
+
+const app = express();
+app.use(express.json());
+
+// use as express middleware
+app.use((req: any, res: any) => api.handleRequest(req, req, res));
+
+// start server
+app.listen(9000, () => console.info('api listening at http://localhost:9000'));
