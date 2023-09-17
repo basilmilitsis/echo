@@ -7,6 +7,8 @@ export * from './CommandIndexRule';
 export * from './CommandRule';
 export * from './DomainEvent';
 export * from './EventStream';
+export * from './evolve';
 export * from './CreateHandler';
+export * from './handleCommand';
 export * from './UpdateHandler';
 export * from './types';
