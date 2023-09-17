@@ -1,7 +1,8 @@
 import * as voca from 'voca';
 
 export class PathTo {
-    static domainFolder = (): string => `./src/domain`;
+    static srcFolder = (): string => `./src`;
+    static domainFolder = (): string => `./${PathTo.srcFolder()}/domain`;
     static aggregateFolder = (aggregate: string): string => `${PathTo.domainFolder()}/${voca.camelCase(aggregate)}`;
     static commandFolder = (aggregate: string, command: string): string =>
         `${PathTo.aggregateFolder(aggregate)}/${voca.camelCase(command)}`;

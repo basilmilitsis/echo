@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as voca from 'voca';
 
-import { PathTo } from './PathTo';
-import { listFilesIn } from '@root/common';
+import { listFilesIn, determineCommandKind, PathTo } from '@root/common';
 
 export type EventFile = {
     functionName: string;
@@ -25,13 +24,7 @@ export const buildEventStructures = (commands: string[], aggregate: string): Eve
                 
     for (let i = 0; i < commands.length; i++) {
         const command = commands[i];
-
-        const isCreateCommand = fs.existsSync(PathTo.createCommandFile(aggregate, command));
-        const isupdateCommand = fs.existsSync(PathTo.updateCommandFile(aggregate, command));
-        if (!isCreateCommand && !isupdateCommand) {
-            throw new Error(`Unknown command type for command: ${command}`);
-        }
-
+        const commandKind = determineCommandKind(aggregate, command)
         const events = listFilesIn(PathTo.commandFolder(aggregate, command), '.event.ts')
         for (let j = 0; j < events.length; j++) {
             const eventFileName = events[j];
@@ -40,7 +33,7 @@ export const buildEventStructures = (commands: string[], aggregate: string): Eve
                 eventType:  `${eventName}`,
                 eventFileName: eventFileName,
                 commandFolder: voca.camelCase(command),
-                eventKind: isCreateCommand ? 'create' : 'update',
+                eventKind: commandKind,
                 evolveFunction:  `evolve${eventName}`,
                 evolveFilename: `${eventName}.evolve`,
                 isFileName: `${eventName}.is`,

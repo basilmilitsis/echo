@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as voca from 'voca';
 
-import { PathTo } from './PathTo';
-import { listFilesIn } from '@root/common';
+import { listFilesIn, determineCommandKind, PathTo } from '@root/common';
 
 export type CommandFile = {
     functionName: string;
@@ -25,14 +24,9 @@ export const buildCommandStructures = (commands: string[], aggregate: string): C
     for (let i = 0; i < commands.length; i++) {
         const command = commands[i];
 
-        const isCreateCommand = fs.existsSync(PathTo.createCommandFile(aggregate, command));
-        const isupdateCommand = fs.existsSync(PathTo.updateCommandFile(aggregate, command));
-        if (!isCreateCommand && !isupdateCommand) {
-            throw new Error(`Unknown command type for command: ${command}`);
-        }
         commandStructures.push({
             command: command,
-            commandType: isCreateCommand ? 'create' : 'update',
+            commandType: determineCommandKind(aggregate, command),
             validator: fs.existsSync(PathTo.validatorFile(aggregate, command))
                 ? {
                       functionName: `validate${voca.titleCase(command)}`,

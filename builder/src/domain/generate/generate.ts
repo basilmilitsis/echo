@@ -5,7 +5,7 @@ import * as voca from 'voca';
 import commander from 'commander';
 import { ensureCurrentlyInProjectRoot, listFilesIn, listFoldersIn, loadTemplate } from '@root/common';
 import { CommandStructure, buildCommandStructures } from './buildCommandStructures';
-import { PathTo } from './PathTo';
+import { PathTo } from '../../common/PathTo';
 import { EventStructure, buildEventStructures } from './buildEventStructures';
 
 // TODO: refactor and simplify this
@@ -18,11 +18,6 @@ export const addToSubCommand_generate = (command: commander.Command): void => {
 
             const aggregates = listFoldersIn(PathTo.domainFolder());
             aggregates.forEach((aggregate) => {
-
-                const outputFolder = path.join(process.env.PWD, `${PathTo.aggregateFolder(aggregate)}/_generated`);
-                if (!fs.existsSync(outputFolder)) {
-                    fs.mkdirSync(outputFolder);
-                }
 
                 //-- Get all command names
                 const commands = listFoldersIn(PathTo.aggregateFolder(aggregate)).filter((x) => !x.startsWith('_'));
@@ -46,6 +41,7 @@ export const addToSubCommand_generate = (command: commander.Command): void => {
                 const model = {
                     aggregateTypeName: voca.titleCase(aggregate),
                     aggregateFileName: voca.titleCase(aggregate),
+                    aggregateFolder: voca.camelCase(aggregate),
 
                     evolvers: evolverSets.map((evolverSet) => ({
                         evolverFunctionName: `evolve${voca.titleCase(evolverSet.evolver)}`,
@@ -90,6 +86,11 @@ export const addToSubCommand_generate = (command: commander.Command): void => {
                             com.commandAggregateRules.map((x) => x.functionName).join(',') || '',
                     })),
                 };
+
+                const outputFolder = path.join(process.env.PWD, `${PathTo.srcFolder()}/_generated`);
+                if (!fs.existsSync(outputFolder)) {
+                    fs.mkdirSync(outputFolder);
+                }
 
                 //-- render template
                 fs.writeFileSync(

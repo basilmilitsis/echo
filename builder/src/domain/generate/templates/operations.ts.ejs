@@ -1,11 +1,15 @@
-import { CommandContext, DomainEvent } from '@root/common';
-import { handleCreateCommand, handleUpdateCommand } from '../../../common/handleCommand';
-import { EvolverSetsForAggregate } from "../../../common/evolve";
+import {
+    EvolverSetsForAggregate,
+    handleCreateCommand,
+    handleUpdateCommand,
+    CommandContext,
+    DomainEvent,
+} from '@root/common';
 
 //--------------------------------
 //--------------------------------
 
-import { <%= aggregateTypeName %> } from '../<%= aggregateFileName %>';
+import { <%= aggregateTypeName %> } from '@root/domain/<%=aggregateFolder%>/<%= aggregateFileName %>';
 
 
 //--------------------------------
@@ -13,8 +17,8 @@ import { <%= aggregateTypeName %> } from '../<%= aggregateFileName %>';
 
 
 <% events.forEach(function (event) { %>
-import { <%= event.evolveFunction %> } from "../<%= event.commandFolder %>/<%= event.evolveFilename %>";
-import { <%= event.isFunctionName %> } from "../<%= event.commandFolder %>/<%= event.isFileName %>";
+import { <%= event.evolveFunction %> } from "@root/domain/<%=aggregateFolder%>/<%=event.commandFolder%>/<%= event.evolveFilename %>";
+import { <%= event.isFunctionName %> } from "@root/domain/<%=aggregateFolder%>/<%=event.commandFolder%>/<%= event.isFileName %>";
 <% }) %>
 
 export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName %>>[] = [
@@ -54,53 +58,55 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
 
     //--------------------------------
 
-    import { <%= command.commandTypeName %> } from '../<%= command.commandFolderName %>/<%= command.commandFileName %>';
-    import { <%= command.handleFunctionName %> } from '../<%= command.commandFolderName %>/<%= command.handleFileName %>';
+    import { <%= command.commandTypeName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/<%= command.commandFileName %>';
+    import { <%= command.handleFunctionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/<%= command.handleFileName %>';
     <% if (command.validator) { %>  
-        import { <%= command.validator.functionName %> } from '../<%= command.commandFolderName %>/<%= command.validator.importName %>';
+        import { <%= command.validator.functionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/<%= command.validator.importName %>';
     <% } %>
     <% command.commandRules.forEach(function (rule) { %>
-        import { <%= rule.functionName %> } from '../<%= command.commandFolderName %>/commandRules/<%= rule.importName %>';
+        import { <%= rule.functionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/commandRules/<%= rule.importName %>';
     <% }) %>
     <% command.commandIndexRules.forEach(function (rule) { %>
-        import { <%= rule.functionName %> } from '../<%= command.commandFolderName %>/indexRules/<%= rule.importName %>';
+        import { <%= rule.functionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/indexRules/<%= rule.importName %>';
     <% }) %>
     <% command.commandAggregateRules.forEach(function (rule) { %>
-        import { <%= rule.functionName %> } from '../<%= command.commandFolderName %>/aggregateRules/<%= rule.importName %>';
+        import { <%= rule.functionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/aggregateRules/<%= rule.importName %>';
     <% }) %>    
 
     <% if (command.commandType === 'create') { %>  
-        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => handleCreateCommand(
-            '<%= aggregateTypeName %>', 
-            command, 
-            <%= command.handleFunctionName %>, 
-            <% if (command.validator) { %>  
-                <%= command.validator.functionName %>
-            <% } else { %>  
-                undefined
-            <% } %>,
-            [ <%= command.commandRuleFunctionNames %> ],
-            [ <%= command.commandIndexRuleFunctionNames %> ],
-            context.eventStream,
-            context.generateUuid
-        );
+        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => 
+            handleCreateCommand(
+                '<%= aggregateTypeName %>', 
+                command, 
+                <%= command.handleFunctionName %>, 
+                <% if (command.validator) { %>  
+                    <%= command.validator.functionName %>
+                <% } else { %>  
+                    undefined
+                <% } %>,
+                [ <%= command.commandRuleFunctionNames %> ],
+                [ <%= command.commandIndexRuleFunctionNames %> ],
+                context.eventStream,
+                context.generateUuid
+            );
     <% } %>
     <% if (command.commandType === 'update') { %>  
-        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => handleUpdateCommand(
-            '<%= aggregateTypeName %>', 
-            command, 
-            commandEventEvolvers, 
-            <%= command.handleFunctionName %>, 
-            <% if (command.validator) { %>  
-                <%= command.validator.functionName %>
-            <% } else { %>  
-                undefined
-            <% } %>,
-            [ <%= command.commandRuleFunctionNames %> ],
-            [ <%= command.commandIndexRuleFunctionNames %> ],
-            [ <%= command.commandAggregateRuleFunctionNames %> ],
-            context.eventStream,
-            context.generateUuid
-        );
+        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => 
+            handleUpdateCommand(
+                '<%= aggregateTypeName %>', 
+                command, 
+                commandEventEvolvers, 
+                <%= command.handleFunctionName %>, 
+                <% if (command.validator) { %>  
+                    <%= command.validator.functionName %>
+                <% } else { %>  
+                    undefined
+                <% } %>,
+                [ <%= command.commandRuleFunctionNames %> ],
+                [ <%= command.commandIndexRuleFunctionNames %> ],
+                [ <%= command.commandAggregateRuleFunctionNames %> ],
+                context.eventStream,
+                context.generateUuid
+            );
     <% } %>
 <% }) %>    
