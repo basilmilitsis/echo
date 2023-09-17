@@ -6,6 +6,7 @@
     "author": "",
     "license": "ISC",
     "main": ".dist/index.js",
+    "typings": ".dist/index.d.ts",
     "scripts": {
         "build:clean": "rm -rf .dist",
         "build:assets:copy": "(cd ./src && find ./ -regex '.*\\.ejs$' -exec cp --parents {} ../.dist/ \\;)",

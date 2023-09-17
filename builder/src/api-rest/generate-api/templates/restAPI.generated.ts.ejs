@@ -1,9 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import OpenAPIBackend, { UnknownParams, Context, Document } from 'openapi-backend';
 import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
-
-import { DefaultEventStream, EventStream, CommandContext } from '@root/common';
-import { interpretAsApiRestError } from '@root/common-api-rest';
+import { DefaultEventStream, EventStream, CommandContext, interpretAsApiRestError } from 'domain-api-base';
 
 //---------------------------
 

@@ -1,4 +1,4 @@
-import { DomainEvent } from '@root/common';
+import { DomainEvent } from 'domain-api-base';
 import { <%= aggregateName %> } from '../<%= aggregateFileName %>';
 
 export const <%= evolveFunctionName %> = (aggregate: <%= aggregateName %>, event: DomainEvent<string>): <%= aggregateName %> => {

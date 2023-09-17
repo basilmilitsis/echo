@@ -1,0 +1,49 @@
+{
+    "name": "domain-api",
+    "version": "1.0.0",
+    "description": "",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "main": ".dist/index.js",
+    "typings": ".dist/index.d.ts",
+    "scripts": {
+        "build:clean": "rm -rf .dist",
+        "build:generate:domain:code": "node ../../builder/.dist/index.js domain generate",
+        "build:generate:rest:schema": "node ../../builder/.dist/index.js api-rest generate-schema",
+        "build:generate:rest:api": "node ../../builder/.dist/index.js api-rest generate-api",
+        "build:generate": "pnpm build:generate:domain:code && pnpm build:generate:rest:schema && pnpm build:generate:rest:api",
+        "build:compile": "tsc -p tsconfig.dist.json && tsc-alias -p tsconfig.dist.json",
+        "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile",
+        "start": "node .",
+        "dev": "pnpm build && pnpm start",
+        "test": "jest"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.17",
+        "@types/jest": "^29.5.3",
+        "@types/luxon": "^3.3.0",
+        "@types/node": "^20.4.2",
+        "@types/uuid": "^9.0.2",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.45.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-jest": "^27.2.3",
+        "jest": "^29.6.1",
+        "prettier": "^3.0.0",
+        "ts-jest": "^29.1.1",
+        "typescript": "^5.1.6"
+    },
+    "dependencies": {
+        "@eventstore/db-client": "^5.0.1",
+        "domain-api-base": "workspace:^1.0.0",
+        "express": "^4.18.2",
+        "luxon": "^3.3.0",
+        "openapi-backend": "^5.9.2",
+        "source-map-support": "^0.5.21",
+        "tsc-alias": "^1.8.7",
+        "uuid": "^9.0.0",
+        "zod": "^3.22.2"
+    }
+}
