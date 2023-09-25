@@ -1,20 +1,19 @@
 import 'source-map-support/register';
 
-import { Command } from 'commander';
-import { subCommand_command } from './command';
-import { subCommand_event } from './event';
-import { subCommand_query } from './query';
-import { subCommand_domain } from './domain';
-import { subCommand_apiRest } from './api-rest';
+import commander from 'commander';
+import { api_domain } from './api/domain/api_domain';
+import { api_rest } from './api/rest/api_rest';
 
-const program = new Command();
-
+const program = new commander.Command();
 program.name('domain-builder').description('CLI to build domain objects').version('0.0.0');
 
-program.addCommand(subCommand_command());
-program.addCommand(subCommand_event());
-program.addCommand(subCommand_query());
-program.addCommand(subCommand_domain());
-program.addCommand(subCommand_apiRest());
+//-- Api
+const api = new commander.Command('api');
+api.command('create')
+    .argument('<name>')
+    .action((options) => {});
+api.addCommand(api_domain).addCommand(api_rest);
 
+//-- Add all commands
+program.addCommand(api);
 program.parse();

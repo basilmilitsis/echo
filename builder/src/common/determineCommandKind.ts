@@ -2,14 +2,14 @@ import * as fs from 'fs';
 import { PathTo } from '@root/common';
 
 
-export const determineCommandKind = (aggregate: string, command: string): 'create' | 'update' => {
-    const isupdateCommand = fs.existsSync(PathTo.updateCommandFile(aggregate, command));
+export const determineCommandKind = (absDomainRootPath: string, aggregate: string, command: string): 'create' | 'update' => {
+    const isupdateCommand = fs.existsSync(PathTo.updateCommandFile(absDomainRootPath, aggregate, command));
 
     if (isupdateCommand) {
         return 'update';
     }
 
-    const isCreateCommand = fs.existsSync(PathTo.createCommandFile(aggregate, command));
+    const isCreateCommand = fs.existsSync(PathTo.createCommandFile(absDomainRootPath, aggregate, command));
     if (isCreateCommand) {
         return 'create';
     }

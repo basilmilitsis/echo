@@ -73,7 +73,7 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
         import { <%= rule.functionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/aggregateRules/<%= rule.importName %>';
     <% }) %>    
 
-    <% if (command.commandType === 'create') { %>  
+    <% if (command.commandKind === 'create') { %>  
         export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => 
             handleCreateCommand(
                 '<%= aggregateTypeName %>', 
@@ -90,7 +90,7 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
                 context.generateUuid
             );
     <% } %>
-    <% if (command.commandType === 'update') { %>  
+    <% if (command.commandKind === 'update') { %>  
         export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => 
             handleUpdateCommand(
                 '<%= aggregateTypeName %>', 
