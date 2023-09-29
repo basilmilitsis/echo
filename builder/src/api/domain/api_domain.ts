@@ -49,6 +49,15 @@ api_domain
                 commandFileName: `${voca.titleCase(commandName)}.create.command`,
             }
         );
+        Template.write(
+            PathTo.validatorFile(process.env.PWD, aggregateName, commandName),
+            Template.templatePath(__dirname, `./templates/add-command/validate.ts.ejs`),
+            {
+                functionName: `validate${voca.titleCase(commandName)}`,
+                commandTypeName: voca.titleCase(commandName),
+                commandFileName: `${voca.titleCase(commandName)}.create.command`,
+            }
+        );
     });
 
 api_domain
@@ -76,6 +85,15 @@ api_domain
                 commandFileName: `${voca.titleCase(commandName)}.update.command`,
                 aggregateTypeName: voca.titleCase(aggregateName),
                 aggregateFileName: voca.titleCase(aggregateName),
+            }
+        );
+        Template.write(
+            PathTo.validatorFile(process.env.PWD, aggregateName, commandName),
+            Template.templatePath(__dirname, `./templates/add-command/validate.ts.ejs`),
+            {
+                functionName: `validate${voca.titleCase(commandName)}`,
+                commandTypeName: voca.titleCase(commandName),
+                commandFileName: `${voca.titleCase(commandName)}.update.command`,
             }
         );
     });
