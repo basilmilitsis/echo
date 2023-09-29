@@ -14,6 +14,12 @@ export class PathRules {
         }
     }
 
+    static ensureCurrentlyInSolutionRoot = (): void => {
+        if (listFilesIn(process.cwd()).findIndex(x => x === "rush.json") === -1) {
+            throw new Error('Not in solution root');
+        }
+    }
+
     static ensureCurrentlyInProjectRoot = (): void => {
         if (listFilesIn(process.cwd()).findIndex(x => x === "package.json") === -1) {
             throw new Error('Not in project root');

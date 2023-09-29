@@ -1,11 +1,12 @@
 import path from 'node:path';
 import * as voca from 'voca';
 
+// TODO: rename and/or move to src/api/
 // TODO: use path.join
 export class PathTo {
     static srcFolder = (pwd: string): string => path.join(pwd, '/src');
 
-    static generatedFolder = (pwd: string): string => path.join(pwd, '/src/_generated');
+    static generatedFolder = (pwd: string): string => path.join(PathTo.srcFolder(pwd), '_generated');
     static operationsFile = (pwd: string, aggregateName: string): string =>
         path.join(PathTo.generatedFolder(pwd), `${voca.titleCase(aggregateName)}.operations.ts`);
     static restApiFile = (pwd: string): string => path.join(PathTo.generatedFolder(pwd), `rest.api.generated.ts`);
@@ -44,4 +45,15 @@ export class PathTo {
 
     static validatorFile = (pwd: string, aggregate: string, command: string): string =>
         `${PathTo.commandFolder(pwd, aggregate, command)}/${voca.titleCase(command)}.validate.ts`;
+
+    static eslintFile = (pwd: string): string => path.join(pwd, `.eslintrc.json`);
+    static gitignoreFile = (pwd: string): string => path.join(pwd, `.gitignore`);
+    static prettierrcFile = (pwd: string): string => path.join(pwd, `.prettierrc.json`);
+    static jestFile = (pwd: string): string => path.join(pwd, `.jest.config.js`);
+    static packageFile = (pwd: string): string => path.join(pwd, `package.json`);
+    static tsconfigDistFile = (pwd: string): string => path.join(pwd, `tsconfig.dist.json`);
+    static tsconfigFile = (pwd: string): string => path.join(pwd, `tsconfig.json`);
+
+    static indexFile = (pwd: string): string => path.join(PathTo.srcFolder(pwd), `index.ts`);
+    static domainGitkeepFile = (pwd: string): string => path.join(PathTo.domainFolder(pwd), `.gitkeep`);
 }
