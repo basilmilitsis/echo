@@ -1,5 +1,6 @@
+export * from './errors';
+
 export * from './Aggregate';
-export * from './AggregateLoadError';
 export * from './Command';
 export * from './CommandAggregateRule';
 export * from './CommandContext';

@@ -1,9 +1,15 @@
+import {
+    CommandAggregateRuleError,
+    CommandIndexRuleError,
+    CommandRuleError,
+    ValidationError,
+} from './errors';
 import { EvolverSetsForAggregate, evolve } from './evolve';
-import { ValidationError, Validator } from './Validator';
-import { CommandRule, CommandRuleError } from './CommandRule';
-import { CommandIndexRule, CommandIndexRuleError } from './CommandIndexRule';
-import { CommandAggregateRule, CommandAggregateRuleError } from './CommandAggregateRule';
-import { AggregatLoadError } from './AggregateLoadError';
+import { Validator } from './Validator';
+import { CommandRule } from './CommandRule';
+import { CommandIndexRule } from './CommandIndexRule';
+import { CommandAggregateRule } from './CommandAggregateRule';
+import { AggregatLoadError } from './errors/AggregateLoadError';
 import { Command } from './Command';
 import { Aggregate } from './Aggregate';
 import { EventStream } from './EventStream';
@@ -12,10 +18,7 @@ import { DomainEvent } from './DomainEvent';
 import { CreateHandler } from './CreateHandler';
 import { UpdateHandler } from './UpdateHandler';
 
-const doValdiation = <C extends Command>(command: C, validator: Validator<C> | undefined): void => {
-    if (!validator) {
-        return;
-    }
+const doValdiation = <C extends Command>(command: C, validator: Validator<C>): void => {
     console.log('======> running validator...');
     const validationErrors = validator(command);
     if (validationErrors.length > 0) {
@@ -61,7 +64,7 @@ const loadAggregate = async <C extends Command, A extends Aggregate>(
     command: C,
     aggregateName: string,
     eventStream: EventStream,
-    evolvers: EvolverSetsForAggregate<A>[],
+    evolvers: EvolverSetsForAggregate<A>[]
 ): Promise<A> => {
     const aggregateEvents = await eventStream.findEvents(aggregateName, command.id);
     console.log('======> found events: ', JSON.stringify(aggregateEvents, null, 4));
@@ -73,7 +76,7 @@ const loadAggregate = async <C extends Command, A extends Aggregate>(
 const doCommandAggregateRules = <C extends Command, A extends Aggregate>(
     command: C,
     aggregate: A,
-    commandAggregateRules: CommandAggregateRule<C, A>[] | undefined,
+    commandAggregateRules: CommandAggregateRule<C, A>[] | undefined
 ): void => {
     if (!commandAggregateRules) {
         return;
@@ -112,15 +115,11 @@ const raiseEvents = async <C extends Command, A extends Aggregate>(
     console.log('======> added domainEvents ', JSON.stringify(domainEvents, null, 4));
 };
 
-
-
-
-
 export const handleCreateCommand = async <C extends Command, A extends Aggregate>(
     aggregateName: string,
     command: C,
     handle: CreateHandler<C>,
-    validator: Validator<C> | undefined,
+    validator: Validator<C>,
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
     eventStream: EventStream,
@@ -151,7 +150,7 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
     command: C,
     evolvers: EvolverSetsForAggregate<A>[],
     handle: UpdateHandler<C, A>,
-    validator: Validator<C> | undefined,
+    validator: Validator<C>,
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
     commandAggregateRules: CommandAggregateRule<C, A>[] | undefined,
@@ -171,7 +170,7 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
 
     //-- load aggregate
     const aggregate: A = await loadAggregate(command, aggregateName, eventStream, evolvers);
-    if(!aggregate) {
+    if (!aggregate) {
         throw new AggregatLoadError('ERROR: Aggregate not found');
     }
 
@@ -186,4 +185,3 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
 
     console.log('========================================================================');
 };
-
