@@ -1,5 +1,6 @@
 import * as voca from 'voca';
 import { PathTo, determineCommandKind, listFilesIn, listFoldersIn } from "@root/common";
+import { CommandKind } from './CommandKind';
 
 export type FileInfo = {
     functionName: string;
@@ -7,7 +8,7 @@ export type FileInfo = {
 };
 export type CommandStructure = {
     command: string;
-    commandType: 'create' | 'update';
+    commandType: CommandKind;
     validator?: FileInfo;
     commandRules: FileInfo[];
     commandIndexRules: FileInfo[];
@@ -18,7 +19,7 @@ export type EventStructure = {
     eventType: string;
     eventFileName: string;
     commandFolder: string;
-    eventKind: 'create' | 'update';
+    eventKind: CommandKind;
     evolveFunction: string;
     evolveFilename: string;
     isFileName: string;
@@ -27,7 +28,7 @@ export type EventStructure = {
 export type CommandInfo = {
     commandName: string;
     commandTypeName: string;
-    commandKind: 'create' | 'update';
+    commandKind: CommandKind;
     commandFileName: string;
     commandFolderName: string;
     validator: FileInfo;
@@ -67,13 +68,13 @@ const instrospectCommand = (domainRootPath: string, aggregateName: string, comma
                     importName: fileName.replace('.ts', ''),
                 })) || [],
         commandIndexRules:
-            listFilesIn(PathTo.commandIndexRulesFolder(domainRootPath, aggregateName, commandName), '.indexRule.ts')
+            listFilesIn(PathTo.indexRulesFolder(domainRootPath, aggregateName, commandName), '.indexRule.ts')
                 .map((fileName) => ({
                     functionName: fileName.replace('.indexRule.ts', ''),
                     importName: fileName.replace('.ts', ''),
                 })) || [],
         commandAggregateRules:
-            listFilesIn(PathTo.commandAggregateRulesFolder(domainRootPath, aggregateName, commandName), '.aggregateRule.ts')
+            listFilesIn(PathTo.aggregateRulesFolder(domainRootPath, aggregateName, commandName), '.aggregateRule.ts')
                 .map((fileName) => ({
                     functionName: fileName.replace('.aggregateRule.ts', ''),
                     importName: fileName.replace('.ts', ''),

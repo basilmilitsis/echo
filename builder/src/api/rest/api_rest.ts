@@ -5,13 +5,13 @@ import { buildModel_restSchema } from './templates/rest-schema/rest.schema.json.
 
 export const api_rest = new commander.Command('rest');
 api_rest.command('generate-schema').action(() => {
-    PathRules.ensureCurrentlyInProjectRoot();
+PathRules.ensureCurrentlyInProjectRoot();
 
-    Template.write(
-        PathTo.restApiSchema(process.env.PWD),
-        Template.templatePath(__dirname, `./templates/rest-schema/rest.schema.json.ejs`),
-        buildModel_restSchema(process.env.PWD, introspectDomain(process.env.PWD))
-    );
+Template.write(
+    PathTo.restApiSchema(process.env.PWD),
+    Template.templatePath(__dirname, `./templates/rest-schema/rest.schema.json.ejs`),
+    buildModel_restSchema(process.env.PWD, introspectDomain(process.env.PWD))
+);
 });
 
 api_rest.command('generate-api').action(() => {

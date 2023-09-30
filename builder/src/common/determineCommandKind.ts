@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import { PathTo } from '@root/common';
+import { CommandKind } from './CommandKind';
 
-
-export const determineCommandKind = (absDomainRootPath: string, aggregate: string, command: string): 'create' | 'update' => {
+export const determineCommandKind = (absDomainRootPath: string, aggregate: string, command: string): CommandKind => {
     const isupdateCommand = fs.existsSync(PathTo.updateCommandFile(absDomainRootPath, aggregate, command));
 
     if (isupdateCommand) {

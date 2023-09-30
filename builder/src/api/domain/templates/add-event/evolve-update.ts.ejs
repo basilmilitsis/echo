@@ -1,6 +1,6 @@
 import { DomainEvent } from 'domain-api-base';
-import { <%= aggregateName %> } from '../<%= aggregateFileName %>';
+import { <%=aggregateName%> } from '../<%=aggregateFileName%>';
 
-export const <%= evolveFunctionName %> = (aggregate: <%= aggregateName %>, event: DomainEvent<string>): <%= aggregateName %> => {
+export const <%=evolveFunctionName%> = (aggregate: <%=aggregateName%>, event: DomainEvent<string>): <%=aggregateName%> => {
     throw new Error('Not implemented');
 }

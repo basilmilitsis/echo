@@ -7,21 +7,28 @@ import { buildModel_eventIs } from './templates/add-event/is';
 import { buildModel_evolveCreateEvent } from './templates/add-event/evolve-create';
 import { buildModel_evolveUpdateEvent } from './templates/add-event/evolve-update';
 import { buildModel_operations } from './templates/generate/operations';
+import { buildModel_commandRule } from './templates/add-command-rule/commandRule';
+import { buildModel_aggregateRule } from './templates/add-aggregate-rule/aggregateRule';
+import { buildModel_indexRule } from './templates/add-index-rule/indexRule';
+import { buildModel_aggregate } from './templates/add-aggregate/aggregateRule';
 
 export const api_domain = new commander.Command('domain');
 
 api_domain
     .command('add-aggregate')
-    .argument('aggregate')
-    .action((aggregate) => {
-        console.log(`TODO`);
-    });
+    .argument('aggregateName')
+    .action((aggregateName) => {
+        const outputFolder = PathTo.aggregateFolder(process.env.PWD, aggregateName);
 
-api_domain
-    .command('add-rule')
-    .argument('aggregate')
-    .action((aggregate) => {
-        console.log(`TODO`);
+        PathRules.ensureCurrentlyInProjectRoot();
+        PathRules.ensureFolderDoesNotExist(outputFolder);
+
+        Template.makeFolder(outputFolder);
+        Template.write(
+            PathTo.aggregateFile(process.env.PWD, aggregateName),
+            Template.templatePath(__dirname, './templates/add-aggregate/aggregate.ts.ejs'),
+            buildModel_aggregate(aggregateName)
+        );
     });
 
 api_domain
@@ -32,6 +39,7 @@ api_domain
         const outputFolder = PathTo.commandFolder(process.env.PWD, aggregateName, commandName);
         PathRules.ensureCurrentlyInProjectRoot();
         PathRules.ensureFolderDoesNotExist(outputFolder);
+        
         Template.makeFolder(outputFolder);
         Template.write(
             PathTo.createCommandFile(process.env.PWD, aggregateName, commandName),
@@ -58,6 +66,12 @@ api_domain
                 commandFileName: `${voca.titleCase(commandName)}.create.command`,
             }
         );
+
+        Template.makeFolder(PathTo.commandRulesFolder(process.env.PWD, aggregateName, commandName));
+        Template.makeFile(PathTo.commandRulesGitkeep(process.env.PWD, aggregateName, commandName));
+
+        Template.makeFolder(PathTo.indexRulesFolder(process.env.PWD, aggregateName, commandName));
+        Template.makeFile(PathTo.indexRulesGitkeep(process.env.PWD, aggregateName, commandName));
     });
 
 api_domain
@@ -68,6 +82,7 @@ api_domain
         const outputFolder = PathTo.commandFolder(process.env.PWD, aggregateName, commandName);
         PathRules.ensureCurrentlyInProjectRoot();
         PathRules.ensureFolderDoesNotExist(outputFolder);
+        
         Template.makeFolder(outputFolder);
         Template.write(
             PathTo.updateCommandFile(process.env.PWD, aggregateName, commandName),
@@ -96,6 +111,15 @@ api_domain
                 commandFileName: `${voca.titleCase(commandName)}.update.command`,
             }
         );
+
+        Template.makeFolder(PathTo.commandRulesFolder(process.env.PWD, aggregateName, commandName));
+        Template.makeFile(PathTo.commandRulesGitkeep(process.env.PWD, aggregateName, commandName));
+
+        Template.makeFolder(PathTo.indexRulesFolder(process.env.PWD, aggregateName, commandName));
+        Template.makeFile(PathTo.indexRulesGitkeep(process.env.PWD, aggregateName, commandName));
+        
+        Template.makeFolder(PathTo.aggregateRulesFolder(process.env.PWD, aggregateName, commandName));
+        Template.makeFile(PathTo.aggregateRulesGitkeep(process.env.PWD, aggregateName, commandName));
     });
 
 api_domain
@@ -144,6 +168,84 @@ api_domain
             isFilePath,
             Template.templatePath(__dirname, './templates/add-event/is.ts.ejs'),
             buildModel_eventIs(eventName)
+        );
+    });
+
+api_domain
+    .command('add-command-rule')
+    .argument('aggregateName')
+    .argument('commandName')
+    .argument('ruleName')
+    .action((aggregateName, commandName, ruleName) => {
+        const outputFolder = PathTo.commandRuleFolder(process.env.PWD, aggregateName, commandName, ruleName);
+
+        PathRules.ensureCurrentlyInProjectRoot();
+        PathRules.ensureFolderExists(PathTo.commandRulesFolder(process.env.PWD, aggregateName, commandName));
+        PathRules.ensureFolderDoesNotExist(outputFolder);
+
+        Template.makeFolder(outputFolder);
+        Template.write(
+            PathTo.commandRuleFile(process.env.PWD, aggregateName, commandName, ruleName),
+            Template.templatePath(__dirname, './templates/add-command-rule/commandRule.ts.ejs'),
+            buildModel_commandRule(
+                commandName,
+                determineCommandKind(process.env.PWD, aggregateName, commandName),
+                ruleName
+            )
+        );
+    });
+
+api_domain
+    .command('add-index-rule')
+    .argument('aggregateName')
+    .argument('commandName')
+    .argument('ruleName')
+    .action((aggregateName, commandName, ruleName) => {
+        const outputFolder = PathTo.indexRuleFolder(process.env.PWD, aggregateName, commandName, ruleName);
+
+        PathRules.ensureCurrentlyInProjectRoot();
+        PathRules.ensureFolderExists(PathTo.indexRulesFolder(process.env.PWD, aggregateName, commandName));
+        PathRules.ensureFolderDoesNotExist(outputFolder);
+
+        Template.makeFolder(outputFolder);
+        Template.write(
+            PathTo.indexRuleFile(process.env.PWD, aggregateName, commandName, ruleName),
+            Template.templatePath(__dirname, './templates/add-index-rule/indexRule.ts.ejs'),
+            buildModel_indexRule(
+                commandName,
+                determineCommandKind(process.env.PWD, aggregateName, commandName),
+                ruleName
+            )
+        );
+    });
+
+api_domain
+    .command('add-aggregate-rule')
+    .argument('aggregateName')
+    .argument('commandName')
+    .argument('ruleName')
+    .action((aggregateName, commandName, ruleName) => {
+        const outputFolder = PathTo.aggregateRuleFolder(process.env.PWD, aggregateName, commandName, ruleName);
+
+        const commandKind = determineCommandKind(process.env.PWD, aggregateName, commandName);
+        if(commandKind === 'create') {
+            throw new Error('Crete commands cannot have an Aggregate Rule');
+        }
+
+        PathRules.ensureCurrentlyInProjectRoot();
+        PathRules.ensureFolderExists(PathTo.aggregateRulesFolder(process.env.PWD, aggregateName, commandName));
+        PathRules.ensureFolderDoesNotExist(outputFolder);
+
+        Template.makeFolder(outputFolder);
+        Template.write(
+            PathTo.aggregateRuleFile(process.env.PWD, aggregateName, commandName, ruleName),
+            Template.templatePath(__dirname, './templates/add-aggregate-rule/aggregateRule.ts.ejs'),
+            buildModel_aggregateRule(
+                aggregateName,
+                commandName,
+                commandKind,
+                ruleName
+            )
         );
     });
 

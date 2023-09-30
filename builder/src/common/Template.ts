@@ -6,6 +6,9 @@ export class Template {
     static makeFolder(path: string): void {
         fs.mkdirSync(path);
     }
+    static makeFile(path: string): void {
+        fs.writeFileSync(path, '');
+    }
 
     static templatePath(loadFrom: string, relativePath: string): string {
         return path.join(loadFrom, relativePath);
