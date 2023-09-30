@@ -11,6 +11,10 @@ import { buildModel_commandRule } from './templates/add-command-rule/commandRule
 import { buildModel_aggregateRule } from './templates/add-aggregate-rule/aggregateRule';
 import { buildModel_indexRule } from './templates/add-index-rule/indexRule';
 import { buildModel_aggregate } from './templates/add-aggregate/aggregateRule';
+import { buildModel_validate } from './templates/add-command/validate';
+import { buildModel_handleUpdate } from './templates/add-command/handle-update';
+import { buildModel_handleCreate } from './templates/add-command/handle-create';
+import { buildModel_command } from './templates/add-command/command';
 
 export const api_domain = new commander.Command('domain');
 
@@ -39,32 +43,22 @@ api_domain
         const outputFolder = PathTo.commandFolder(process.env.PWD, aggregateName, commandName);
         PathRules.ensureCurrentlyInProjectRoot();
         PathRules.ensureFolderDoesNotExist(outputFolder);
-        
+
         Template.makeFolder(outputFolder);
         Template.write(
             PathTo.createCommandFile(process.env.PWD, aggregateName, commandName),
             Template.templatePath(__dirname, './templates/add-command/command.ts.ejs'),
-            {
-                interfaceName: voca.titleCase(commandName),
-            }
+            buildModel_command(commandName)
         );
         Template.write(
             PathTo.commandHandleFile(process.env.PWD, aggregateName, commandName),
             Template.templatePath(__dirname, `./templates/add-command/handle-create.ts.ejs`),
-            {
-                functionName: `handle${voca.titleCase(commandName)}`,
-                commandTypeName: voca.titleCase(commandName),
-                commandFileName: `${voca.titleCase(commandName)}.create.command`,
-            }
+            buildModel_handleCreate(commandName)
         );
         Template.write(
             PathTo.validatorFile(process.env.PWD, aggregateName, commandName),
             Template.templatePath(__dirname, `./templates/add-command/validate.ts.ejs`),
-            {
-                functionName: `validate${voca.titleCase(commandName)}`,
-                commandTypeName: voca.titleCase(commandName),
-                commandFileName: `${voca.titleCase(commandName)}.create.command`,
-            }
+            buildModel_validate(commandName, 'create')
         );
 
         Template.makeFolder(PathTo.commandRulesFolder(process.env.PWD, aggregateName, commandName));
@@ -82,34 +76,22 @@ api_domain
         const outputFolder = PathTo.commandFolder(process.env.PWD, aggregateName, commandName);
         PathRules.ensureCurrentlyInProjectRoot();
         PathRules.ensureFolderDoesNotExist(outputFolder);
-        
+
         Template.makeFolder(outputFolder);
         Template.write(
             PathTo.updateCommandFile(process.env.PWD, aggregateName, commandName),
             Template.templatePath(__dirname, './templates/add-command/command.ts.ejs'),
-            {
-                interfaceName: voca.titleCase(commandName),
-            }
+            buildModel_command(commandName)
         );
         Template.write(
             PathTo.commandHandleFile(process.env.PWD, aggregateName, commandName),
             Template.templatePath(__dirname, `./templates/add-command/handle-update.ts.ejs`),
-            {
-                functionName: `handle${voca.titleCase(commandName)}`,
-                commandTypeName: voca.titleCase(commandName),
-                commandFileName: `${voca.titleCase(commandName)}.update.command`,
-                aggregateTypeName: voca.titleCase(aggregateName),
-                aggregateFileName: voca.titleCase(aggregateName),
-            }
+            buildModel_handleUpdate(commandName, aggregateName)
         );
         Template.write(
             PathTo.validatorFile(process.env.PWD, aggregateName, commandName),
             Template.templatePath(__dirname, `./templates/add-command/validate.ts.ejs`),
-            {
-                functionName: `validate${voca.titleCase(commandName)}`,
-                commandTypeName: voca.titleCase(commandName),
-                commandFileName: `${voca.titleCase(commandName)}.update.command`,
-            }
+            buildModel_validate(commandName, 'update')
         );
 
         Template.makeFolder(PathTo.commandRulesFolder(process.env.PWD, aggregateName, commandName));
@@ -117,7 +99,7 @@ api_domain
 
         Template.makeFolder(PathTo.indexRulesFolder(process.env.PWD, aggregateName, commandName));
         Template.makeFile(PathTo.indexRulesGitkeep(process.env.PWD, aggregateName, commandName));
-        
+
         Template.makeFolder(PathTo.aggregateRulesFolder(process.env.PWD, aggregateName, commandName));
         Template.makeFile(PathTo.aggregateRulesGitkeep(process.env.PWD, aggregateName, commandName));
     });
@@ -228,7 +210,7 @@ api_domain
         const outputFolder = PathTo.aggregateRuleFolder(process.env.PWD, aggregateName, commandName, ruleName);
 
         const commandKind = determineCommandKind(process.env.PWD, aggregateName, commandName);
-        if(commandKind === 'create') {
+        if (commandKind === 'create') {
             throw new Error('Crete commands cannot have an Aggregate Rule');
         }
 
@@ -240,12 +222,7 @@ api_domain
         Template.write(
             PathTo.aggregateRuleFile(process.env.PWD, aggregateName, commandName, ruleName),
             Template.templatePath(__dirname, './templates/add-aggregate-rule/aggregateRule.ts.ejs'),
-            buildModel_aggregateRule(
-                aggregateName,
-                commandName,
-                commandKind,
-                ruleName
-            )
+            buildModel_aggregateRule(aggregateName, commandName, commandKind, ruleName)
         );
     });
 
