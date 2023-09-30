@@ -1,9 +1,12 @@
 .todo
 .notes
+
+**/_generated
 node_modules
-.client-test
+.dist
 .github
-.client-test
+
+# ======== Standard =============================================
 
 # Logs
 *.log
