@@ -1,5 +1,6 @@
 import commander from 'commander';
-import { introspectDomain, PathRules, PathTo, Template } from '@root/common';
+import { PathRules, Template } from '@root/common';
+import { introspectDomain, PathTo } from '@root/api/common';
 import { buildModel_restApi } from './templates/rest-api/rest.api.schema.generated.ts.js';
 import { buildModel_restSchema } from './templates/rest-schema/rest.schema.json.js';
 

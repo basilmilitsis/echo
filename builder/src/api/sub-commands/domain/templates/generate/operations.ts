@@ -1,4 +1,4 @@
-import { AggregateInfo, EventStructure, FileInfo } from '@root/common';
+import { AggregateInfo, EventStructure, FileInfo } from '@root/api/common';
 
 type OpeartionCommandModel = {
     commandKind: string;

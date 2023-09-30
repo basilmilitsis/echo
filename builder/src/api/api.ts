@@ -3,9 +3,10 @@ import * as voca from 'voca';
 import fs from 'fs';
 
 import commander from 'commander';
-import { api_domain } from './domain/api_domain';
-import { api_rest } from './rest/api_rest';
-import { PathRules, PathTo, Template } from '@root/common';
+import { api_domain } from './sub-commands/domain/api_domain';
+import { api_rest } from './sub-commands/rest/api_rest';
+import { PathRules, Template } from '@root/common';
+import { PathTo } from './common';
 
 type RushFile = {
     projects: {packageName: string, projectFolder: string}[]

@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { PathTo } from '@root/common';
+import { PathTo } from './PathTo';
 import { CommandKind } from './CommandKind';
 
 export const determineCommandKind = (absDomainRootPath: string, aggregate: string, command: string): CommandKind => {

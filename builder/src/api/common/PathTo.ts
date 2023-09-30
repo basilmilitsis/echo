@@ -1,7 +1,6 @@
 import path from 'node:path';
 import * as voca from 'voca';
 
-// TODO: rename and/or move to src/api/
 export class PathTo {
     static srcFolder = (pwd: string): string => path.join(pwd, '/src');
 

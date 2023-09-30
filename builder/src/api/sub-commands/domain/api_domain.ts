@@ -1,6 +1,6 @@
-import * as voca from 'voca';
 import commander from 'commander';
-import { introspectAggregate, PathRules, PathTo, Template, determineCommandKind, listFoldersIn } from '@root/common';
+import { PathRules, Template, listFoldersIn } from '@root/common';
+import { PathTo, determineCommandKind, introspectAggregate } from '@root/api/common';
 import { buildModel_eventBuild } from './templates/add-event/build';
 import { buildModel_event } from './templates/add-event/event';
 import { buildModel_eventIs } from './templates/add-event/is';

@@ -1,5 +1,5 @@
-import { CommandKind } from '@root/common/CommandKind';
 import * as voca from 'voca';
+import { CommandKind } from '@root/api/common';
 
 type AggregateRuleModel = {
     aggregateName: string;

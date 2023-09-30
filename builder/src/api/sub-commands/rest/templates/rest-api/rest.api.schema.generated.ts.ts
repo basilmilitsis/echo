@@ -1,5 +1,6 @@
 import * as voca from 'voca';
-import { PathTo, determineCommandKind, listFoldersIn } from '@root/common';
+import { listFoldersIn } from '@root/common';
+import { determineCommandKind, PathTo } from '@root/api/common';
 
 type CommandImportModel = {
     aggregateFolder: string;

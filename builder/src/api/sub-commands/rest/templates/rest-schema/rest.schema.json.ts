@@ -1,6 +1,5 @@
 import * as voca from 'voca';
-import { PathTo } from '@root/common';
-import { AggregateInfo, CommandInfo } from '@root/common';
+import { AggregateInfo, CommandInfo } from '@root/api/common';
 import { operationToJsonString } from './operationToJsonString';
 
 type OperationModel = {
@@ -19,10 +18,11 @@ const buildAggregateCommandModels = (
     commands: CommandInfo[]
 ): OperationModel[] => {
     return commands.map((command) => {
-        const commandPath =
-            command.commandKind === 'create'
-                ? PathTo.createCommandFile('??', aggregateName, command.commandName)
-                : PathTo.updateCommandFile('??', aggregateName, command.commandName); // TODO refactor
+        const commandPath = '';
+        // const commandPath =
+        //     command.commandKind === 'create'
+        //         ? PathTo.createCommandFile('??', aggregateName, command.commandName)
+        //         : PathTo.updateCommandFile('??', aggregateName, command.commandName); // TODO refactor
         return {
             apiName: voca.camelCase(command.commandName),
             apiMethod: command.commandKind === 'create' ? 'post' : 'put',

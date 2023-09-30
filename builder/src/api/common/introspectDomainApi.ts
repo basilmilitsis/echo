@@ -1,6 +1,8 @@
 import * as voca from 'voca';
-import { PathTo, determineCommandKind, listFilesIn, listFoldersIn } from "@root/common";
+import { listFilesIn, listFoldersIn } from "@root/common";
 import { CommandKind } from './CommandKind';
+import { determineCommandKind } from './determineCommandKind';
+import { PathTo } from './PathTo';
 
 export type FileInfo = {
     functionName: string;
