@@ -49,10 +49,20 @@ export type AggregateInfo = {
 
 const instrospectCommand = (domainRootPath: string, aggregateName: string, commandName: string): CommandInfo => {
     const commandKind = determineCommandKind(process.env.PWD, aggregateName, commandName);
+    let commandAggregateRules = [];
+    if(commandKind === 'update') {
+        // only update commands can have aggregate rules
+        listFilesIn(PathTo.aggregateRulesFolder(domainRootPath, aggregateName, commandName), '.aggregateRule.ts')
+        .map((fileName) => ({
+            functionName: fileName.replace('.aggregateRule.ts', ''),
+            importName: fileName.replace('.ts', ''),
+        })) || [];
+    }
+
     return {
         commandName: commandName,
         commandTypeName: voca.titleCase(commandName),
-        commandKind: commandKind, // TODO: change model name
+        commandKind: commandKind,
         commandFileName: `${voca.titleCase(commandName)}.${commandKind}.command`,
         commandFolderName: commandName,
         validator: {
@@ -75,12 +85,7 @@ const instrospectCommand = (domainRootPath: string, aggregateName: string, comma
                     functionName: fileName.replace('.indexRule.ts', ''),
                     importName: fileName.replace('.ts', ''),
                 })) || [],
-        commandAggregateRules:
-            listFilesIn(PathTo.aggregateRulesFolder(domainRootPath, aggregateName, commandName), '.aggregateRule.ts')
-                .map((fileName) => ({
-                    functionName: fileName.replace('.aggregateRule.ts', ''),
-                    importName: fileName.replace('.ts', ''),
-                })) || [],
+        commandAggregateRules: commandAggregateRules,
         events:
             listFilesIn(PathTo.commandFolder(domainRootPath, aggregateName, commandName), '.event.ts')
                 .map((fileName) => {
