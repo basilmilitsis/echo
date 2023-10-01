@@ -1,4 +1,4 @@
-import { Id } from "./types";
+import { Id } from "./Id";
 
 export type CommandEventData = Record<string, string | string[] | number>
 

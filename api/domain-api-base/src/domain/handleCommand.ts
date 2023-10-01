@@ -1,22 +1,26 @@
+import { Logger } from '@root/common';
 import {
+    AggregatLoadError,
     CommandAggregateRuleError,
     CommandIndexRuleError,
     CommandRuleError,
+    DomainError,
     ValidationError,
 } from './errors';
 import { EvolverSetsForAggregate, evolve } from './evolve';
-import { Validator } from './Validator';
-import { CommandRule } from './CommandRule';
-import { CommandIndexRule } from './CommandIndexRule';
-import { CommandAggregateRule } from './CommandAggregateRule';
-import { AggregatLoadError } from './errors/AggregateLoadError';
-import { Command } from './Command';
-import { Aggregate } from './Aggregate';
-import { EventStream } from './EventStream';
-import { CommandEvent } from './CommandEvent';
-import { DomainEvent } from './DomainEvent';
-import { CreateHandler } from './CreateHandler';
-import { UpdateHandler } from './UpdateHandler';
+import {
+    Aggregate,
+    Command,
+    CommandAggregateRule,
+    CommandEvent,
+    CommandIndexRule,
+    CommandRule,
+    CreateHandler,
+    DomainEvent,
+    EventStream,
+    UpdateHandler,
+    Validator,
+} from './types';
 
 const doValdiation = <C extends Command>(command: C, validator: Validator<C>): void => {
     console.log('======> running validator...');
@@ -123,7 +127,8 @@ export const handleCreateCommand = async <C extends Command, A extends Aggregate
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
     eventStream: EventStream,
-    generateUuid: () => string
+    generateUuid: () => string,
+    logger: Logger
 ) => {
     console.log('========================================================================');
 
@@ -155,7 +160,8 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
     commandIndexRules: CommandIndexRule<C>[] | undefined,
     commandAggregateRules: CommandAggregateRule<C, A>[] | undefined,
     eventStream: EventStream,
-    generateUuid: () => string
+    generateUuid: () => string,
+    logger: Logger
 ) => {
     console.log('========================================================================');
 

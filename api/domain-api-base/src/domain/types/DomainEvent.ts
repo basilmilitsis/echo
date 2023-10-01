@@ -1,6 +1,7 @@
 import { CommandEventData } from './CommandEvent';
-import { Id } from './types';
+import { Id } from './Id';
 
+// TODO
 // export enum DomainEventKind {
 //     Create = 'Create',
 //     Update = 'Update'

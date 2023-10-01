@@ -87,7 +87,8 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
                 [ <%= command.commandRuleFunctionNames %> ],
                 [ <%= command.commandIndexRuleFunctionNames %> ],
                 context.eventStream,
-                context.generateUuid
+                context.generateUuid,
+                context.logger
             );
     <% } %>
     <% if (command.commandKind === 'update') { %>  
@@ -106,7 +107,8 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
                 [ <%= command.commandIndexRuleFunctionNames %> ],
                 [ <%= command.commandAggregateRuleFunctionNames %> ],
                 context.eventStream,
-                context.generateUuid
+                context.generateUuid,
+                context.logger
             );
     <% } %>
 <% }) %>    

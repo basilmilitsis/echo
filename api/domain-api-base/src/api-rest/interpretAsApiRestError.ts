@@ -1,3 +1,4 @@
+import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
 import {
     CommandAggregateRuleError,
     CommandIndexRuleError,
@@ -5,6 +6,7 @@ import {
     ValidationError,
     AggregatLoadError,
 } from '@root/domain';
+import { Logger } from '@root/common';
 
 export type ApiRestError = {
     result: 'error';
@@ -12,60 +14,64 @@ export type ApiRestError = {
     messages: string[];
 };
 
-export const interpretAsApiRestError = (err: unknown): ApiRestError => {
+export const interpretAsApiRestError = (
+    res: ExpressRes,
+    err: unknown,
+    logger: Logger,
+): express.Response<ApiRestError, Record<string, any>> => {
     if (err instanceof ValidationError) {
-        console.log(`ValidationError: ${err.name} - errors: ${JSON.stringify(err.validationErrors, null, 4)}`);
-        return {
+        logger.error('ValidationError', err);
+        return res.status(500).json({
             result: 'error',
             type: 'ValidationError',
             messages: err.validationErrors,
-        };
+        });
     }
     if (err instanceof CommandRuleError) {
-        console.log(`CommandRuleError: ${err.name} - errors: ${JSON.stringify(err.ruleErrors, null, 4)}`);
-        return {
+        logger.error('CommandRuleError', err);
+        return res.status(500).json({
             result: 'error',
             type: 'CommandRuleError',
             messages: err.ruleErrors,
-        };
+        });
     }
     if (err instanceof CommandAggregateRuleError) {
-        console.log(`CommandAggregateRuleError: ${err.name} - errors: ${JSON.stringify(err.ruleErrors, null, 4)}`);
-        return {
+        logger.error('CommandAggregateRuleError', err);
+        return res.status(500).json({
             result: 'error',
             type: 'CommandAggregateRuleError',
             messages: err.ruleErrors,
-        };
+        });
     }
     if (err instanceof CommandIndexRuleError) {
-        console.log(`CommandIndexRuleError: ${err.name} - errors: ${JSON.stringify(err.ruleErrors, null, 4)}`);
-        return {
+        logger.error('CommandIndexRuleError', err);
+        return res.status(500).json({
             result: 'error',
             type: 'CommandAggregateRuleError',
             messages: err.ruleErrors,
-        };
+        });
     }
     if (err instanceof AggregatLoadError) {
-        console.log(`AggregatLoadError: ${err.name}`);
-        return {
+        logger.error('AggregatLoadError', err);
+       return res.status(500).json({
             result: 'error',
             type: 'AggregatLoadError',
-            messages: ['Aggregat Load Error'],
-        };
+            messages: ['Aggregate Load Error'],
+        });
     }
     if (err instanceof Error) {
-        console.log(`Error: ${err.name}`);
-        return {
+        logger.error('Error', err);
+        return res.status(500).json({
             result: 'error',
             type: 'Error',
             messages: ['Error... TBD'], // TODO
-        };
+        });
     }
 
-    console.log(`Unknown Error`);
-    return {
+    logger.error('Unknown Error', new Error()); // TODO
+    return res.status(500).json({
         result: 'error',
         type: 'Unknown Error',
         messages: ['Unknown Error'],
-    };
+    });
 };

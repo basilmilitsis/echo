@@ -1,5 +1,4 @@
-import { Aggregate } from "./Aggregate";
-import { DomainEvent } from "./DomainEvent";
+import { Aggregate, DomainEvent } from "./types";
 
 export type AggregateCreateEventEvolver<
     A extends Aggregate = Aggregate,

@@ -1,7 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 import OpenAPIBackend, { UnknownParams, Context, Document } from 'openapi-backend';
 import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
-import { DefaultEventStream, EventStream, CommandContext, interpretAsApiRestError } from 'domain-api-base';
+import { 
+    DefaultEventStream, 
+    EventStream, 
+    CommandContext, 
+    interpretAsApiRestError, 
+    DomainLogger,
+    BaseLogger, 
+    extractContext,
+}  from 'domain-api-base';
 
 //---------------------------
 
@@ -22,7 +30,7 @@ import { <%=command.commandType%> } from '@root/domain/<%=command.aggregateFolde
 //---------------------------
 
 const eventStream: EventStream = new DefaultEventStream();
-const context: CommandContext = { eventStream, generateUuid: uuidv4 };
+const baseLogger = new BaseLogger();
 
 //---------------------------
 
@@ -48,13 +56,27 @@ const api = new OpenAPIBackend({
             c: Context<<%= operation.commandType %>, UnknownParams, UnknownParams, UnknownParams, UnknownParams, Document>,
             req: ExpressReq<any, <%= operation.commandType %>, any, any, any>,
             res: ExpressRes
-        ) => {
+        ) => {           
+            let domainLogger: DomainLogger;
             try {
-                console.log('<%=operation.operationId%>, body : ', JSON.stringify(req.body, null, 4));
+                domainLogger = new DomainLogger(baseLogger, extractContext(uuidv4));
+            }
+            catch(err) {
+                baseLogger.error('Framework Error', err as Error /* TODO: make unknown */, { /* TODO */ });
+                return res.status(500).json({
+                    result: 'error',
+                    type: 'Error',
+                    messages: ['Error... TBD'], // TODO
+                });
+            }
+
+            try {
+                domainLogger.info(`<%=operation.operationId%>, body: ${JSON.stringify(req.body, null, 4)}`);
+                const context: CommandContext = { eventStream, generateUuid: uuidv4, logger: domainLogger };
                 await <%= operation.operationFunctionName %>(req.body, context);
                 return res.status(200).json({ result: 'ok' });
             } catch (err) {
-                return res.status(500).json(interpretAsApiRestError(err));
+                return interpretAsApiRestError(res, err, domainLogger);
             }
         },
         <% }) %>

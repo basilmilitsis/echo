@@ -1,3 +1,3 @@
 import 'source-map-support/register';
 
-import './_generated/restAPI.generated';
+import './_generated/rest.api.generated';
