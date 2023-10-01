@@ -8,7 +8,7 @@
     "main": ".dist/index.js",
     "typings": ".dist/index.d.ts",
     "scripts": {
-        "build:clean": "rm -rf .dist",
+        "build:clean": "rm -rf .dist && rm -rf ./src/_generated/*",
         "build:generate:domain:code": "node ../../builder/.dist/index.js api domain generate",
         "build:generate:rest:schema": "node ../../builder/.dist/index.js api rest generate-schema",
         "build:generate:rest:api": "node ../../builder/.dist/index.js api rest generate-api",
