@@ -3,6 +3,7 @@ version: "3.4"
 services:
   eventstoredb:
     image: eventstore/eventstore:latest
+    container_name: eventstoredb
     environment:
       - EVENTSTORE_CLUSTER_SIZE=1
       - EVENTSTORE_RUN_PROJECTIONS=All
@@ -15,9 +16,9 @@ services:
     ports:
       - "1113:1113" # map internal tcp port
       - "2113:2113" # map internal admin ui port
-    # volumes:
-    #   - ${PWD}/logs:eventstore-data
-    #   - ${PWD}/logs:eventstore-logs
+    volumes:
+      - ${PWD}/eventstore/logs:/var/lib/eventstore # intended to be run from "{project_root}/services" folder
+      - ${PWD}/eventstore/logs:/var/log/eventstore # intended to be run from "{project_root}/services" folder
 
 volumes:
   eventstore-data:

@@ -5,7 +5,7 @@ services:
     image: elastic/elasticsearch:8.10.2
     container_name: logsearch
     volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data
+      - ${PWD}/logging/elasticsearch/data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -21,7 +21,7 @@ services:
     container_name: logstash
     volumes:
       #- ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash:/usr/share/logstash/pipeline:ro
+      - ${PWD}/logging/logstash:/usr/share/logstash/pipeline:ro
       #- /var/log/GDPR/myapplication:/var/log/GDPR/myapplication:ro
     ports:
       - "5000:5000/tcp"
@@ -42,8 +42,9 @@ services:
 
   kibana:
     image: elastic/kibana:8.10.2
+    container_name: kibana
     # volumes:
-    #   - ./kibana/config/:/usr/share/kibana/config:ro
+    #   - ${PWD}/logging/kibana/config/:/usr/share/kibana/config:ro
     ports:
       - "5601:5601"
     networks:
