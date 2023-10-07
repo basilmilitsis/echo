@@ -36,7 +36,7 @@ const baseLogger = new BaseLogger();
 //---------------------------
 
 const api = new OpenAPIBackend({
-    definition: './src/_generated/rest.schema.generated.json', // TODO: move
+    definition: `${__dirname}/rest.schema.generated.json`,
     handlers: {
 
         // TODO
