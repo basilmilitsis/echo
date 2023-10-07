@@ -62,11 +62,11 @@ const api = new OpenAPIBackend({
                 domainLogger = new DomainLogger(baseLogger, extractContext(uuidv4));
             }
             catch(err) {
-                baseLogger.error('Framework Error', err as Error /* TODO: make unknown */, { /* TODO */ });
+                baseLogger.error('Framework Error', err as Error /* TODO: make unknown */, { /* TODO: pass in some context */ });
                 return res.status(500).json({
                     result: 'error',
                     type: 'Error',
-                    messages: ['Error... TBD'], // TODO
+                    messages: ['Error... TBD'], // TODO: 
                 });
             }
 
