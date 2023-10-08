@@ -72,6 +72,7 @@ export class PathTo {
     static prettierrcFile = (pwd: string): string => path.join(pwd, `.prettierrc.json`);
     static jestFile = (pwd: string): string => path.join(pwd, `.jest.config.js`);
     static packageFile = (pwd: string): string => path.join(pwd, `package.json`);
+    static envFile = (pwd: string): string => path.join(pwd, `.env`);
     static tsconfigDistFile = (pwd: string): string => path.join(pwd, `tsconfig.dist.json`);
     static tsconfigFile = (pwd: string): string => path.join(pwd, `tsconfig.json`);
 

@@ -15,7 +15,8 @@ type RushFile = {
 export const api = new commander.Command('api');
 api.command('create')
     .argument('apiName')
-    .action((apiName) => {
+    .argument('apiPort')
+    .action((apiName, apiPort) => {
 
         PathRules.ensureCurrentlyInSolutionRoot();
 
@@ -49,6 +50,13 @@ api.command('create')
             Template.templatePath(__dirname, `./templates/create/package.json.ejs`),
             {
                 apiName: apiName
+            }
+        );
+        Template.write(
+            PathTo.envFile(projectPath),
+            Template.templatePath(__dirname, `./templates/create/.env.ejs`),
+            {
+                apiPort: apiPort
             }
         );
         Template.write(
