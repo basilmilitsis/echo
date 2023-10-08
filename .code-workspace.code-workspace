@@ -4,12 +4,16 @@
 			"path": "."
 		},
 		{
-			"name": "builder",
+			"name": "🔨builder",
 			"path": "builder"
 		},
 		{
-			"name": "domain-api",
-			"path": "domain-api"
+			"name": "📚api/domain-api-base",
+			"path": "api/domain-api-base"
+		},
+		{
+			"name": "🌐api/domain-api",
+			"path": "api/domain-api"
 		}
 	],
 	"settings": {
