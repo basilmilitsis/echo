@@ -2,39 +2,43 @@
   "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/command-line.schema.json",
   "commands": [
     {
-      "commandKind": "global",
       "name": "start-service-stack",
       "summary": "Starts the service stack",
       "description": "Starts the service stack: DB, ELK, etc",
+      "commandKind": "global",
+      "safeForSimultaneousRushProcesses": true,
       "shellCommand": "(cd ./stack/service/ && sh ./start.sh)"
     },
     {
-      "commandKind": "global",
       "name": "stop-service-stack",
       "summary": "Stops the service stack",
       "description": "Stops the service stack: DB, ELK, etc",
+      "commandKind": "global",
+      "safeForSimultaneousRushProcesses": true,
       "shellCommand": "(cd ./stack/service/ && sh ./stop.sh)"
     },
     {
-      "commandKind": "global",
       "name": "start-api-stack",
       "summary": "Starts the api stack",
       "description": "Starts the api stack...",
+      "commandKind": "global",
+      "safeForSimultaneousRushProcesses": true,
       "shellCommand": "(cd ./stack/api/ && sh ./start.sh)"
     },
     {
-      "commandKind": "global",
       "name": "stop-api-stack",
       "summary": "Stops the api stack",
       "description": "Stops the api stack...",
+      "commandKind": "global",
+      "safeForSimultaneousRushProcesses": true,
       "shellCommand": "(cd ./stack/api/ && sh ./stop.sh)"
     },
     {
-      "commandKind": "bulk",
-      "enableParallelism": true,
       "name": "package",
-      "summary": "Pacake containers",
-      "description": "Package containers for all projects"
+      "summary": "Package containers",
+      "description": "Package containers for all projects",
+      "commandKind": "bulk",
+      "enableParallelism": true
     }
   ],
   "parameters": []

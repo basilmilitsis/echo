@@ -6,7 +6,15 @@
       "projectName": "domain-api",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
-      "dependenciesToExclude": ["@types/*", "**/src/*"]
+      "dependenciesToExclude": ["@types/*"],
+      "patternsToInclude": [".dist/**", "package.json"]
+    },
+    {
+      "projectName": "domain-api-base",
+      "additionalProjectsToInclude": [],
+      "additionalDependenciesToInclude": [],
+      "dependenciesToExclude": ["@types/*"],
+      "patternsToInclude": [".dist/**", "package.json"]
     }
   ]
 }
