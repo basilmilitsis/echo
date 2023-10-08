@@ -1,9 +1,17 @@
-version: "3.4"
+version: "3.8"
 
 services:
   eventstoredb:
     image: eventstore/eventstore:latest
     container_name: eventstoredb
+    volumes:
+      - ${PWD}/eventstore/logs:/var/lib/eventstore # intended to be run from "{project_root}/services" folder
+      - ${PWD}/eventstore/logs:/var/log/eventstore # intended to be run from "{project_root}/services" folder
+    networks:
+      - net
+    ports:
+      - "1113:1113" # map internal tcp port
+      - "2113:2113" # map internal admin ui port
     environment:
       - EVENTSTORE_CLUSTER_SIZE=1
       - EVENTSTORE_RUN_PROJECTIONS=All
@@ -13,13 +21,7 @@ services:
       - EVENTSTORE_INSECURE=true
       - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
       - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
-    ports:
-      - "1113:1113" # map internal tcp port
-      - "2113:2113" # map internal admin ui port
-    volumes:
-      - ${PWD}/eventstore/logs:/var/lib/eventstore # intended to be run from "{project_root}/services" folder
-      - ${PWD}/eventstore/logs:/var/log/eventstore # intended to be run from "{project_root}/services" folder
 
-volumes:
-  eventstore-data:
-  eventstore-logs:
+networks:
+  net:
+    external: true

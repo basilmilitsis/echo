@@ -12,6 +12,7 @@
         "build:generate": ":",
         "build:compile": "tsc -p tsconfig.dist.json && tsc-alias -p tsconfig.dist.json",
         "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile",
+        "package": ":",
         "start": "node .",
         "dev": "pnpm build && pnpm start",
         "test": "jest"

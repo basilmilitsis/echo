@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/deploy-scenario.schema.json",
+  "deploymentProjectNames": ["domain-api"],
+  "projectSettings": [
+    {
+      "projectName": "domain-api",
+      "additionalProjectsToInclude": [],
+      "additionalDependenciesToInclude": [],
+      "dependenciesToExclude": ["@types/*", "**/src/*"]
+    }
+  ]
+}

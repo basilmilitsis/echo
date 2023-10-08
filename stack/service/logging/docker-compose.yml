@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.8'
 
 services:
   elasticsearch:
@@ -6,6 +6,8 @@ services:
     container_name: logsearch
     volumes:
       - ${PWD}/logging/elasticsearch/data:/usr/share/elasticsearch/data
+    networks:
+      - net
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -13,8 +15,6 @@ services:
       discovery.type: single-node
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
       xpack.security.enabled: false
-    networks:
-      - elk
 
   logstash:
     image: elastic/logstash:8.10.2
@@ -23,6 +23,8 @@ services:
       #- ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ${PWD}/logging/logstash:/usr/share/logstash/pipeline:ro
       #- /var/log/GDPR/myapplication:/var/log/GDPR/myapplication:ro
+    networks:
+      - net
     ports:
       - "5000:5000/tcp"
       - "5000:5000/udp"
@@ -33,30 +35,24 @@ services:
       discovery.seed_hosts: logstash
       ES_HOST: "logsearch"
       ES_PORT: "9200"
-    networks:
-      - elk
     depends_on:
-      - elasticsearch
-    links:
       - elasticsearch
 
   kibana:
     image: elastic/kibana:8.10.2
-    container_name: kibana
+    container_name: logview
     # volumes:
     #   - ${PWD}/logging/kibana/config/:/usr/share/kibana/config:ro
+    networks:
+      - net
     ports:
       - "5601:5601"
-    networks:
-      - elk
     depends_on:
-      - elasticsearch
-    links:
       - elasticsearch
 
 networks:
-  elk:
-    driver: bridge
+  net:
+    external: true
 
 volumes:
   esdata:

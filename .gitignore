@@ -1,12 +1,13 @@
 .todo
 .misc
 
-services/logging/elasticsearch/data
-services/eventstore/logs
+stack/service/logging/elasticsearch/data
+stack/service/eventstore/logs
 
 **/_generated
 node_modules
 .dist
+.deploy
 .github
 
 # ======== Standard =============================================

@@ -14,9 +14,14 @@
         "build:generate:rest:api": "node ../../builder/.dist/index.js api rest generate-api",
         "build:generate": "pnpm build:generate:domain:code && pnpm build:generate:rest:schema && pnpm build:generate:rest:api",
         "build:compile": "tsc -p tsconfig.dist.json && tsc-alias -p tsconfig.dist.json",
-        "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile",
+        "build:post": "cp src/_generated/rest.schema.generated.json .dist/_generated",
+        "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile && pnpm build:post",
+        "package:make": "rush deploy --target-folder .deploy --overwrite",
+        "package:container": "docker build . --tag <%=apiName%>:1.0.0",
+        "package": "pnpm package:make && pnpm package:container",
         "start": "node .",
         "dev": "pnpm build && pnpm start",
+        "dev:container": "docker run --env-file .env <%=apiName%>:1.0.0",
         "test": "jest"
     },
     "devDependencies": {

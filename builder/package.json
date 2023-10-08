@@ -12,6 +12,7 @@
         "build:assets:copy": "(cd ./src && find ./ -regex '.*\\.ejs$' -exec cp --parents {} ../.dist/ \\;)",
         "build:compile": "tsc -p tsconfig.dist.json && tsc-alias -p tsconfig.dist.json",
         "build": "pnpm build:clean && pnpm build:compile && pnpm build:assets:copy",
+        "package": ":",
         "start": "node .",
         "dev": "pnpm build && pnpm start",
         "test": "jest"

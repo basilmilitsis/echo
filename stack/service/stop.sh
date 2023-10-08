@@ -1,0 +1,1 @@
+docker-compose --project-name service -f ./eventstore/docker-compose.yml -f ./logging/docker-compose.yml down
