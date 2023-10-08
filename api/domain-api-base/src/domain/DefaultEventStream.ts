@@ -1,5 +1,6 @@
 import { EventStoreDBClient, JSONEventType, FORWARDS, START, StreamNotFoundError, jsonEvent } from "@eventstore/db-client";
 import { CommandEventData, DomainEvent, EventStream } from "./types";
+import { ApiRestEnvironment } from "@root/api-rest";
 
 export class DefaultEventStream implements EventStream {
     private client: EventStoreDBClient;
@@ -7,7 +8,7 @@ export class DefaultEventStream implements EventStream {
         console.log('........ connecting.....');
         this.client = new EventStoreDBClient(
             {
-                endpoint: 'localhost:2113',
+                endpoint: `${ApiRestEnvironment.apiRest_eventstoreDB_host}:${ApiRestEnvironment.apiRest_eventstoreDB_port}`,
             },
             {
                 insecure: true,
