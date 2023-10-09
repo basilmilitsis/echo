@@ -19,6 +19,8 @@
     },
     "exclude": [
         ".dist",
-        "node_modules"
+        ".deploy",
+        "node_modules",
+        "**/*.test.ts"
     ]
 }

@@ -71,9 +71,10 @@ export class PathTo {
     static gitignoreFile = (pwd: string): string => path.join(pwd, `.gitignore`);
     static prettierrcFile = (pwd: string): string => path.join(pwd, `.prettierrc.json`);
     static jestFile = (pwd: string): string => path.join(pwd, `.jest.config.js`);
+    static jestEnvFile = (pwd: string): string => path.join(pwd, `.jest.env.js`);
     static packageFile = (pwd: string): string => path.join(pwd, `package.json`);
     static envFile = (pwd: string): string => path.join(pwd, `.env`);
-    static tsconfigDistFile = (pwd: string): string => path.join(pwd, `tsconfig.dist.json`);
+    static tsconfigTestFile = (pwd: string): string => path.join(pwd, `tsconfig.test.json`);
     static tsconfigFile = (pwd: string): string => path.join(pwd, `tsconfig.json`);
 
     static indexFile = (pwd: string): string => path.join(PathTo.srcFolder(pwd), `index.ts`);

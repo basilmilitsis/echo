@@ -2,7 +2,7 @@
     "extends": "./tsconfig.json",
     "exclude": [
         ".dist",
-        "**/*.test.ts",
+        ".deploy",
         "node_modules"
     ]
 }

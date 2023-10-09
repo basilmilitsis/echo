@@ -46,6 +46,11 @@ api.command('create')
             {}
         );
         Template.write(
+            PathTo.jestEnvFile(projectPath),
+            Template.templatePath(__dirname, `./templates/create/jest.env.js.ejs`),
+            {}
+        );
+        Template.write(
             PathTo.packageFile(projectPath),
             Template.templatePath(__dirname, `./templates/create/package.json.ejs`),
             {
@@ -60,16 +65,16 @@ api.command('create')
             }
         );
         Template.write(
-            PathTo.tsconfigDistFile(projectPath),
-            Template.templatePath(__dirname, `./templates/create/tsconfig.dist.json.ejs`),
-            {}
-        );
-        Template.write(
             PathTo.tsconfigFile(projectPath),
             Template.templatePath(__dirname, `./templates/create/tsconfig.json.ejs`),
             {}
         );
-
+        Template.write(
+            PathTo.tsconfigTestFile(projectPath),
+            Template.templatePath(__dirname, `./templates/create/tsconfig.test.json.ejs`),
+            {}
+        );
+            
         //-- write files in "./api/<apiName>/src" folder
         Template.makeFolder(PathTo.srcFolder(projectPath));
 

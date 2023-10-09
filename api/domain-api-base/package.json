@@ -10,7 +10,7 @@
     "scripts": {
         "build:clean": "rm -rf .dist",
         "build:generate": ":",
-        "build:compile": "tsc -p tsconfig.dist.json && tsc-alias -p tsconfig.dist.json",
+        "build:compile": "tsc && tsc-alias",
         "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile",
         "package": ":",
         "start": "node .",

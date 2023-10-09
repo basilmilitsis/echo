@@ -13,7 +13,7 @@
     "scripts": {
         "build:clean": "pnpm custom:unlink && rm -rf .dist",
         "build:assets:copy": "(cd ./src && find ./ -regex '.*\\.ejs$' -exec cp --parents {} ../.dist/ \\;)",
-        "build:compile": "tsc -p tsconfig.dist.json && tsc-alias -p tsconfig.dist.json",
+        "build:compile": "tsc && tsc-alias",
         "build:post": "pnpm custom:unlink && pnpm custom:link",
         "build": "pnpm build:clean && pnpm build:compile && pnpm build:assets:copy && pnpm build:post",
         "package": ":",
