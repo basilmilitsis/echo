@@ -8,6 +8,9 @@ services:
       - net
     ports:
       - "4001:4001"
+      - "4101:9229"
+    working_dir: /app/api/domain-api
+    command: "npm run dev:start"
     environment:
       PRODUCTION: false
       LOG_TO_HOST: logstash

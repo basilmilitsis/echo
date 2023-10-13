@@ -19,9 +19,10 @@
         "package": ":",
         "custom:link": "npm install --global",
         "custom:unlink": "npm uninstall --global builder",
-        "start": "node .",
-        "dev": "pnpm build && pnpm start",
-        "test": "jest"
+        "test": "jest",
+        "dev:start": "node --inspect=0.0.0.0:9229 .",
+        "dev": "pnpm build && pnpm dev:start",
+        "start": "node ."
     },
     "devDependencies": {
         "@types/jest": "^29.5.3",

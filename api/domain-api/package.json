@@ -19,10 +19,11 @@
         "package:make": "rush deploy --target-folder .deploy --overwrite",
         "package:container": "docker build . --tag domain-api:1.0.0 --label \"commit:12345\"",
         "package": "pnpm package:make && pnpm package:container",
-        "start": "node .",
-        "dev": "pnpm build && pnpm start",
-        "dev:container": "docker run --env-file .env domain-api:1.0.0",
-        "test": "jest"
+        "test": "jest",
+        "devcontainer:start": "docker run --env-file .env --workdir /app/api/domain-api domain-api:1.0.0 npm run dev:start",
+        "dev:start": "node --inspect=0.0.0.0:9229 .",
+        "dev": "pnpm build && pnpm dev:start",
+        "start": "node ."
     },
     "devDependencies": {
         "@types/express": "^4.17.17",
