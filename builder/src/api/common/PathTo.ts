@@ -2,6 +2,11 @@ import path from 'node:path';
 import * as voca from 'voca';
 
 export class PathTo {
+
+    static vscodeFolder = (pwd: string): string => path.join(pwd, '.vscode');
+    static vscodeTasksFile = (pwd: string): string => path.join(PathTo.vscodeFolder(pwd), `tasks.json`);
+    static vscodeLaunchFile = (pwd: string): string => path.join(PathTo.vscodeFolder(pwd), `launch.json`);
+
     static srcFolder = (pwd: string): string => path.join(pwd, '/src');
 
     static generatedFolder = (pwd: string): string => path.join(PathTo.srcFolder(pwd), '_generated');
@@ -76,6 +81,8 @@ export class PathTo {
     static envFile = (pwd: string): string => path.join(pwd, `.env`);
     static tsconfigTestFile = (pwd: string): string => path.join(pwd, `tsconfig.test.json`);
     static tsconfigFile = (pwd: string): string => path.join(pwd, `tsconfig.json`);
+    static dockerfileFile = (pwd: string): string => path.join(pwd, `dockerfile`);
+    
 
     static indexFile = (pwd: string): string => path.join(PathTo.srcFolder(pwd), `index.ts`);
     static domainGitkeepFile = (pwd: string): string => path.join(PathTo.domainFolder(pwd), `.gitkeep`);

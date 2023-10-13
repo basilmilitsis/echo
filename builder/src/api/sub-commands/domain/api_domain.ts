@@ -231,13 +231,7 @@ api_domain.command('generate').action(() => {
 
     const aggregateFolderNames = listFoldersIn(PathTo.domainFolder(process.env.PWD));
     aggregateFolderNames.forEach((aggregateFolderName) => {
-        const outputFolder = PathTo.generatedFolder(process.env.PWD);
-        // if (!fs.existsSync(outputFolder)) {
-        //     fs.mkdirSync(outputFolder);
-        // }
-
         const introspectedAggregate = introspectAggregate(process.env.PWD, aggregateFolderName);
-        //Template.makeFolder(outputFolder);
         Template.write(
             PathTo.operationsFile(process.env.PWD, aggregateFolderName),
             Template.templatePath(__dirname, './templates/generate/operations.ts.ejs'),
