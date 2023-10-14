@@ -2,7 +2,7 @@ import { createGenerator, Config } from 'ts-json-schema-generator';
 
 export const operationToJsonString = (operationName: string, operationPath: string, tsConfigPath: string): string => {
     const config: Config = {
-        //path: operationPath, // TOD: is this needed?
+        //path: operationPath, // TODO: is this needed?
         tsconfig: tsConfigPath,
         type: operationName,
         expose: 'none',

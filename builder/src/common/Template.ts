@@ -9,12 +9,12 @@ export class Template {
     static makeFile(path: string): void {
         Disk.writeFile(path, '');
     }
-
-    static templatePath(loadFrom: string, relativePath: string): string {
-        return path.join(loadFrom, relativePath);
-    }
     static write<T>(outputPath: string, loadTemplatPath: string, model: T): void {
         const templateFile = Disk.readFile(loadTemplatPath);
         Disk.writeFile(outputPath, ejs.render(templateFile, model));
+    }
+
+    static templatePath(loadFrom: string, relativePath: string): string {
+        return path.join(loadFrom, relativePath);
     }
 }

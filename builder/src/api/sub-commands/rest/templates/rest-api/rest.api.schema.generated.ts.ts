@@ -53,7 +53,7 @@ export const buildModel_restApi = (domainRootPath: string): RestApiModel => {
         });
 
         operationImports.push({
-            operationsFile: `${voca.titleCase(aggregate)}.operations`,
+            operationsFile: `${voca.titleCase(aggregate)}.operations.generated`,
             operationFunctions: commands.map((command) => voca.camelCase(command)),
         });
     });

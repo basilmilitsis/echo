@@ -1,5 +1,5 @@
 import { EventStream, CommandIndexRule } from "domain-api-base";
-import { <%=commandName%> } from "../../<%=commandFileName%>";
+import { <%=commandName%> } from "@root/domain/<%=aggregateFolderName%>/<%=commandFolderName%>/<%=commandFileName%>";
 
 export const <%=ruleFunctionName%>: CommandIndexRule<<%=commandName%>> = async (command: <%=commandName%>, eventStream: EventStream): Promise<string[]> => {
     return [];

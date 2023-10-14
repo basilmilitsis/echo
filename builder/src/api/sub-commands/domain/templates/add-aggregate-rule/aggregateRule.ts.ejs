@@ -1,6 +1,6 @@
 import { CommandAggregateRule } from "domain-api-base";
-import { <%=aggregateName%> } from "../../../<%=aggregateFileName%>";
-import { <%=commandName%> } from "../../<%=commandFileName%>";
+import { <%=aggregateName%> } from "@root/domain/<%=aggregateFolderName%>/<%=aggregateFileName%>";
+import { <%=commandName%> } from "@root/domain/<%=aggregateFolderName%>/<%=commandFolderName%>/<%=commandFileName%>";
 
 export const <%=ruleFunctionName%>: CommandAggregateRule<<%=commandName%>, <%=aggregateName%>> = (command: <%=commandName%>, aggregate: <%=aggregateName%>): string[] => {
     return [];

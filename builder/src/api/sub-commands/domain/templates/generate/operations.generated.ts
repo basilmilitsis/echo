@@ -62,7 +62,7 @@ export const buildModel_operations = (aggregateInfo: AggregateInfo): OperationsM
             commandFolderName: command.commandFolderName,
             commandFileName: command.commandFileName,
 
-            operationFunctionName: command.commandFolderName, // TODO
+            operationFunctionName: command.commandFolderName, // TODO:
 
             handleFunctionName: command.handle.functionName,
             handleFileName: command.handle.importName,

@@ -19,10 +19,11 @@ const buildAggregateCommandModels = (
 ): OperationModel[] => {
     return commands.map((command) => {
         const commandPath = '';
+        // TODO: is this needed?
         // const commandPath =
         //     command.commandKind === 'create'
         //         ? PathTo.createCommandFile('??', aggregateName, command.commandName)
-        //         : PathTo.updateCommandFile('??', aggregateName, command.commandName); // TODO refactor
+        //         : PathTo.updateCommandFile('??', aggregateName, command.commandName); // TODO: refactor
         return {
             apiName: voca.camelCase(command.commandName),
             apiMethod: command.commandKind === 'create' ? 'post' : 'put',
