@@ -10,6 +10,11 @@ node_modules
 .deploy
 .github
 
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+
+
 # ======== Standard =============================================
 
 # Logs
