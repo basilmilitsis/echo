@@ -1,5 +1,5 @@
-import { Serializable } from "@root/common";
-import { Id } from "./Id";
+import { Serializable } from 'lib-common';
+import { Id } from './Id';
 
 export type Credentials = {
     id: string;

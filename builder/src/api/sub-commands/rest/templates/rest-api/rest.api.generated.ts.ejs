@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import OpenAPIBackend, { UnknownParams, Context, Document } from 'openapi-backend';
 import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
+import { BaseLogger } from 'lib-common';
 import { 
     DefaultEventStream, 
     EventStream, 
     CommandContext, 
     interpretAsApiRestError, 
     DomainLogger,
-    BaseLogger, 
     extractContext,
     ApiRestEnvironment,
 }  from 'domain-api-base';

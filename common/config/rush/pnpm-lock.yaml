@@ -22,6 +22,7 @@ importers:
       eslint-plugin-jest: ^27.2.3
       express: ^4.18.2
       jest: ^29.6.1
+      lib-common: workspace:^1.0.0
       luxon: ^3.3.0
       openapi-backend: ^5.9.2
       prettier: ^3.0.0
@@ -36,6 +37,7 @@ importers:
       domain-api-base: link:../domain-api-base
       dotenv: 16.3.1
       express: 4.18.2
+      lib-common: link:../../lib/lib-common
       luxon: 3.4.3
       openapi-backend: 5.9.2
       source-map-support: 0.5.21
@@ -117,6 +119,7 @@ importers:
       '@typescript-eslint/eslint-plugin': ^6.3.0
       '@typescript-eslint/parser': ^6.3.0
       commander: ^11.0.0
+      dotenv: ~16.3.1
       ejs: ^3.1.9
       eslint: ^8.47.0
       eslint-config-prettier: ^9.0.0
@@ -133,6 +136,7 @@ importers:
       voca: ^1.4.1
     dependencies:
       commander: 11.0.0
+      dotenv: 16.3.1
       js-yaml: 4.1.0
       lib-common: link:../lib/lib-common
       source-map-support: 0.5.21

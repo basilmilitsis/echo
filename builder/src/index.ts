@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import 'source-map-support/register';
+import 'dotenv/config';
 
 import commander from 'commander';
 import { api } from './api/api';
