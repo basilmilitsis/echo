@@ -1,6 +1,6 @@
 import commander from 'commander';
 import * as voca from 'voca';
-import { PathRules, Writer, listFoldersIn } from '@root/common';
+import { BuilderEnvironment, PathRules, Writer, listFoldersIn } from '@root/common';
 import { PathTo, determineCommandKind, introspectAggregate } from '@root/api/common';
 import { buildModel_eventBuild } from './templates/add-event/build';
 import { buildModel_event } from './templates/add-event/event';
@@ -25,7 +25,7 @@ api_domain
     .action((aggregateName) => {
         PathRules.ensureCurrentlyInProjectRoot();
 
-        new Writer(process.env.PWD)
+        new Writer(BuilderEnvironment.pwd)
             .title('Adding aggregate')
             .existingFolder('src', (folder) => {
                 folder.existingFolder('domain', (folder) => {
@@ -48,7 +48,7 @@ api_domain
     .action((aggregateName, commandName) => {
         PathRules.ensureCurrentlyInProjectRoot();
 
-        new Writer(process.env.PWD)
+        new Writer(BuilderEnvironment.pwd)
             .title('Adding create command')
             .existingFolder('src', (folder) => {
                 folder.existingFolder('domain', (folder) => {
@@ -90,7 +90,7 @@ api_domain
     .action((aggregateName, commandName) => {
         PathRules.ensureCurrentlyInProjectRoot();
 
-        new Writer(process.env.PWD)
+        new Writer(BuilderEnvironment.pwd)
             .title('Adding update command')
             .existingFolder('src', (folder) => {
                 folder.existingFolder('domain', (folder) => {
@@ -136,9 +136,9 @@ api_domain
     .action((aggregateName, commandName, eventName) => {
         PathRules.ensureCurrentlyInProjectRoot();
 
-        const commandKind = determineCommandKind(process.env.PWD, aggregateName, commandName);
+        const commandKind = determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName);
 
-        new Writer(process.env.PWD)
+        new Writer(BuilderEnvironment.pwd)
             .title('Adding event')
             .existingFolder('src', (folder) => {
                 folder.existingFolder('domain', (folder) => {
@@ -182,7 +182,7 @@ api_domain
     .action((aggregateName, commandName, ruleName) => {
         PathRules.ensureCurrentlyInProjectRoot();
 
-        new Writer(process.env.PWD)
+        new Writer(BuilderEnvironment.pwd)
             .title('Adding command rule')
             .existingFolder('src', (folder) => {
                 folder.existingFolder('domain', (folder) => {
@@ -195,7 +195,7 @@ api_domain
                                     buildModel_commandRule(
                                         aggregateName,
                                         commandName,
-                                        determineCommandKind(process.env.PWD, aggregateName, commandName),
+                                        determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName),
                                         ruleName
                                     )
                                 );
@@ -215,7 +215,7 @@ api_domain
     .action((aggregateName, commandName, ruleName) => {
         PathRules.ensureCurrentlyInProjectRoot();
 
-        new Writer(process.env.PWD)
+        new Writer(BuilderEnvironment.pwd)
             .title('Adding index rule')
             .existingFolder('src', (folder) => {
                 folder.existingFolder('domain', (folder) => {
@@ -228,7 +228,7 @@ api_domain
                                     buildModel_indexRule(
                                         aggregateName,
                                         commandName,
-                                        determineCommandKind(process.env.PWD, aggregateName, commandName),
+                                        determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName),
                                         ruleName
                                     )
                                 );
@@ -248,12 +248,12 @@ api_domain
     .action((aggregateName, commandName, ruleName) => {
         PathRules.ensureCurrentlyInProjectRoot();
 
-        const commandKind = determineCommandKind(process.env.PWD, aggregateName, commandName);
+        const commandKind = determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName);
         if (commandKind === 'create') {
             throw new Error('Create commands cannot have an Aggregate Rule');
         }
 
-        new Writer(process.env.PWD)
+        new Writer(BuilderEnvironment.pwd)
             .title('Adding aggregate rule')
             .existingFolder('src', (folder) => {
                 folder.existingFolder('domain', (folder) => {
@@ -276,10 +276,10 @@ api_domain
 api_domain.command('generate').action(() => {
     PathRules.ensureCurrentlyInProjectRoot();
 
-    const aggregateFolderNames = listFoldersIn(PathTo.domainFolder(process.env.PWD));
+    const aggregateFolderNames = listFoldersIn(PathTo.domainFolder(BuilderEnvironment.pwd));
     aggregateFolderNames.forEach((aggregateFolderName) => {
-        const introspectedAggregate = introspectAggregate(process.env.PWD, aggregateFolderName);
-        new Writer(process.env.PWD)
+        const introspectedAggregate = introspectAggregate(BuilderEnvironment.pwd, aggregateFolderName);
+        new Writer(BuilderEnvironment.pwd)
             .title('Generating *.operations.generated.ts (for each aggregate)')
             .ensureFolder('src', (folder) => {
                 folder.ensureFolder('_generated', (folder) => {

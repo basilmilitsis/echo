@@ -1,4 +1,4 @@
-import { RootEnvironment } from '@root/common';
+import { RootEnvironment } from 'lib-common';
 
 export class ApiRestEnvironment extends RootEnvironment {
     static readonly apiRest_port: number = ApiRestEnvironment.parseInt('APIREST_API_PORT');

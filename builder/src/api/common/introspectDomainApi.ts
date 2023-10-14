@@ -1,5 +1,5 @@
 import * as voca from 'voca';
-import { listFilesIn, listFoldersIn } from "@root/common";
+import { BuilderEnvironment, listFilesIn, listFoldersIn } from '@root/common';
 import { CommandKind } from './CommandKind';
 import { determineCommandKind } from './determineCommandKind';
 import { PathTo } from './PathTo';
@@ -39,24 +39,27 @@ export type CommandInfo = {
     commandIndexRules: FileInfo[];
     commandAggregateRules: FileInfo[];
     events: EventStructure[];
-}
+};
 export type AggregateInfo = {
     aggregateTypeName: string;
     aggregateFileName: string;
     aggregateFolder: string;
     commands: CommandInfo[];
-}
+};
 
 const instrospectCommand = (domainRootPath: string, aggregateName: string, commandName: string): CommandInfo => {
-    const commandKind = determineCommandKind(process.env.PWD, aggregateName, commandName);
-    let commandAggregateRules = [];
-    if(commandKind === 'update') {
+    const commandKind = determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName);
+    let commandAggregateRules: FileInfo[] = [];
+    if (commandKind === 'update') {
         // only update commands can have aggregate rules
-        listFilesIn(PathTo.aggregateRulesFolder(domainRootPath, aggregateName, commandName), '.aggregateRule.ts')
-        .map((fileName) => ({
-            functionName: fileName.replace('.aggregateRule.ts', ''),
-            importName: fileName.replace('.ts', ''),
-        })) || [];
+        commandAggregateRules =
+            listFilesIn(
+                PathTo.aggregateRulesFolder(domainRootPath, aggregateName, commandName),
+                '.aggregateRule.ts'
+            ).map((fileName) => ({
+                functionName: fileName.replace('.aggregateRule.ts', ''),
+                importName: fileName.replace('.ts', ''),
+            })) || [];
     }
 
     return {
@@ -74,21 +77,23 @@ const instrospectCommand = (domainRootPath: string, aggregateName: string, comma
             importName: `${voca.titleCase(commandName)}.handle`,
         },
         commandRules:
-            listFilesIn(PathTo.commandRulesFolder(domainRootPath, aggregateName, commandName), '.commandRule.ts')
-                .map((fileName) => ({
+            listFilesIn(PathTo.commandRulesFolder(domainRootPath, aggregateName, commandName), '.commandRule.ts').map(
+                (fileName) => ({
                     functionName: fileName.replace('.commandRule.ts', ''),
                     importName: fileName.replace('.ts', ''),
-                })) || [],
+                })
+            ) || [],
         commandIndexRules:
-            listFilesIn(PathTo.indexRulesFolder(domainRootPath, aggregateName, commandName), '.indexRule.ts')
-                .map((fileName) => ({
+            listFilesIn(PathTo.indexRulesFolder(domainRootPath, aggregateName, commandName), '.indexRule.ts').map(
+                (fileName) => ({
                     functionName: fileName.replace('.indexRule.ts', ''),
                     importName: fileName.replace('.ts', ''),
-                })) || [],
+                })
+            ) || [],
         commandAggregateRules: commandAggregateRules,
         events:
-            listFilesIn(PathTo.commandFolder(domainRootPath, aggregateName, commandName), '.event.ts')
-                .map((fileName) => {
+            listFilesIn(PathTo.commandFolder(domainRootPath, aggregateName, commandName), '.event.ts').map(
+                (fileName) => {
                     const eventName = fileName.replace('.event.ts', '');
                     return {
                         eventType: `${eventName}`,
@@ -99,36 +104,40 @@ const instrospectCommand = (domainRootPath: string, aggregateName: string, comma
                         evolveFilename: `${eventName}.evolve`,
                         isFileName: `${eventName}.is`,
                         isFunctionName: `is${eventName}`,
-                    }
-                }) || [],
+                    };
+                }
+            ) || [],
     };
-}
+};
 
 export const introspectAggregate = (domainRootPath: string, aggregateName: string): AggregateInfo => {
-    const commandFolderNames = listFoldersIn(PathTo.aggregateFolder(domainRootPath, aggregateName))
-        .filter((x) => !x.startsWith('_'));
+    const commandFolderNames = listFoldersIn(PathTo.aggregateFolder(domainRootPath, aggregateName)).filter(
+        (x) => !x.startsWith('_')
+    );
 
     return {
         aggregateTypeName: voca.titleCase(aggregateName),
         aggregateFileName: voca.titleCase(aggregateName),
         aggregateFolder: voca.camelCase(aggregateName),
-        commands: commandFolderNames.map(folderName => instrospectCommand(domainRootPath, aggregateName, folderName))
-    }
-}
+        commands: commandFolderNames.map((folderName) => instrospectCommand(domainRootPath, aggregateName, folderName)),
+    };
+};
 
 export const introspectDomain = (domainRootPath: string): AggregateInfo[] => {
-
     const aggregateNames = listFoldersIn(PathTo.domainFolder(domainRootPath));
 
     return aggregateNames.map((aggregateName) => {
-        const commandFolderNames = listFoldersIn(PathTo.aggregateFolder(domainRootPath, aggregateName))
-            .filter((x) => !x.startsWith('_'));
+        const commandFolderNames = listFoldersIn(PathTo.aggregateFolder(domainRootPath, aggregateName)).filter(
+            (x) => !x.startsWith('_')
+        );
 
         return {
             aggregateTypeName: voca.titleCase(aggregateName),
             aggregateFileName: voca.titleCase(aggregateName),
             aggregateFolder: voca.camelCase(aggregateName),
-            commands: commandFolderNames.map(folderName => instrospectCommand(domainRootPath, aggregateName, folderName))
-        }
+            commands: commandFolderNames.map((folderName) =>
+                instrospectCommand(domainRootPath, aggregateName, folderName)
+            ),
+        };
     });
-}
+};

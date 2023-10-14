@@ -1,4 +1,5 @@
 import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
+import { Logger } from 'lib-common';
 import {
     CommandAggregateRuleError,
     CommandIndexRuleError,
@@ -6,7 +7,6 @@ import {
     ValidationError,
     AggregatLoadError,
 } from '@root/domain';
-import { Logger } from '@root/common';
 
 export type ApiRestError = {
     result: 'error';
@@ -17,7 +17,7 @@ export type ApiRestError = {
 export const interpretAsApiRestError = (
     res: ExpressRes,
     err: unknown,
-    logger: Logger,
+    logger: Logger
 ): express.Response<ApiRestError, Record<string, any>> => {
     if (err instanceof ValidationError) {
         logger.error('ValidationError', err);
@@ -53,7 +53,7 @@ export const interpretAsApiRestError = (
     }
     if (err instanceof AggregatLoadError) {
         logger.error('AggregatLoadError', err);
-       return res.status(500).json({
+        return res.status(500).json({
             result: 'error',
             type: 'AggregatLoadError',
             messages: ['Aggregate Load Error'],
@@ -64,11 +64,11 @@ export const interpretAsApiRestError = (
         return res.status(500).json({
             result: 'error',
             type: 'Error',
-            messages: ['Error... TBD'], // TODO
+            messages: ['Error... TBD'], // TODO: deal with caught errors
         });
     }
 
-    logger.error('Unknown Error', new Error()); // TODO
+    logger.error('Unknown Error', new Error()); // TODO: deal with catching an non-error
     return res.status(500).json({
         result: 'error',
         type: 'Unknown Error',

@@ -1,5 +1,5 @@
 import * as voca from 'voca';
-import { listFoldersIn } from '@root/common';
+import { BuilderEnvironment, listFoldersIn } from '@root/common';
 import { determineCommandKind, PathTo } from '@root/api/common';
 
 type CommandImportModel = {
@@ -40,7 +40,7 @@ export const buildModel_restApi = (domainRootPath: string): RestApiModel => {
                 commandType: voca.titleCase(command),
                 commandFolder: voca.camelCase(command),
                 commandFile: `${voca.titleCase(command)}.${determineCommandKind(
-                    process.env.PWD,
+                    BuilderEnvironment.pwd,
                     aggregate,
                     command
                 )}.command`,

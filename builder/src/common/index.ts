@@ -1,3 +1,4 @@
+export * from './BuilderEnvironment';
 export * from './Disk';
 export * from './listFiles';
 export * from './listFolders';

@@ -1,4 +1,4 @@
-import { OperationContext } from "@root/domain";
+import { OperationContext } from '@root/domain';
 
 // TODO: extract correlationId/credentials/metadata from request
 export const extractContext = (generateUuid: () => string): OperationContext => {
@@ -12,4 +12,4 @@ export const extractContext = (generateUuid: () => string): OperationContext => 
         },
         customMetadata: {},
     };
-}
+};

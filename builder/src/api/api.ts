@@ -2,7 +2,7 @@ import * as voca from 'voca';
 import commander from 'commander';
 import { api_domain } from './sub-commands/domain/api_domain';
 import { api_rest } from './sub-commands/rest/api_rest';
-import { Writer, PathRules } from '@root/common';
+import { Writer, PathRules, BuilderEnvironment } from '@root/common';
 
 type RushFile = {
     projects: { packageName: string; projectFolder: string }[];
@@ -19,18 +19,17 @@ type DeployFile = {
 type CodeWorkspaceFile = {
     folders: { name: string; path: string }[];
 };
-type DockerComposeFile = Record<
-    string,
-    {
+type DockerComposeFile = {
+    services: Record<string, {
         image: string;
         container_name: string;
         networks: string[];
         ports: string[];
         working_dir: string;
         command: string;
-        environment: Record<string, string>;
-    }
->;
+        environment: Record<string, string | boolean | number>;
+    }>
+};
 
 export const api = new commander.Command('api');
 api.command('create')
@@ -46,7 +45,7 @@ api.command('create')
         }
         const apiDebuggerPort = apiPortAsInt + 500;
 
-        new Writer(process.env.PWD)
+        new Writer(BuilderEnvironment.pwd)
             .title(`Creating new API '${apiName}' on port: ${apiPort}`)
             .updateJsonFile('.code-workspace', (workspaceFile: CodeWorkspaceFile) => {
                 if (!workspaceFile.folders.find((x) => x.name === `🌐api/${apiName}`)) {

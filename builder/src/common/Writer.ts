@@ -91,19 +91,19 @@ export class Writer {
         return this;
     }
 
-    createTemplateFile<T>(fileName: string, templatePath: string, model: T): Writer {
+    createTemplateFile<T extends Object>(fileName: string, templatePath: string, model: T): Writer {
         const templateFile = Disk.readFile(templatePath);
         this.createFile(fileName, ejs.render(templateFile, model));
         logPath(this._depth, '📄', fileName);
         return this;
     }
-    replaceTemplateFile<T>(fileName: string, templatePath: string, model: T): Writer {
+    replaceTemplateFile<T extends Object>(fileName: string, templatePath: string, model: T): Writer {
         const templateFile = Disk.readFile(templatePath);
         this.replaceFile(fileName, ejs.render(templateFile, model));
         logPath(this._depth, '📄', fileName);
         return this;
     }
-    ensureTemplateFile<T>(fileName: string, templatePath: string, model: T): Writer {
+    ensureTemplateFile<T extends Object>(fileName: string, templatePath: string, model: T): Writer {
         const templateFile = Disk.readFile(templatePath);
         this.ensureFile(fileName, ejs.render(templateFile, model));
         logPath(this._depth, '📄', fileName);

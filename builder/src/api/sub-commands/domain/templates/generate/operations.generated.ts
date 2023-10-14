@@ -55,7 +55,6 @@ export const buildModel_operations = (aggregateInfo: AggregateInfo): OperationsM
                 }));
             })
             .flat(),
-
         commands: aggregateInfo.commands.map((command) => ({
             commandKind: command.commandKind,
             commandTypeName: command.commandTypeName,
@@ -67,12 +66,10 @@ export const buildModel_operations = (aggregateInfo: AggregateInfo): OperationsM
             handleFunctionName: command.handle.functionName,
             handleFileName: command.handle.importName,
 
-            validator: command.validator
-                ? {
-                      functionName: command.validator.functionName,
-                      importName: command.validator.importName,
-                  }
-                : undefined,
+            validator: {
+                functionName: command.validator.functionName,
+                importName: command.validator.importName,
+            },
             commandRules:
                 command.commandRules.map((x) => ({
                     functionName: x.functionName,

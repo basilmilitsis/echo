@@ -1,6 +1,7 @@
 import winston from 'winston';
 const LogstashTransport = require('winston-logstash/lib/winston-logstash-latest');
-import { RootEnvironment, Serializable } from '@root/common';
+import { Serializable } from './Serializable';
+import { RootEnvironment } from './environment';
 
 export class BaseLogger {
     logger: winston.Logger;

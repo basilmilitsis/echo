@@ -8,5 +8,5 @@ export const operationToJsonString = (operationName: string, operationPath: stri
         expose: 'none',
     };
     const schema = createGenerator(config).createSchema(config.type);
-    return JSON.stringify(schema.definitions[operationName], null, 4);
+    return JSON.stringify(schema.definitions??[operationName], null, 4);
 };

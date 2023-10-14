@@ -1,7 +1,12 @@
 {
   "folders": [
     {
+      "name": "*",
       "path": "."
+    },
+    {
+      "name": "📚lib/lib-common",
+      "path": "lib/lib-common"
     },
     {
       "name": "🔨builder",

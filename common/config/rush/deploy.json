@@ -15,6 +15,13 @@
       "additionalDependenciesToInclude": [],
       "dependenciesToExclude": ["@types/*"],
       "patternsToInclude": [".dist/**", "package.json"]
+    },
+    {
+      "projectName": "lib-common",
+      "additionalProjectsToInclude": [],
+      "additionalDependenciesToInclude": [],
+      "dependenciesToExclude": ["@types/*"],
+      "patternsToInclude": [".dist/**", "package.json"]
     }
   ]
 }

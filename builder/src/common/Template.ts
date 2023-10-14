@@ -9,7 +9,7 @@ export class Template {
     static makeFile(path: string): void {
         Disk.writeFile(path, '');
     }
-    static write<T>(outputPath: string, loadTemplatPath: string, model: T): void {
+    static write<T extends Object>(outputPath: string, loadTemplatPath: string, model: T): void {
         const templateFile = Disk.readFile(loadTemplatPath);
         Disk.writeFile(outputPath, ejs.render(templateFile, model));
     }

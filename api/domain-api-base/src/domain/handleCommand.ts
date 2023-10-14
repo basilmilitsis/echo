@@ -1,4 +1,4 @@
-import { Logger } from '@root/common';
+import { Logger } from 'lib-common';
 import {
     AggregatLoadError,
     CommandAggregateRuleError,
