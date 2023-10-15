@@ -1,5 +1,5 @@
 {
-    "name": "domain-api-base",
+    "name": "@echo/lib-domain-api",
     "version": "1.0.0",
     "description": "",
     "keywords": [],
@@ -34,8 +34,8 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
+        "@echo/lib-common": "workspace:^1.0.0",
         "@eventstore/db-client": "^5.0.1",
-        "lib-common": "workspace:^1.0.0",
         "luxon": "^3.3.0",
         "source-map-support": "^0.5.21",
         "tsc-alias": "^1.8.7",

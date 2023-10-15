@@ -1,4 +1,4 @@
-import { CommandEvent, UpdateHandler } from 'domain-api-base';
+import { CommandEvent, UpdateHandler } from '@echo/lib-domain-api';
 import { ArchivePost } from './ArchivePost.update.command';
 import { Post } from '../Post';
 import { buildPostArchivedV1 } from './PostArchived_V1.build';

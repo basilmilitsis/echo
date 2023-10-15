@@ -1,4 +1,4 @@
-import { DomainEvent } from 'domain-api-base';
+import { DomainEvent } from '@echo/lib-domain-api';
 import { EventType, PostCreatedData_V1 } from './PostCreated_V1.event';
 
 export const isPostCreated_V1 = (

@@ -1,4 +1,4 @@
-import { CommandEvent, UpdateHandler } from 'domain-api-base';
+import { CommandEvent, UpdateHandler } from '@echo/lib-domain-api';
 import { ChangeTitleOfPost } from './ChangeTitleOfPost.update.command';
 import { Post } from '../Post';
 

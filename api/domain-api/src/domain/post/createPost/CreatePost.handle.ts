@@ -1,4 +1,4 @@
-import { CommandEvent, CreateHandler } from 'domain-api-base';
+import { CommandEvent, CreateHandler } from '@echo/lib-domain-api';
 import { CreatePost } from './CreatePost.create.command';
 import { buildPostCreated_V1 } from './PostCreated_V1.build';
 

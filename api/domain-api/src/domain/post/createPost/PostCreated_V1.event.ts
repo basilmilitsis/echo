@@ -1,4 +1,4 @@
-import { CommandEvent, CommandEventData } from 'domain-api-base';
+import { CommandEvent, CommandEventData } from '@echo/lib-domain-api';
 
 export enum EventType {
     PostCreated_V1 = 'PostCreated_V1',

@@ -1,4 +1,4 @@
-import { Logger } from 'lib-common';
+import { Logger } from '@echo/lib-common';
 import {
     AggregatLoadError,
     CommandAggregateRuleError,

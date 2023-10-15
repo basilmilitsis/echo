@@ -14,19 +14,19 @@
   "variants": [],
   "projects": [
     {
-      "packageName": "lib-common",
+      "packageName": "@echo/lib-common",
       "projectFolder": "lib/lib-common"
     },
     {
-      "packageName": "builder",
+      "packageName": "@echo/lib-domain-api",
+      "projectFolder": "lib/lib-domain-api"
+    },
+    {
+      "packageName": "@echo/builder",
       "projectFolder": "builder"
     },
     {
-      "packageName": "domain-api-base",
-      "projectFolder": "api/domain-api-base"
-    },
-    {
-      "packageName": "domain-api",
+      "packageName": "@echo/domain-api",
       "projectFolder": "api/domain-api"
     }
   ]

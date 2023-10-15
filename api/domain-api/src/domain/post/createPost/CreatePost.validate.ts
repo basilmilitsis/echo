@@ -1,4 +1,4 @@
-import { Validator } from "domain-api-base";
+import { Validator } from "@echo/lib-domain-api";
 import { CreatePost } from "./CreatePost.create.command";
 
 export const validateCreatePost: Validator<CreatePost> = (command: CreatePost): string[] => {

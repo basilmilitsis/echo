@@ -1,5 +1,5 @@
 {
-    "name": "builder",
+    "name": "@echo/builder",
     "version": "1.0.0",
     "description": "",
     "keywords": [],
@@ -42,9 +42,9 @@
         "@types/ejs": "~3.1.3"
     },
     "dependencies": {
+        "@echo/lib-common": "workspace:^1.0.0",
         "commander": "^11.0.0",
         "dotenv": "~16.3.1",
-        "lib-common": "workspace:^1.0.0",
         "source-map-support": "^0.5.21",
         "ts-json-schema-generator": "^1.3.0",
         "tsc-alias": "^1.8.7",

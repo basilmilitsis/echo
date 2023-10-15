@@ -1,4 +1,4 @@
-import { EventStream, CommandIndexRule } from "domain-api-base";
+import { EventStream, CommandIndexRule } from "@echo/lib-domain-api";
 import { CreatePost } from "../CreatePost.create.command";
 
 export const postCannotAlreadyExist: CommandIndexRule<CreatePost> = async (command: CreatePost, eventStream: EventStream): Promise<string[]> => {

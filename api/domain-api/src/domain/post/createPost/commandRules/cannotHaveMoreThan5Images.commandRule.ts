@@ -1,4 +1,4 @@
-import { CommandRule } from "domain-api-base";
+import { CommandRule } from "@echo/lib-domain-api";
 import { CreatePost } from "../CreatePost.create.command";
 
 export const cannotHaveMoreThan5Images: CommandRule<CreatePost> = (command: CreatePost): string[] => {

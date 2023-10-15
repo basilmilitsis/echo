@@ -5,24 +5,29 @@
       "path": "."
     },
     {
-      "name": "📚lib/lib-common",
+      "name": "🔗lib/lib-common",
       "path": "lib/lib-common"
+    },
+    {
+      "name": "🔗lib/lib-domain-api",
+      "path": "lib/lib-domain-api"
     },
     {
       "name": "🔨builder",
       "path": "builder"
     },
     {
-      "name": "📚api/domain-api-base",
-      "path": "api/domain-api-base"
+      "name": "⭕api/domain-api",
+      "path": "api/domain-api"
     },
     {
-      "name": "🌐api/domain-api",
-      "path": "api/domain-api"
-    }
+      "name": "📚stack",
+      "path": "stack",
+    
+    },
   ],
   "settings": {
-    "jest.disabledWorkspaceFolders": ["root"],
+    "jest.disabledWorkspaceFolders": ["root", "📚stack"],
     "jest.autoRun": {
       "watch": false
     }

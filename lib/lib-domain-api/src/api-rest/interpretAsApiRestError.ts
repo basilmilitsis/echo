@@ -1,5 +1,5 @@
 import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
-import { Logger } from 'lib-common';
+import { Logger } from '@echo/lib-common';
 import {
     CommandAggregateRuleError,
     CommandIndexRuleError,

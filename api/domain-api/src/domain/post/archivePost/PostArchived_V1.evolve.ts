@@ -1,4 +1,4 @@
-import { DomainEvent } from 'domain-api-base';
+import { DomainEvent } from '@echo/lib-domain-api';
 import { Post } from '../Post';
 import { PostArchivedData_V1 } from './PostArchived_V1.event';
 

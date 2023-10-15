@@ -1,4 +1,4 @@
-import { BaseLogger, Logger } from 'lib-common';
+import { BaseLogger, Logger } from '@echo/lib-common';
 import { OperationContext } from './types';
 
 export class DomainLogger implements Logger {

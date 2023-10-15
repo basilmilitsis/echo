@@ -1,4 +1,4 @@
-import { DomainEvent, AggregateUpdateEventEvolver } from 'domain-api-base';
+import { DomainEvent, AggregateUpdateEventEvolver } from '@echo/lib-domain-api';
 import { Post } from '../Post';
 import { PostPublishedData_V1 } from './PostPublished_V1.event';
 

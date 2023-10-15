@@ -1,23 +1,23 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/deploy-scenario.schema.json",
-  "deploymentProjectNames": ["domain-api"],
+  "deploymentProjectNames": ["@echo/domain-api"],
   "projectSettings": [
     {
-      "projectName": "domain-api",
+      "projectName": "@echo/domain-api",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
       "dependenciesToExclude": ["@types/*"],
       "patternsToInclude": [".dist/**", "package.json"]
     },
     {
-      "projectName": "domain-api-base",
+      "projectName": "@echo/lib-domain-api",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
       "dependenciesToExclude": ["@types/*"],
       "patternsToInclude": [".dist/**", "package.json"]
     },
     {
-      "projectName": "lib-common",
+      "projectName": "@echo/lib-common",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
       "dependenciesToExclude": ["@types/*"],

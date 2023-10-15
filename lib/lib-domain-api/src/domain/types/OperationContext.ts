@@ -1,4 +1,4 @@
-import { Serializable } from 'lib-common';
+import { Serializable } from '@echo/lib-common';
 import { Id } from './Id';
 
 export type Credentials = {

@@ -1,4 +1,4 @@
-import { Id } from 'domain-api-base';
+import { Id } from '@echo/lib-domain-api';
 import { EventType, PostArchivedData_V1, PostArchived_V1 } from './PostArchived_V1.event';
 
 export const buildPostArchivedV1 = (id: Id, data: PostArchivedData_V1): PostArchived_V1 => ({

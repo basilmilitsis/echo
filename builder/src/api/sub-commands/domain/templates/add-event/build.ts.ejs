@@ -1,4 +1,4 @@
-import { Id } from 'domain-api-base';
+import { Id } from '@echo/lib-domain-api';
 import { EventType, <%= eventDataTypeName %>, <%= eventTypeName %> } from './<%= eventFilename %>';
 
 export const <%= functionName %> = (id: Id, data: <%= eventDataTypeName %>): <%= eventTypeName %> => ({

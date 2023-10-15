@@ -1,4 +1,4 @@
-import { Command } from 'domain-api-base';
+import { Command } from '@echo/lib-domain-api';
 
 export interface CreatePost extends Command {
     text: string;
