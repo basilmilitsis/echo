@@ -5,6 +5,15 @@
       "path": "."
     },
     {
+      "name": "📚stack",
+      "path": "stack",
+    
+    },
+    {
+      "name": "🔨builder",
+      "path": "builder"
+    },
+    {
       "name": "🔗lib/lib-common",
       "path": "lib/lib-common"
     },
@@ -12,19 +21,12 @@
       "name": "🔗lib/lib-domain-api",
       "path": "lib/lib-domain-api"
     },
-    {
-      "name": "🔨builder",
-      "path": "builder"
-    },
+
     {
       "name": "⭕api/domain-api",
       "path": "api/domain-api"
     },
-    {
-      "name": "📚stack",
-      "path": "stack",
-    
-    },
+
   ],
   "settings": {
     "jest.disabledWorkspaceFolders": ["root", "📚stack"],
