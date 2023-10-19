@@ -13,7 +13,7 @@
         "build:generate:rest:schema": "node ../../builder/.dist/index.js api rest generate-schema",
         "build:generate:rest:api": "node ../../builder/.dist/index.js api rest generate-api",
         "build:generate": "pnpm build:generate:domain:code && pnpm build:generate:rest:schema && pnpm build:generate:rest:api",
-        "build:compile": "tsc && tsc-alias",
+        "build:compile": "tsc --project tsconfig.build.json && tsc-alias",
         "build:post": "cp src/_generated/rest.schema.generated.json .dist/_generated",
         "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile && pnpm build:post",
         "package:make": "rush deploy --target-folder .deploy --overwrite",

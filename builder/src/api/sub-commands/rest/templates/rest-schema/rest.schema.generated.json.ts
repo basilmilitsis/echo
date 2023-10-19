@@ -28,7 +28,7 @@ const buildAggregateCommandModels = (
             apiName: voca.camelCase(command.commandName),
             apiMethod: command.commandKind === 'create' ? 'post' : 'put',
             operationId: voca.camelCase(command.commandName),
-            input: operationToJsonString(voca.titleCase(command.commandName), commandPath, './tsconfig.json'),
+            input: operationToJsonString(voca.titleCase(command.commandName), commandPath, './tsconfig.build.json'),
         };
     });
 };

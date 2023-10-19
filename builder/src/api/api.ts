@@ -8,6 +8,7 @@ type RushFile = {
     projects: { packageName: string; projectFolder: string }[];
 };
 type DeployFile = {
+    deploymentProjectNames: string[];
     projectSettings: {
         projectName: string;
         additionalProjectsToInclude: string[];
@@ -50,7 +51,7 @@ api.command('create')
             .updateJsonFile('.code-workspace', (workspaceFile: CodeWorkspaceFile) => {
                 if (!workspaceFile.folders.find((x) => x.name === `🌐api/${apiName}`)) {
                     workspaceFile.folders.push({
-                        name: `🌐api/${apiName}`,
+                        name: `⭕api/${apiName}`,
                         path: `api/${apiName}`,
                     });
                 }
@@ -59,7 +60,7 @@ api.command('create')
             .updateJsonFile('rush.json', (rushFile: RushFile) => {
                 if (!rushFile.projects.find((x) => x.packageName === apiName)) {
                     rushFile.projects.push({
-                        packageName: apiName,
+                        packageName: `@echo/${apiName}`,
                         projectFolder: `api/${apiName}`,
                     });
                 }
@@ -69,9 +70,13 @@ api.command('create')
                 folder.ensureFolder('config', (folder) => {
                     folder.ensureFolder('rush', (folder) => {
                         folder.updateJsonFile('deploy.json', (deployFile: DeployFile) => {
+                            const fullApiName = `@echo/${apiName}`;
+                            if (!deployFile.deploymentProjectNames.includes(fullApiName)) {
+                                deployFile.deploymentProjectNames.push(fullApiName);
+                            }
                             if (!deployFile.projectSettings.find((x) => x.projectName === apiName)) {
                                 deployFile.projectSettings.push({
-                                    projectName: apiName,
+                                    projectName: fullApiName,
                                     additionalProjectsToInclude: [],
                                     additionalDependenciesToInclude: [],
                                     dependenciesToExclude: ['@types/*'],
@@ -124,8 +129,8 @@ api.command('create')
                     })
                     .createTemplateFile('tsconfig.json', `${__dirname}/templates/create/tsconfig.json.ejs`, {})
                     .createTemplateFile(
-                        'tsconfig.test.json',
-                        `${__dirname}/templates/create/tsconfig.test.json.ejs`,
+                        'tsconfig.build.json',
+                        `${__dirname}/templates/create/tsconfig.build.json.ejs`,
                         {}
                     )
                     .ensureFolder('.vscode', (folder) =>
