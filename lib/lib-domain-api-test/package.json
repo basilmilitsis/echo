@@ -1,0 +1,48 @@
+{
+    "name": "@echo/lib-domain-api-test",
+    "version": "1.0.0",
+    "description": "",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "main": ".dist/index.js",
+    "typings": ".dist/index.d.ts",
+    "scripts": {
+        "build:clean": "rm -rf .dist",
+        "build:generate": ":",
+        "build:compile": "tsc --project tsconfig.build.json && tsc-alias",
+        "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile",
+        "package": ":",
+        "test": "jest",
+        "dev:start": "node --inspect=0.0.0.0:9229 .",
+        "dev": "pnpm build && pnpm dev:start",
+        "start": "node ."
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.3",
+        "@types/luxon": "^3.3.0",
+        "@types/node": "^20.4.2",
+        "@types/uuid": "^9.0.2",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.45.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-jest": "^27.2.3",
+        "jest": "^29.6.1",
+        "prettier": "^3.0.0",
+        "ts-jest": "^29.1.1",
+        "typescript": "^5.1.6"
+    },
+    "dependencies": {
+        "@echo/lib-common": "workspace:^1.0.0",
+        "@echo/lib-domain-api": "workspace:^1.0.0",
+        "@eventstore/db-client": "^5.0.1",
+        "luxon": "^3.3.0",
+        "source-map-support": "^0.5.21",
+        "tsc-alias": "^1.8.7",
+        "uuid": "^9.0.0",
+        "winston": "~3.10.0",
+        "winston-logstash": "~1.2.1",
+        "@types/express": "~4.17.18"
+    }
+}

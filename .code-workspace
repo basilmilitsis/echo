@@ -21,7 +21,10 @@
       "name": "🔗lib/lib-domain-api",
       "path": "lib/lib-domain-api"
     },
-
+    {
+      "name": "🔗lib/lib-domain-api-test",
+      "path": "lib/lib-domain-api-test"
+    },
     {
       "name": "⭕api/domain-api",
       "path": "api/domain-api"

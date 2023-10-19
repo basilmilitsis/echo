@@ -22,6 +22,10 @@
       "projectFolder": "lib/lib-domain-api"
     },
     {
+      "packageName": "@echo/lib-domain-api-test",
+      "projectFolder": "lib/lib-domain-api-test"
+    },
+    {
       "packageName": "@echo/builder",
       "projectFolder": "builder"
     },

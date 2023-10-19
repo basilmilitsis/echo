@@ -44,6 +44,7 @@
     "dependencies": {
         "@echo/lib-common": "workspace:^1.0.0",
         "@echo/lib-domain-api": "workspace:^1.0.0",
+        "@echo/lib-domain-api-test": "workspace:^1.0.0",
         "@eventstore/db-client": "^5.0.1",
         "express": "^4.18.2",
         "luxon": "^3.3.0",

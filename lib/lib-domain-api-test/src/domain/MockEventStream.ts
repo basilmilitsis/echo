@@ -1,6 +1,5 @@
-import { DomainEvent, EventStream } from './types';
+import { DomainEvent, EventStream } from '@echo/lib-domain-api';
 
-// TODO: Move to test library
 export class MockEventStream implements EventStream {
     private events: DomainEvent<string>[] = [];
 
