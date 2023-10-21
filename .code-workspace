@@ -6,8 +6,7 @@
     },
     {
       "name": "📚stack",
-      "path": "stack",
-    
+      "path": "stack"
     },
     {
       "name": "🔨builder",
@@ -28,8 +27,7 @@
     {
       "name": "⭕api/domain-api",
       "path": "api/domain-api"
-    },
-
+    }
   ],
   "settings": {
     "jest.disabledWorkspaceFolders": ["root", "📚stack"],
