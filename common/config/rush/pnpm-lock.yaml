@@ -7,6 +7,7 @@ importers:
 
   ../../api/domain-api:
     specifiers:
+      '@echo/builder': workspace:^1.0.0
       '@echo/lib-common': workspace:^1.0.0
       '@echo/lib-domain-api': workspace:^1.0.0
       '@echo/lib-domain-api-test': workspace:^1.0.0
@@ -34,6 +35,7 @@ importers:
       uuid: ^9.0.0
       zod: ^3.22.2
     dependencies:
+      '@echo/builder': link:../../builder
       '@echo/lib-common': link:../../lib/lib-common
       '@echo/lib-domain-api': link:../../lib/lib-domain-api
       '@echo/lib-domain-api-test': link:../../lib/lib-domain-api-test

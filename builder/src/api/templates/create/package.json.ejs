@@ -9,9 +9,9 @@
     "typings": ".dist/index.d.ts",
     "scripts": {
         "build:clean": "rm -rf .dist && rm -rf ./src/_generated/*",
-        "build:generate:domain:code": "node ../../builder/.dist/index.js api domain generate",
-        "build:generate:rest:schema": "node ../../builder/.dist/index.js api rest generate-schema",
-        "build:generate:rest:api": "node ../../builder/.dist/index.js api rest generate-api",
+        "build:generate:domain:code": "pnpm exec builder api domain generate",
+        "build:generate:rest:schema": "pnpm exec builder api rest generate-schema",
+        "build:generate:rest:api": "pnpm exec builder api rest generate-api",
         "build:generate": "pnpm build:generate:domain:code && pnpm build:generate:rest:schema && pnpm build:generate:rest:api",
         "build:compile": "tsc && tsc-alias",
         "build:post": "cp src/_generated/rest.schema.generated.json .dist/_generated",
@@ -42,6 +42,7 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
+        "@echo/builder": "workspace:^1.0.0",
         "@echo/lib-common": "workspace:^1.0.0",
         "@echo/lib-domain-api": "workspace:^1.0.0",
         "@eventstore/db-client": "^5.0.1",
