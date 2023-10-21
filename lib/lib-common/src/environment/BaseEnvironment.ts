@@ -1,4 +1,4 @@
-import { LoadEnvironmentVariableError } from '../errors';
+import { LoadEnvironmentVariableError } from '@root/errors';
 
 export class BaseEnvironment {
 
