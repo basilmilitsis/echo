@@ -1,8 +1,8 @@
 import { DomainEvent } from '@echo/lib-domain-api';
-import { EventType } from './<%= eventFilename %>';
+import { EventType, <%=eventDataTypename%> } from './<%=eventFilename%>';
 
 export const <%= isFunctionName %> = (
     event: DomainEvent<string>
-): event is DomainEvent<string> => {
+): event is DomainEvent<string, <%=eventDataTypename%>> => {
     return event.type === EventType.<%= eventEnumFieldName %>;
 };
