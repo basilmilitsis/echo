@@ -4,25 +4,39 @@ builder api create domain-api-poster 4002
 cd api/domain-api-poster
 
 # ------------------------------------------------------------------------------------------------
-# User
+# UserProfile
 # ------------------------------------------------------------------------------------------------
 
-builder api domain add-aggregate        User
+builder api domain add-aggregate        UserProfile 
 
-# RegisterUser
-builder api domain add-create-command   User    registerUser
+# CreateUserProfile
+builder api domain add-create-command   UserProfile   createUserProfile
 # ---
-builder api domain add-index-rule       User    registerUser     userMustNotAlreadyExist
-builder api domain add-command-rule     User    registerUser     passwordMustBeStrong
+builder api domain add-index-rule       UserProfile   createUserProfile     userMustNotAlreadyExist
 # ---
-builder api domain add-event            User    registerUser     userRegistered
+builder api domain add-event            UserProfile   createUserProfile     userProfileCreated
 
-# ChangeUserName
-builder api domain add-update-command   User    changeUserName
+# ChangeUserProfileName
+builder api domain add-update-command   UserProfile   changeUserProfileName
 # ---
-builder api domain add-index-rule       User    changeUserName   userMustExist
+builder api domain add-index-rule       UserProfile   changeUserProfileName   userProfileMustExist
 # ---
-builder api domain add-event            User    changeUserName   userNameChanged
+builder api domain add-event            UserProfile   changeUserProfileName   userProfileNameChanged
+
+# SetUserProfilePicture
+builder api domain add-update-command   UserProfile   setUserProfilePicture
+# ---
+builder api domain add-index-rule       UserProfile   setUserProfilePicture   userProfileMustExist
+# ---
+builder api domain add-event            UserProfile   setUserProfilePicture   userProfilPictureSet
+
+# SetUserProfileLocation
+builder api domain add-update-command   UserProfile   setUserProfileLocation
+# ---
+builder api domain add-index-rule       UserProfile   setUserProfileLocation   userProfileMustExist
+# ---
+builder api domain add-event            UserProfile   setUserProfileLocation   userProfileLocationSet
+
 
 # ------------------------------------------------------------------------------------------------
 # Post

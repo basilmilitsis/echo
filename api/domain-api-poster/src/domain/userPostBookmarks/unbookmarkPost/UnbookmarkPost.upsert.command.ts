@@ -1,4 +1,5 @@
-import { Command } from '@echo/lib-domain-api';
+import { Command, Id } from '@echo/lib-domain-api';
 
 export interface UnbookmarkPost extends Command {
+    postId: Id;
 }

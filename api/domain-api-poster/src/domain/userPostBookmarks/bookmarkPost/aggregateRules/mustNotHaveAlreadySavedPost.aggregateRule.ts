@@ -3,5 +3,6 @@ import { UserPostBookmarks } from "@root/domain/userPostBookmarks/UserPostBookma
 import { BookmarkPost } from "@root/domain/userPostBookmarks/bookmarkPost/BookmarkPost.upsert.command";
 
 export const mustNotHaveAlreadySavedPost: CommandAggregateRule<BookmarkPost, UserPostBookmarks> = (command: BookmarkPost, aggregate: UserPostBookmarks): string[] => {
+    // TODO
     return [];
 } 

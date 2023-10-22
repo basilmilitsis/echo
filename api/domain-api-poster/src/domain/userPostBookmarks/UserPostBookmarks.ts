@@ -1,5 +1,5 @@
 import { Aggregate, Id } from '@echo/lib-domain-api';
 
 export interface UserPostBookmarks extends Aggregate {
-    postsSaved: Id[];
+    savedPosts: Id[];
 }
