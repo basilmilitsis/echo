@@ -35,15 +35,16 @@ export const buildModel_restApi = (domainRootPath: string): RestApiModel => {
         );
 
         commands.forEach((command) => {
+            const commandKind = determineCommandKind(
+                BuilderEnvironment.pwd,
+                aggregate,
+                command
+            );
             commandImports.push({
                 aggregateFolder: voca.camelCase(aggregate),
                 commandType: voca.titleCase(command),
                 commandFolder: voca.camelCase(command),
-                commandFile: `${voca.titleCase(command)}.${determineCommandKind(
-                    BuilderEnvironment.pwd,
-                    aggregate,
-                    command
-                )}.command`,
+                commandFile: `${voca.titleCase(command)}.${commandKind}.command`,
             });
             operationHandlers.push({
                 operationId: `${voca.camelCase(command)}`,

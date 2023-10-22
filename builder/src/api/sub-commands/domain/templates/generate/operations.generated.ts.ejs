@@ -2,6 +2,7 @@ import {
     EvolverSetsForAggregate,
     handleCreateCommand,
     handleUpdateCommand,
+    handleUpsertCommand,
     CommandContext,
     DomainEvent,
 } from '@echo/lib-domain-api';
@@ -40,6 +41,17 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
             {
                 eventName: '<%= event.eventType %>',
                 evolver: (state: <%= aggregateTypeName %>, event: DomainEvent<string>) => {
+                    if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
+                    return <%= event.evolveFunction %>(state, event)
+                },
+            },
+            <% }) %>
+        ],
+        upsertEventEvolverSets: [
+            <% events.filter(e => e.eventKind === 'upsert').forEach(function (event) { %>
+            {
+                eventName: '<%= event.eventType %>',
+                evolver: (state: <%= aggregateTypeName %> | undefined, event: DomainEvent<string>) => {
                     if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
                     return <%= event.evolveFunction %>(state, event)
                 },
@@ -94,6 +106,26 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
     <% if (command.commandKind === 'update') { %>  
         export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => 
             handleUpdateCommand(
+                '<%= aggregateTypeName %>', 
+                command, 
+                commandEventEvolvers, 
+                <%= command.handleFunctionName %>, 
+                <% if (command.validator) { %>  
+                    <%= command.validator.functionName %>
+                <% } else { %>  
+                    undefined
+                <% } %>,
+                [ <%= command.commandRuleFunctionNames %> ],
+                [ <%= command.commandIndexRuleFunctionNames %> ],
+                [ <%= command.commandAggregateRuleFunctionNames %> ],
+                context.eventStream,
+                context.generateUuid,
+                context.logger
+            );
+    <% } %>
+    <% if (command.commandKind === 'upsert') { %>  
+        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => 
+            handleUpsertCommand(
                 '<%= aggregateTypeName %>', 
                 command, 
                 commandEventEvolvers, 

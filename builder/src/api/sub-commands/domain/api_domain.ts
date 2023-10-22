@@ -16,6 +16,8 @@ import { buildModel_validate } from './templates/add-command/validate';
 import { buildModel_handleUpdate } from './templates/add-command/handle-update';
 import { buildModel_handleCreate } from './templates/add-command/handle-create';
 import { buildModel_command } from './templates/add-command/command';
+import { buildModel_handleUpsert } from './templates/add-command/handle-upsert';
+import { buildModel_evolveUpsertEvent } from './templates/add-event/evolve-upsert';
 
 export const api_domain = new commander.Command('domain');
 
@@ -129,6 +131,51 @@ api_domain
     });
 
 api_domain
+    .command('add-upsert-command')
+    .argument('aggregateName')
+    .argument('commandName')
+    .action((aggregateName, commandName) => {
+        PathRules.ensureCurrentlyInProjectRoot();
+
+        new Writer(BuilderEnvironment.pwd)
+            .title('Adding upsert command')
+            .existingFolder('src', (folder) => {
+                folder.existingFolder('domain', (folder) => {
+                    folder.existingFolder(voca.camelCase(aggregateName), (folder) => {
+                        folder.createFolder(voca.camelCase(commandName), (folder) => {
+                            folder
+                                .createTemplateFile(
+                                    `${voca.titleCase(commandName)}.upsert.command.ts`,
+                                    `${__dirname}/templates/add-command/command.ts.ejs`,
+                                    buildModel_command(commandName)
+                                )
+                                .createTemplateFile(
+                                    `${voca.titleCase(commandName)}.handle.ts`,
+                                    `${__dirname}/templates/add-command/handle-upsert.ts.ejs`,
+                                    buildModel_handleUpsert(commandName, aggregateName)
+                                )
+                                .createTemplateFile(
+                                    `${voca.titleCase(commandName)}.validate.ts`,
+                                    `${__dirname}/templates/add-command/validate.ts.ejs`,
+                                    buildModel_validate(commandName, 'upsert')
+                                )
+                                .ensureFolder('commandRules', (folder) => {
+                                    folder.createStringFile('.gitkeep', '');
+                                })
+                                .ensureFolder('indexRules', (folder) => {
+                                    folder.createStringFile('.gitkeep', '');
+                                })
+                                .ensureFolder('aggregateRules', (folder) => {
+                                    folder.createStringFile('.gitkeep', '');
+                                });
+                        });
+                    });
+                });
+            })
+            .close();
+    });
+
+api_domain
     .command('add-event')
     .argument('aggregateName')
     .argument('commandName')
@@ -160,7 +207,9 @@ api_domain
                                     `${__dirname}/templates/add-event/evolve-${commandKind}.ts.ejs`,
                                     commandKind === 'create'
                                         ? buildModel_evolveCreateEvent(aggregateName, eventName)
-                                        : buildModel_evolveUpdateEvent(aggregateName, eventName)
+                                        : commandKind === 'update'
+                                        ? buildModel_evolveUpdateEvent(aggregateName, eventName)
+                                        : buildModel_evolveUpsertEvent(aggregateName, eventName)
                                 )
                                 .createTemplateFile(
                                     `${voca.titleCase(eventName)}_V1.is.ts`,

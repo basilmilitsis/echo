@@ -1,7 +1,7 @@
-import { CommandEvent, CreateHandler } from '@echo/lib-domain-api';
+import { CommandEvent, HandleCreateCommand } from '@echo/lib-domain-api';
 import { <%= commandTypeName %> } from './<%= commandFileName %>';
 
-export const <%= functionName %>: CreateHandler<<%= commandTypeName %>> = (
+export const <%= functionName %>: HandleCreateCommand<<%= commandTypeName %>> = (
     command: <%= commandTypeName %>
 ): CommandEvent[] => {
     return [];

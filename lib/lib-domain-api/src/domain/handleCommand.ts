@@ -15,14 +15,15 @@ import {
     CommandEvent,
     CommandIndexRule,
     CommandRule,
-    CreateHandler,
+    HandleCreateCommand,
     DomainEvent,
     EventStream,
-    UpdateHandler,
-    Validator,
+    HandleUpdateCommand,
+    ValidateCommand,
+    HandleUpsertCommand,
 } from './types';
 
-const doValdiation = <C extends Command>(command: C, validator: Validator<C>): void => {
+const doValdiation = <C extends Command>(command: C, validator: ValidateCommand<C>): void => {
     console.log('======> running validator...');
     const validationErrors = validator(command);
     if (validationErrors.length > 0) {
@@ -77,6 +78,23 @@ const loadAggregate = async <C extends Command, A extends Aggregate>(
     return aggregate;
 };
 
+const tryLoadAggregate = async <C extends Command, A extends Aggregate>(
+    command: C,
+    aggregateName: string,
+    eventStream: EventStream,
+    evolvers: EvolverSetsForAggregate<A>[]
+): Promise<A | undefined> => {
+    const aggregateEvents = await eventStream.findEvents(aggregateName, command.id);
+    console.log('======> found events: ', JSON.stringify(aggregateEvents, null, 4));
+    if(!aggregateEvents || aggregateEvents.length === 0) {
+        return undefined;
+    }
+    const aggregate: A = evolve(aggregateName, aggregateEvents, evolvers);
+    console.log('======> aggregate ', JSON.stringify(aggregate, null, 4));
+    return aggregate;
+};
+
+
 const doCommandAggregateRules = <C extends Command, A extends Aggregate>(
     command: C,
     aggregate: A,
@@ -122,8 +140,8 @@ const raiseEvents = async <C extends Command, A extends Aggregate>(
 export const handleCreateCommand = async <C extends Command, A extends Aggregate>(
     aggregateName: string,
     command: C,
-    handle: CreateHandler<C>,
-    validator: Validator<C>,
+    handle: HandleCreateCommand<C>,
+    validator: ValidateCommand<C>,
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
     eventStream: EventStream,
@@ -154,8 +172,8 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
     aggregateName: string,
     command: C,
     evolvers: EvolverSetsForAggregate<A>[],
-    handle: UpdateHandler<C, A>,
-    validator: Validator<C>,
+    handle: HandleUpdateCommand<C, A>,
+    validator: ValidateCommand<C>,
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
     commandAggregateRules: CommandAggregateRule<C, A>[] | undefined,
@@ -182,6 +200,46 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
 
     //-- command aggregate rules
     doCommandAggregateRules(command, aggregate, commandAggregateRules);
+
+    //-- handle command
+    const commandEvents = handle(command, aggregate);
+
+    //-- raise events
+    await raiseEvents(command, aggregateName, commandEvents, eventStream, generateUuid);
+
+    console.log('========================================================================');
+};
+
+export const handleUpsertCommand = async <C extends Command, A extends Aggregate>(
+    aggregateName: string,
+    command: C,
+    evolvers: EvolverSetsForAggregate<A>[],
+    handle: HandleUpsertCommand<C, A>,
+    validator: ValidateCommand<C>,
+    commandRules: CommandRule<C>[] | undefined,
+    commandIndexRules: CommandIndexRule<C>[] | undefined,
+    commandAggregateRules: CommandAggregateRule<C, A>[] | undefined,
+    eventStream: EventStream,
+    generateUuid: () => string,
+    logger: Logger
+) => {
+    console.log('========================================================================');
+
+    //-- validator
+    doValdiation(command, validator);
+
+    //-- command rules
+    doCommandRules(command, commandRules);
+
+    //-- command index rules
+    await doCommandIndexRules(command, commandIndexRules, eventStream);
+
+    //-- load aggregate
+    const aggregate: A | undefined = await tryLoadAggregate(command, aggregateName, eventStream, evolvers);
+    if (aggregate) {
+        //-- command aggregate rules
+        doCommandAggregateRules(command, aggregate, commandAggregateRules);
+    }
 
     //-- handle command
     const commandEvents = handle(command, aggregate);

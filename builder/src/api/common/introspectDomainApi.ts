@@ -50,7 +50,7 @@ export type AggregateInfo = {
 const instrospectCommand = (domainRootPath: string, aggregateName: string, commandName: string): CommandInfo => {
     const commandKind = determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName);
     let commandAggregateRules: FileInfo[] = [];
-    if (commandKind === 'update') {
+    if (commandKind === 'update' || 'upsert') {
         // only update commands can have aggregate rules
         commandAggregateRules =
             listFilesIn(

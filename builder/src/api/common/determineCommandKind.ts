@@ -4,7 +4,6 @@ import { CommandKind } from './CommandKind';
 
 export const determineCommandKind = (absDomainRootPath: string, aggregate: string, command: string): CommandKind => {
     const isupdateCommand = fs.existsSync(PathTo.updateCommandFile(absDomainRootPath, aggregate, command));
-
     if (isupdateCommand) {
         return 'update';
     }
@@ -14,5 +13,10 @@ export const determineCommandKind = (absDomainRootPath: string, aggregate: strin
         return 'create';
     }
 
-    throw new Error(`Unknown command type for command: ${command}`);
+    const isUpsertCommand = fs.existsSync(PathTo.upsertCommandFile(absDomainRootPath, aggregate, command));
+    if (isUpsertCommand) {
+        return 'upsert';
+    }
+
+    throw new Error(`Invalid command type for command: ${command}`);
 };

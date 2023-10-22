@@ -1,6 +1,6 @@
-import { Validator } from "@echo/lib-domain-api";
+import { ValidateCommand } from "@echo/lib-domain-api";
 import { <%=commandTypeName%> } from './<%=commandFileName%>';
 
-export const <%=functionName%>: Validator<<%=commandTypeName%>> = (command: <%=commandTypeName%>): string[] => {
+export const <%=functionName%>: ValidateCommand<<%=commandTypeName%>> = (command: <%=commandTypeName%>): string[] => {
     return [];
 } 

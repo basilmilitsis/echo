@@ -15,6 +15,8 @@ export class PathTo {
         path.join(PathTo.commandFolder(pwd, aggregate, command), `${voca.titleCase(command)}.create.command.ts`);
     static updateCommandFile = (pwd: string, aggregate: string, command: string): string =>
         path.join(PathTo.commandFolder(pwd, aggregate, command), `${voca.titleCase(command)}.update.command.ts`);
+    static upsertCommandFile = (pwd: string, aggregate: string, command: string): string =>
+        path.join(PathTo.commandFolder(pwd, aggregate, command), `${voca.titleCase(command)}.upsert.command.ts`);
 
     static commandRulesFolder = (pwd: string, aggregate: string, command: string): string =>
         path.join(PathTo.commandFolder(pwd, aggregate, command), 'commandRules');

@@ -1,10 +1,10 @@
-import { CommandEvent, UpdateHandler } from '@echo/lib-domain-api';
+import { CommandEvent, HandleUpdateCommand } from '@echo/lib-domain-api';
 import { <%= commandTypeName %> } from './<%= commandFileName %>';
 import { <%= aggregateTypeName %> } from '../<%= aggregateFileName %>';
 
-export const <%= functionName %>: UpdateHandler<<%= commandTypeName %>, <%= aggregateTypeName %>> = (
+export const <%= functionName %>: HandleUpdateCommand<<%= commandTypeName %>, <%= aggregateTypeName %>> = (
     command: <%= commandTypeName %>,
-    aggregate: <%= aggregateTypeName %> | undefined
+    aggregate: <%= aggregateTypeName %>
 ): CommandEvent[] => {
     return [];
 };

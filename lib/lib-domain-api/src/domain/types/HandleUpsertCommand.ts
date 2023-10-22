@@ -2,7 +2,7 @@ import { Aggregate } from './Aggregate';
 import { Command } from './Command';
 import { CommandEvent } from './CommandEvent';
 
-export type UpdateHandler<C extends Command, A extends Aggregate> = (
+export type HandleUpsertCommand<C extends Command, A extends Aggregate> = (
     command: C,
-    aggregate: A
+    aggregate: A | undefined
 ) => CommandEvent[];

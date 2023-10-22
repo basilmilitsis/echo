@@ -1,1 +1,1 @@
-export type CommandKind = 'create' | 'update';
+export type CommandKind = 'create' | 'update' | 'upsert';

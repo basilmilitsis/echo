@@ -1,5 +1,5 @@
 import * as voca from 'voca';
-import { AggregateInfo, CommandInfo } from '@root/api/common';
+import { AggregateInfo, CommandInfo, PathTo } from '@root/api/common';
 import { operationToJsonString } from './operationToJsonString';
 
 type OperationModel = {
@@ -18,17 +18,24 @@ const buildAggregateCommandModels = (
     commands: CommandInfo[]
 ): OperationModel[] => {
     return commands.map((command) => {
-        const commandPath = '';
-        // TODO: is this needed?
-        // const commandPath =
-        //     command.commandKind === 'create'
-        //         ? PathTo.createCommandFile('??', aggregateName, command.commandName)
-        //         : PathTo.updateCommandFile('??', aggregateName, command.commandName); // TODO: refactor
+        const commandPath =
+            command.commandKind === 'create'
+                ? PathTo.createCommandFile(domainRootPath, aggregateName, command.commandName)
+                : command.commandKind === 'update'
+                ? PathTo.updateCommandFile(domainRootPath, aggregateName, command.commandName)
+                : PathTo.upsertCommandFile(domainRootPath, aggregateName, command.commandName);
+
+        const commandSchemaAsString = operationToJsonString(
+            voca.titleCase(command.commandName),
+            commandPath,
+            './tsconfig.build.json'
+        );
+        const commandSchemaAsJson = JSON.parse(commandSchemaAsString);
         return {
             apiName: voca.camelCase(command.commandName),
             apiMethod: command.commandKind === 'create' ? 'post' : 'put',
             operationId: voca.camelCase(command.commandName),
-            input: operationToJsonString(voca.titleCase(command.commandName), commandPath, './tsconfig.build.json'),
+            input: JSON.stringify(commandSchemaAsJson[voca.titleCase(command.commandName)]),
         };
     });
 };
@@ -41,6 +48,7 @@ export const buildModel_restSchema = (domainRootPath: string, aggregates: Aggreg
             buildAggregateCommandModels(domainRootPath, aggregate.aggregateTypeName, aggregate.commands)
         );
     });
+
     return {
         operations: operationModels.map((com) => ({
             apiName: com.apiName,

@@ -1,0 +1,10 @@
+import { CommandEvent, HandleUpsertCommand } from '@echo/lib-domain-api';
+import { <%= commandTypeName %> } from './<%= commandFileName %>';
+import { <%= aggregateTypeName %> } from '../<%= aggregateFileName %>';
+
+export const <%= functionName %>: HandleUpsertCommand<<%= commandTypeName %>, <%= aggregateTypeName %>> = (
+    command: <%= commandTypeName %>,
+    aggregate: <%= aggregateTypeName %> | undefined
+): CommandEvent[] => {
+    return [];
+};
