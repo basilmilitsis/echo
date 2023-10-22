@@ -11,8 +11,9 @@
         "build:clean": "rm -rf .dist && rm -rf ./src/_generated/*",
         "build:generate:domain:code": "pnpm exec builder api domain generate",
         "build:generate:rest:schema": "pnpm exec builder api rest generate-schema",
+        "build:generate:rest:schema:validate": "pnpm exec swagger-cli validate ./src/_generated/rest.schema.generated.json",
         "build:generate:rest:api": "pnpm exec builder api rest generate-api",
-        "build:generate": "pnpm build:generate:domain:code && pnpm build:generate:rest:schema && pnpm build:generate:rest:api",
+        "build:generate": "pnpm build:generate:domain:code && pnpm build:generate:rest:schema && pnpm build:generate:rest:schema:validate && pnpm build:generate:rest:api",
         "build:compile": "tsc && tsc-alias",
         "build:post": "cp src/_generated/rest.schema.generated.json .dist/_generated",
         "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile && pnpm build:post",
@@ -53,6 +54,7 @@
         "tsc-alias": "^1.8.7",
         "uuid": "^9.0.0",
         "zod": "^3.22.2",
-        "dotenv": "~16.3.1"
+        "dotenv": "~16.3.1",
+        "swagger-cli": "~4.0.4"
     }
 }
