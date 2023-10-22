@@ -30,8 +30,8 @@ import { <%=command.commandType%> } from '@root/domain/<%=command.aggregateFolde
 
 //---------------------------
 
-const eventStream: EventStream = new DefaultEventStream();
 const baseLogger = new BaseLogger();
+const eventStream: EventStream = new DefaultEventStream(baseLogger);
 
 //---------------------------
 

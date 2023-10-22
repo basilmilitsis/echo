@@ -1,11 +1,19 @@
-import { EventStoreDBClient, JSONEventType, FORWARDS, START, StreamNotFoundError, jsonEvent } from "@eventstore/db-client";
-import { CommandEventData, DomainEvent, EventStream } from "./types";
-import { ApiRestEnvironment } from "@root/api-rest";
+import {
+    EventStoreDBClient,
+    JSONEventType,
+    FORWARDS,
+    START,
+    StreamNotFoundError,
+    jsonEvent,
+} from '@eventstore/db-client';
+import { BaseLogger, Logger } from '@echo/lib-common';
+import { CommandEventData, DomainEvent, EventStream } from './types';
+import { ApiRestEnvironment } from '@root/api-rest';
 
 export class DefaultEventStream implements EventStream {
     private client: EventStoreDBClient;
-    constructor() {
-        console.log('........ connecting.....');
+    constructor(initLogger: BaseLogger) {
+        initLogger.localDiagnostic('DefaultEventStream: connecting...');
         this.client = new EventStoreDBClient(
             {
                 endpoint: `${ApiRestEnvironment.apiRest_eventstoreDB_host}:${ApiRestEnvironment.apiRest_eventstoreDB_port}`,
@@ -14,14 +22,10 @@ export class DefaultEventStream implements EventStream {
                 insecure: true,
             }
         );
-        console.log('........ CONNECTED!!!.....');
+        initLogger.localDiagnostic('DefaultEventStream: CONNECTED!');
     }
 
-    async findEvents(
-        streamName: string,
-        aggregateId: string
-    ): Promise<DomainEvent<string>[]> {
-        console.log('====> reading events...');
+    async findEvents(streamName: string, aggregateId: string): Promise<DomainEvent<string>[]> {
         const stream = this.client.readStream<JSONEventType>(
             `${streamName}-${aggregateId}`,
             {
@@ -31,12 +35,10 @@ export class DefaultEventStream implements EventStream {
             },
             {}
         );
-        console.log('====> reading events... have stream');
         const events: DomainEvent<string>[] = [];
 
         try {
             for await (const resolvedEvent of stream) {
-                console.log('====> reading events... adding event');
                 if (!resolvedEvent.event) {
                     throw new Error('No event found');
                 }
@@ -47,25 +49,16 @@ export class DefaultEventStream implements EventStream {
                     data: resolvedEvent.event?.data as unknown as CommandEventData,
                     meta: {}, // TODO resolvedEvent.event.metadata
                 });
-                //console.log(resolvedEvent.event?.data);
             }
         } catch (error) {
             if (error instanceof StreamNotFoundError) {
-                console.log('====> reading events... empty stream');
                 return [];
             }
-            console.log('====> reading events... ', JSON.stringify(error, null, 4));
             throw error;
         }
-        console.log('====> reading events... done');
         return events;
     }
-    async addEvents(
-        streamName: string,
-        aggregateId: string,
-        events: DomainEvent<string>[]
-    ): Promise<void> {
-        console.log('====> adding events');
+    async addEvents(streamName: string, aggregateId: string, events: DomainEvent<string>[]): Promise<void> {
         await this.client.appendToStream(
             `${streamName}-${aggregateId}`,
             events.map((x) =>
