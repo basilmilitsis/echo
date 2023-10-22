@@ -1,0 +1,7 @@
+service         | link                   |description
+--------------- | ---------------------- |-------------------
+logstash        | http://localhost:5000  |logstash
+logsearch       | http://localhost:9200  |elasticsearch
+logview         | http://localhost:5601  |kibana
+eventstoreDB    | http://localhost:2113  |eventstoreDB
+domain-api      | http://localhost:4001  |domain api
