@@ -1,0 +1,89 @@
+@postId = 1234
+
+###
+
+POST http://localhost:4001/createPost
+content-type: application/json
+
+{
+    "id": "{{postId}}",
+    "text": "text...",
+    "images": []
+}
+
+
+###
+
+PUT http://localhost:4001/publishPost
+content-type: application/json
+
+{
+    "id": "{{postId}}"
+}
+
+###
+
+PUT http://localhost:4001/changeTitleOfPost
+content-type: application/json
+
+{
+    "id": "{{postId}}",
+    "title": "new title"
+}
+
+###
+
+PUT http://localhost:4001/archivePost
+content-type: application/json
+
+{
+    "id": "{{postId}}"
+}
+
+
+###
+
+@userId = abcd
+
+###
+
+PUT http://localhost:4001/userLikesPost
+content-type: application/json
+
+{
+    "id": "{{postId}}",
+    "userId": "{{userId}}"
+}
+
+### 
+
+PUT http://localhost:4001/userUnlikesPost
+content-type: application/json
+
+{
+    "id": "{{postId}}",
+    "userId": "{{userId}}"
+}
+
+###
+###
+
+
+PUT http://localhost:4001/userSavesPost
+content-type: application/json
+
+{
+    "id": "{{userId}}",
+    "postId": "{{postId}}"
+}
+
+
+###
+
+PUT http://localhost:4001/userUnsavesPost
+content-type: application/json
+
+{
+    "id": "{{userId}}",
+    "postId": "{{postId}}"
+}

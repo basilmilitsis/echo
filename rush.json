@@ -32,6 +32,10 @@
     {
       "packageName": "@echo/domain-api",
       "projectFolder": "api/domain-api"
+    },
+    {
+      "packageName": "@echo/domain-api-poster",
+      "projectFolder": "api/domain-api-poster"
     }
   ]
 }

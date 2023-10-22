@@ -12,6 +12,6 @@ export const buildModel_event = (eventName: string): EventModel => ({
     eventDataTypeName: `${voca.titleCase(eventName)}Data_V1`,
     eventTypeName: `${voca.titleCase(eventName)}_V1`,
     eventEnumFieldName: `${voca.titleCase(eventName)}_V1`,
-    buildFunctionName: `build${voca.titleCase(eventName)}V1`,
+    buildFunctionName: `build${voca.titleCase(eventName)}_V1`,
     isFunctionName: `is${voca.titleCase(eventName)}_V1`,
 });

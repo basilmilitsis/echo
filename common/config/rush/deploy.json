@@ -1,27 +1,57 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/deploy-scenario.schema.json",
-  "deploymentProjectNames": ["@echo/domain-api"],
+  "deploymentProjectNames": [
+    "@echo/domain-api",
+    "@echo/domain-api-poster"
+  ],
   "projectSettings": [
     {
       "projectName": "@echo/domain-api",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
-      "dependenciesToExclude": ["@types/*"],
-      "patternsToInclude": [".dist/**", "package.json"]
+      "dependenciesToExclude": [
+        "@types/*"
+      ],
+      "patternsToInclude": [
+        ".dist/**",
+        "package.json"
+      ]
     },
     {
       "projectName": "@echo/lib-domain-api",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
-      "dependenciesToExclude": ["@types/*"],
-      "patternsToInclude": [".dist/**", "package.json"]
+      "dependenciesToExclude": [
+        "@types/*"
+      ],
+      "patternsToInclude": [
+        ".dist/**",
+        "package.json"
+      ]
     },
     {
       "projectName": "@echo/lib-common",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
-      "dependenciesToExclude": ["@types/*"],
-      "patternsToInclude": [".dist/**", "package.json"]
+      "dependenciesToExclude": [
+        "@types/*"
+      ],
+      "patternsToInclude": [
+        ".dist/**",
+        "package.json"
+      ]
+    },
+    {
+      "projectName": "@echo/domain-api-poster",
+      "additionalProjectsToInclude": [],
+      "additionalDependenciesToInclude": [],
+      "dependenciesToExclude": [
+        "@types/*"
+      ],
+      "patternsToInclude": [
+        ".dist/**",
+        "package.json"
+      ]
     }
   ]
 }

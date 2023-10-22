@@ -35,17 +35,18 @@ builder api domain add-create-command   Post    createPost
 # ---
 builder api domain add-index-rule       Post    createPost      postMustNotAlreadyExist
 builder api domain add-index-rule       Post    createPost      userMustExist
+builder api domain add-command-rule     Post    createPost      maximumOfTenImages
 # ---
 builder api domain add-event            Post    createPost      postCreated
 
-# ChangePostTitle
-builder api domain add-update-command   Post    changePostTitle
+# ChangePostText
+builder api domain add-update-command   Post    changePostText
 # ---
-builder api domain add-index-rule       Post    changePostTitle     postMustExist
-builder api domain add-aggregate-rule   Post    changePostTitle     postMustBeOwnedByUser
-builder api domain add-aggregate-rule   Post    changePostTitle     postMustNotBeArchived
+builder api domain add-index-rule       Post    changePostText     postMustExist
+builder api domain add-aggregate-rule   Post    changePostText     postMustBeOwnedByUser
+builder api domain add-aggregate-rule   Post    changePostText     postMustNotBeArchived
 # ---
-builder api domain add-event            Post    changePostTitle     postTitleChanged
+builder api domain add-event            Post    changePostText     postTitleChanged
 
 # PublishPost
 builder api domain add-update-command   Post    publishPost

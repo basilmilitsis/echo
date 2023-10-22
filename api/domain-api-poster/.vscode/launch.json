@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "local:launch",
+            "type": "node",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/.dist/index.js"
+        },
+        {
+            "name": "docker:attach",
+            "type": "node",
+            "restart": true,
+            "request": "attach",
+            "port": 4502,
+            "address": "localhost",
+            "remoteRoot": "/app/api/domain-api-poster",
+            "localRoot": "${workspaceFolder}",
+            "skipFiles": [
+                "<node_internals>/**",
+                "node_modules/**"
+            ]
+        }
+    ]
+}
