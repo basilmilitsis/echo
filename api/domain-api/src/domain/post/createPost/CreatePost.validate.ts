@@ -1,7 +1,7 @@
-import { Validator } from "@echo/lib-domain-api";
+import { ValidateCommand } from "@echo/lib-domain-api";
 import { CreatePost } from "./CreatePost.create.command";
 
-export const validateCreatePost: Validator<CreatePost> = (command: CreatePost): string[] => {
+export const validateCreatePost: ValidateCommand<CreatePost> = (command: CreatePost): string[] => {
     if(command.text === '') {
         return ['Text not supplied']
     }

@@ -1,9 +1,9 @@
-import { CommandEvent, UpdateHandler } from '@echo/lib-domain-api';
+import { CommandEvent, HandleUpdateCommand } from '@echo/lib-domain-api';
 import { PublishPost } from './PublishPost.update.command';
 import { Post } from '../Post';
 import { buildPostPublishedV1 } from './PostPublished_V1.build';
 
-export const handlePublishPost: UpdateHandler<PublishPost, Post> = 
+export const handlePublishPost: HandleUpdateCommand<PublishPost, Post> = 
 (
     command: PublishPost,
     aggregate: Post
