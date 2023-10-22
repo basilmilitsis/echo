@@ -1,13 +1,25 @@
-import { CommandEvent, CommandEventData } from '@echo/lib-domain-api';
+import { Id, DomainEvent, CommandEvent, CommandEventData } from '@echo/lib-domain-api';
 
 export enum EventType {
-    <%= eventEnumFieldName %> = '<%= eventEnumFieldName %>',
+    <%=eventEnumFieldName%> = '<%=eventEnumFieldName%>',
 }
 
-export interface <%= eventDataTypeName %> extends CommandEventData {
+export interface <%=eventDataTypeName%> extends CommandEventData {
 }
 
-export interface <%= eventTypeName %> extends CommandEvent {
+export interface <%=eventTypeName%> extends CommandEvent {
     type: EventType.<%= eventEnumFieldName %>;
-    data: <%= eventDataTypeName %>;
+    data: <%=eventDataTypeName%>;
 }
+
+export const <%=buildFunctionName%> = (id: Id, data: <%=eventDataTypeName%>): <%=eventTypeName%> => ({
+    id: id,
+    type: EventType.<%=eventEnumFieldName%>,
+    data: data,
+});
+
+export const <%=isFunctionName%> = (
+    event: DomainEvent<string>
+): event is DomainEvent<string, <%=eventDataTypeName%>> => {
+    return event.type === EventType.<%= eventEnumFieldName %>;
+};

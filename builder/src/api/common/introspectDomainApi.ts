@@ -24,7 +24,6 @@ export type EventStructure = {
     eventKind: CommandKind;
     evolveFunction: string;
     evolveFilename: string;
-    isFileName: string;
     isFunctionName: string;
 };
 export type CommandInfo = {
@@ -97,12 +96,11 @@ const instrospectCommand = (domainRootPath: string, aggregateName: string, comma
                     const eventName = fileName.replace('.event.ts', '');
                     return {
                         eventType: `${eventName}`,
-                        eventFileName: fileName,
+                        eventFileName: fileName.replace('.ts', ''),
                         commandFolder: voca.camelCase(commandName),
                         eventKind: commandKind,
                         evolveFunction: `evolve${eventName}`,
                         evolveFilename: `${eventName}.evolve`,
-                        isFileName: `${eventName}.is`,
                         isFunctionName: `is${eventName}`,
                     };
                 }

@@ -2,9 +2,7 @@ import commander from 'commander';
 import * as voca from 'voca';
 import { BuilderEnvironment, PathRules, Writer, listFoldersIn } from '@root/common';
 import { PathTo, determineCommandKind, introspectAggregate } from '@root/api/common';
-import { buildModel_eventBuild } from './templates/add-event/build';
 import { buildModel_event } from './templates/add-event/event';
-import { buildModel_eventIs } from './templates/add-event/is';
 import { buildModel_evolveCreateEvent } from './templates/add-event/evolve-create';
 import { buildModel_evolveUpdateEvent } from './templates/add-event/evolve-update';
 import { buildModel_operations } from './templates/generate/operations.generated';
@@ -193,11 +191,6 @@ api_domain
                         folder.existingFolder(voca.camelCase(commandName), (folder) => {
                             folder
                                 .createTemplateFile(
-                                    `${voca.titleCase(eventName)}_V1.build.ts`,
-                                    `${__dirname}/templates/add-event/build.ts.ejs`,
-                                    buildModel_eventBuild(eventName)
-                                )
-                                .createTemplateFile(
                                     `${voca.titleCase(eventName)}_V1.event.ts`,
                                     `${__dirname}/templates/add-event/event.ts.ejs`,
                                     buildModel_event(eventName)
@@ -211,11 +204,6 @@ api_domain
                                         ? buildModel_evolveUpdateEvent(aggregateName, eventName)
                                         : buildModel_evolveUpsertEvent(aggregateName, eventName)
                                 )
-                                .createTemplateFile(
-                                    `${voca.titleCase(eventName)}_V1.is.ts`,
-                                    `${__dirname}/templates/add-event/is.ts.ejs`,
-                                    buildModel_eventIs(eventName)
-                                );
                         });
                     });
                 });

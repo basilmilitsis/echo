@@ -19,7 +19,7 @@ import { <%= aggregateTypeName %> } from '@root/domain/<%=aggregateFolder%>/<%= 
 
 <% events.forEach(function (event) { %>
 import { <%= event.evolveFunction %> } from "@root/domain/<%=aggregateFolder%>/<%=event.commandFolder%>/<%= event.evolveFilename %>";
-import { <%= event.isFunctionName %> } from "@root/domain/<%=aggregateFolder%>/<%=event.commandFolder%>/<%= event.isFileName %>";
+import { <%= event.isFunctionName %> } from "@root/domain/<%=aggregateFolder%>/<%=event.commandFolder%>/<%= event.eventFileName %>";
 <% }) %>
 
 export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName %>>[] = [
