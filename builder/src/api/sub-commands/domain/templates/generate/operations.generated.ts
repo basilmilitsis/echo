@@ -1,5 +1,11 @@
 import { AggregateInfo, EventStructure, FileInfo } from '@root/api/common';
 
+export type RuleFileInfo = {
+    functionName: string;
+    uniqueFunctionName: string;
+    importName: string;
+};
+
 type OpeartionCommandModel = {
     commandKind: string;
     commandTypeName: string;
@@ -14,13 +20,13 @@ type OpeartionCommandModel = {
 
     validator: FileInfo;
 
-    commandRules: FileInfo[];
+    commandRules: RuleFileInfo[];
     commandRuleFunctionNames: string;
 
-    commandIndexRules: FileInfo[];
+    commandIndexRules: RuleFileInfo[];
     commandIndexRuleFunctionNames: string;
 
-    commandAggregateRules: FileInfo[];
+    commandAggregateRules: RuleFileInfo[];
     commandAggregateRuleFunctionNames: string;
 };
 type OperationEvolverModel = {
@@ -37,6 +43,9 @@ type OperationsModel = {
     events: EventStructure[];
     commands: OpeartionCommandModel[];
 };
+
+const createUniqueFunctionName = (commandName: string, functionName: string): string =>
+    `${commandName}_${functionName}`;
 
 export const buildModel_operations = (aggregateInfo: AggregateInfo): OperationsModel => {
     return {
@@ -73,23 +82,35 @@ export const buildModel_operations = (aggregateInfo: AggregateInfo): OperationsM
             commandRules:
                 command.commandRules.map((x) => ({
                     functionName: x.functionName,
+                    uniqueFunctionName: createUniqueFunctionName(command.commandName, x.functionName),
                     importName: x.importName,
                 })) || [],
-            commandRuleFunctionNames: command.commandRules.map((x) => x.functionName).join(',') || '',
+            commandRuleFunctionNames:
+                command.commandRules
+                    .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
+                    .join(',') || '',
 
             commandIndexRules:
                 command.commandIndexRules.map((x) => ({
                     functionName: x.functionName,
+                    uniqueFunctionName: createUniqueFunctionName(command.commandName, x.functionName),
                     importName: x.importName,
                 })) || [],
-            commandIndexRuleFunctionNames: command.commandIndexRules.map((x) => x.functionName).join(',') || '',
+            commandIndexRuleFunctionNames:
+                command.commandIndexRules
+                    .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
+                    .join(',') || '',
 
             commandAggregateRules:
                 command.commandAggregateRules.map((x) => ({
                     functionName: x.functionName,
+                    uniqueFunctionName: createUniqueFunctionName(command.commandName, x.functionName),
                     importName: x.importName,
                 })) || [],
-            commandAggregateRuleFunctionNames: command.commandAggregateRules.map((x) => x.functionName).join(',') || '',
+            commandAggregateRuleFunctionNames:
+                command.commandAggregateRules
+                    .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
+                    .join(',') || '',
         })),
     };
 };

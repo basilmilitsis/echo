@@ -50,13 +50,13 @@ export type AggregateInfo = {
 const instrospectCommand = (domainRootPath: string, aggregateName: string, commandName: string): CommandInfo => {
     const commandKind = determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName);
     let commandAggregateRules: FileInfo[] = [];
-    if (commandKind === 'update' || 'upsert') {
+    if (commandKind === 'update' || commandKind === 'upsert') {
         // only update commands can have aggregate rules
         commandAggregateRules =
             listFilesIn(
                 PathTo.aggregateRulesFolder(domainRootPath, aggregateName, commandName),
                 '.aggregateRule.ts'
-            ).map((fileName) => ({
+            ).map((fileName): FileInfo => ({
                 functionName: fileName.replace('.aggregateRule.ts', ''),
                 importName: fileName.replace('.ts', ''),
             })) || [];
@@ -78,14 +78,14 @@ const instrospectCommand = (domainRootPath: string, aggregateName: string, comma
         },
         commandRules:
             listFilesIn(PathTo.commandRulesFolder(domainRootPath, aggregateName, commandName), '.commandRule.ts').map(
-                (fileName) => ({
+                (fileName): FileInfo => ({
                     functionName: fileName.replace('.commandRule.ts', ''),
                     importName: fileName.replace('.ts', ''),
                 })
             ) || [],
         commandIndexRules:
             listFilesIn(PathTo.indexRulesFolder(domainRootPath, aggregateName, commandName), '.indexRule.ts').map(
-                (fileName) => ({
+                (fileName): FileInfo => ({
                     functionName: fileName.replace('.indexRule.ts', ''),
                     importName: fileName.replace('.ts', ''),
                 })

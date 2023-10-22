@@ -1,7 +1,7 @@
 import { DomainEvent } from '@echo/lib-domain-api';
 import { <%=aggregateName%> } from '../<%=aggregateFileName%>';
-import { <%=eventDataTypename%> } from './<%=eventFileName%>';
+import { <%=eventDataTypeName%> } from './<%=eventFileName%>';
 
-export const <%=evolveFunctionName%> = (event: DomainEvent<string, <%=eventDataTypename%>>): <%=aggregateName%> => {
+export const <%=evolveFunctionName%> = (event: DomainEvent<string, <%=eventDataTypeName%>>): <%=aggregateName%> => {
     throw new Error('Not implemented');
 }

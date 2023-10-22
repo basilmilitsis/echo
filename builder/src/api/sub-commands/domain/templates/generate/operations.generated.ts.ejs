@@ -76,13 +76,13 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
         import { <%= command.validator.functionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/<%= command.validator.importName %>';
     <% } %>
     <% command.commandRules.forEach(function (rule) { %>
-        import { <%= rule.functionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/commandRules/<%= rule.importName %>';
+        import { <%=rule.functionName%> as <%=rule.uniqueFunctionName%> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/commandRules/<%= rule.importName %>';
     <% }) %>
     <% command.commandIndexRules.forEach(function (rule) { %>
-        import { <%= rule.functionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/indexRules/<%= rule.importName %>';
+        import { <%=rule.functionName%> as <%=rule.uniqueFunctionName%> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/indexRules/<%= rule.importName %>';
     <% }) %>
     <% command.commandAggregateRules.forEach(function (rule) { %>
-        import { <%= rule.functionName %> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/aggregateRules/<%= rule.importName %>';
+        import { <%=rule.functionName%> as <%=rule.uniqueFunctionName%> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/aggregateRules/<%= rule.importName %>';
     <% }) %>    
 
     <% if (command.commandKind === 'create') { %>  
