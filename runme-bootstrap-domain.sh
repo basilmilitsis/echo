@@ -28,7 +28,7 @@ builder api domain add-update-command   UserProfile   setUserProfilePicture
 # ---
 builder api domain add-index-rule       UserProfile   setUserProfilePicture   userProfileMustExist
 # ---
-builder api domain add-event            UserProfile   setUserProfilePicture   userProfilPictureSet
+builder api domain add-event            UserProfile   setUserProfilePicture   userProfilePictureSet
 
 # SetUserProfileLocation
 builder api domain add-update-command   UserProfile   setUserProfileLocation
@@ -126,7 +126,7 @@ builder api domain add-index-rule       UserPostBookmarks    bookmarkPost      u
 builder api domain add-index-rule       UserPostBookmarks    bookmarkPost      postMustExist
 builder api domain add-aggregate-rule   UserPostBookmarks    bookmarkPost      mustNotHaveAlreadySavedPost
 # ---
-builder api domain add-event            UserPostBookmarks    bookmarkPost      postSaved
+builder api domain add-event            UserPostBookmarks    bookmarkPost      postBookmarked
 
 # Unsave Post
 builder api domain add-upsert-command   UserPostBookmarks    unbookmarkPost
@@ -135,7 +135,7 @@ builder api domain add-index-rule       UserPostBookmarks    unbookmarkPost    u
 builder api domain add-index-rule       UserPostBookmarks    unbookmarkPost    postMustExist
 builder api domain add-aggregate-rule   UserPostBookmarks    unbookmarkPost    mustHaveAlreadySavedPost
 # ---
-builder api domain add-event            UserPostBookmarks    unbookmarkPost    postUnsaved
+builder api domain add-event            UserPostBookmarks    unbookmarkPost    postUnbookmarked
 
 # ------------------------------------------------------------------------------------------------
 
