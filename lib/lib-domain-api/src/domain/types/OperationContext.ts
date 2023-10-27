@@ -3,7 +3,10 @@ import { Id } from './Id';
 
 export type Credentials = {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    profilePicture: string | undefined;
     roles: string[];
 };
 

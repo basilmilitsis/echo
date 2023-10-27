@@ -17,6 +17,7 @@ services:
       APIREST_API_PORT: 4001
       APIREST_EVENTSTOREDB_HOST: eventstoredb
       APIREST_EVENTSTOREDB_PORT: 2113
+      APIREST_JWT_SECRET_KEY: secret
   domain-api-poster:
     image: domain-api-poster:1.0.0
     container_name: domain-api-poster
@@ -34,6 +35,7 @@ services:
       APIREST_API_PORT: 4002
       APIREST_EVENTSTOREDB_HOST: eventstoredb
       APIREST_EVENTSTOREDB_PORT: 2113
+      APIREST_JWT_SECRET_KEY: secret
 networks:
   net:
     external: true

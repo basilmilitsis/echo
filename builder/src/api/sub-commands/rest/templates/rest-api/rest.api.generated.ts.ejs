@@ -8,7 +8,11 @@ import {
     CommandContext, 
     interpretAsApiRestError, 
     DomainLogger,
-    extractContext,
+    JwtToken,
+    extractJwtStringFromHeader,
+    verifyJwt,
+    decodeJwt,
+    buildCommandContext,
     ApiRestEnvironment,
 }  from '@echo/lib-domain-api';
 
@@ -59,8 +63,15 @@ const api = new OpenAPIBackend({
             res: ExpressRes
         ) => {           
             let domainLogger: DomainLogger;
-            try {
-                domainLogger = new DomainLogger(baseLogger, extractContext(uuidv4));
+            try { 
+                let jwt: JwtToken | undefined = undefined;
+                const jwtString = extractJwtStringFromHeader(req.headers);
+                if(jwtString) {
+                    verifyJwt(jwtString);
+                    jwt = decodeJwt(jwtString);
+                }
+                const commandContext = buildCommandContext(uuidv4, jwt, {});
+                domainLogger = new DomainLogger(baseLogger, commandContext);
             }
             catch(err) {
                 baseLogger.error('Framework Error', err as Error /* TODO: make unknown */, { /* TODO: pass in some context */ });

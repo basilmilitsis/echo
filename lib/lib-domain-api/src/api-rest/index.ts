@@ -1,3 +1,4 @@
 export * from './ApiRestEnvironment';
-export * from './extractContext';
+export * from './buildCommandContext';
+export * from './extractJwtStringFromHeader';
 export * from './interpretAsApiRestError';
