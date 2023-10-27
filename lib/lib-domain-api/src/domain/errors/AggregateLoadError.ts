@@ -1,4 +1,4 @@
-export class AggregatLoadError extends Error {
+export class AggregateLoadError extends Error {
     constructor(message: string) {
         super(message);
     }

@@ -1,6 +1,6 @@
 import { Logger } from '@echo/lib-common';
 import {
-    AggregatLoadError,
+    AggregateLoadError,
     CommandAggregateRuleError,
     CommandIndexRuleError,
     CommandRuleError,
@@ -23,7 +23,7 @@ import {
     HandleUpsertCommand,
 } from './types';
 
-const doValdiation = <C extends Command>(command: C, validator: ValidateCommand<C>, logger: Logger): void => {
+const doValidation = <C extends Command>(command: C, validator: ValidateCommand<C>, logger: Logger): void => {
     logger.localDiagnostic('running validator...');
     const validationErrors = validator(command);
     if (validationErrors.length > 0) {
@@ -160,7 +160,7 @@ export const handleCreateCommand = async <C extends Command, A extends Aggregate
     logger.localDiagnostic('========================================================================');
 
     //-- validator
-    doValdiation(command, validator, logger);
+    doValidation(command, validator, logger);
 
     //-- command rules
     doCommandRules(command, commandRules, logger);
@@ -194,7 +194,7 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
     logger.localDiagnostic('========================================================================');
 
     //-- validator
-    doValdiation(command, validator, logger);
+    doValidation(command, validator, logger);
 
     //-- command rules
     doCommandRules(command, commandRules, logger);
@@ -205,7 +205,7 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
     //-- load aggregate
     const aggregate: A = await loadAggregate(command, aggregateName, eventStream, evolvers, logger);
     if (!aggregate) {
-        throw new AggregatLoadError('ERROR: Aggregate not found');
+        throw new AggregateLoadError('ERROR: Aggregate not found');
     }
 
     //-- command aggregate rules
@@ -237,7 +237,7 @@ export const handleUpsertCommand = async <C extends Command, A extends Aggregate
     logger.localDiagnostic('========================================================================');
 
     //-- validator
-    doValdiation(command, validator, logger);
+    doValidation(command, validator, logger);
 
     //-- command rules
     doCommandRules(command, commandRules, logger);

@@ -5,7 +5,7 @@ import {
     CommandIndexRuleError,
     CommandRuleError,
     ValidationError,
-    AggregatLoadError,
+    AggregateLoadError,
 } from '@root/domain';
 
 export type ApiRestError = {
@@ -51,7 +51,7 @@ export const interpretAsApiRestError = (
             messages: err.ruleErrors,
         });
     }
-    if (err instanceof AggregatLoadError) {
+    if (err instanceof AggregateLoadError) {
         logger.error('AggregatLoadError', err);
         return res.status(500).json({
             result: 'error',
