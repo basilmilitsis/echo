@@ -1,11 +1,21 @@
 import path from 'node:path';
 import * as voca from 'voca';
 
-// TODO: remove
-export class PathTo {
-    static srcFolder = (pwd: string): string => path.join(pwd, '/src');
+export enum PathNames {
+    srcFolder = 'src',
+    domainFolder = 'domain',
+    commandFolder = 'command',
+    commandAuthRulesFolder = 'commandAuthRules',
+    commandRulesFolder = 'commandRules',
+    indexRulesFolder = 'indexRules',
+    aggregateAuthRulesFolder = 'aggregateAuthRules',
+    aggregateRulesFolder = 'aggregateRules',
+}
 
-    static domainFolder = (pwd: string): string => path.join(PathTo.srcFolder(pwd), 'domain');
+export class PathTo {
+    static srcFolder = (pwd: string): string => path.join(pwd, PathNames.srcFolder);
+
+    static domainFolder = (pwd: string): string => path.join(PathTo.srcFolder(pwd), PathNames.domainFolder);
     static aggregateFolder = (pwd: string, aggregate: string): string =>
         path.join(PathTo.domainFolder(pwd), voca.camelCase(aggregate));
 
@@ -18,10 +28,14 @@ export class PathTo {
     static upsertCommandFile = (pwd: string, aggregate: string, command: string): string =>
         path.join(PathTo.commandFolder(pwd, aggregate, command), `${voca.titleCase(command)}.upsert.command.ts`);
 
+    static commandAuthRulesFolder = (pwd: string, aggregate: string, command: string): string =>
+        path.join(PathTo.commandFolder(pwd, aggregate, command), PathNames.commandAuthRulesFolder);
     static commandRulesFolder = (pwd: string, aggregate: string, command: string): string =>
-        path.join(PathTo.commandFolder(pwd, aggregate, command), 'commandRules');
+        path.join(PathTo.commandFolder(pwd, aggregate, command), PathNames.commandRulesFolder);
     static indexRulesFolder = (pwd: string, aggregate: string, command: string): string =>
-        path.join(PathTo.commandFolder(pwd, aggregate, command), 'indexRules');
+        path.join(PathTo.commandFolder(pwd, aggregate, command), PathNames.indexRulesFolder);
+    static aggregateAuthRulesFolder = (pwd: string, aggregate: string, command: string): string =>
+        path.join(PathTo.commandFolder(pwd, aggregate, command), PathNames.aggregateAuthRulesFolder);
     static aggregateRulesFolder = (pwd: string, aggregate: string, command: string): string =>
-        path.join(PathTo.commandFolder(pwd, aggregate, command), 'aggregateRules');
+        path.join(PathTo.commandFolder(pwd, aggregate, command), PathNames.aggregateRulesFolder);
 }

@@ -1,0 +1,6 @@
+import { CommandAuthRule, CommandMetadata } from "@echo/lib-domain-api";
+import { <%=commandName%> } from "@root/domain/<%=aggregateFolderName%>/<%=commandFolderName%>/<%=commandFileName%>";
+
+export const <%=ruleFunctionName%>: CommandAuthRule<<%=commandName%>> = (command: <%=commandName%>, metadata: CommandMetadata): string[] => {
+    return [];
+} 

@@ -2,20 +2,11 @@ import * as voca from 'voca';
 import { BuilderEnvironment, listFilesIn, listFoldersIn } from '@root/common';
 import { CommandKind } from './CommandKind';
 import { determineCommandKind } from './determineCommandKind';
-import { PathTo } from './PathTo';
+import { PathNames, PathTo } from './PathTo';
 
 export type FileInfo = {
     functionName: string;
     importName: string;
-};
-export type CommandStructure = {
-    command: string;
-    commandType: CommandKind;
-    validator?: FileInfo;
-    commandRules: FileInfo[];
-    commandIndexRules: FileInfo[];
-    commandAggregateRules: FileInfo[];
-    evolvers: string[];
 };
 export type EventStructure = {
     eventType: string;
@@ -34,8 +25,10 @@ export type CommandInfo = {
     commandFolderName: string;
     validator: FileInfo;
     handle: FileInfo;
+    commandAuthRules: FileInfo[];
     commandRules: FileInfo[];
     commandIndexRules: FileInfo[];
+    commandAggregateAuthRules: FileInfo[];
     commandAggregateRules: FileInfo[];
     events: EventStructure[];
 };
@@ -46,20 +39,27 @@ export type AggregateInfo = {
     commands: CommandInfo[];
 };
 
-const instrospectCommand = (domainRootPath: string, aggregateName: string, commandName: string): CommandInfo => {
+const introspectCommand = (domainRootPath: string, aggregateName: string, commandName: string): CommandInfo => {
     const commandKind = determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName);
-    let commandAggregateRules: FileInfo[] = [];
-    if (commandKind === 'update' || commandKind === 'upsert') {
-        // only update commands can have aggregate rules
-        commandAggregateRules =
-            listFilesIn(
-                PathTo.aggregateRulesFolder(domainRootPath, aggregateName, commandName),
-                '.aggregateRule.ts'
-            ).map((fileName): FileInfo => ({
-                functionName: fileName.replace('.aggregateRule.ts', ''),
-                importName: fileName.replace('.ts', ''),
-            })) || [];
-    }
+    const folders = listFoldersIn(PathTo.commandFolder(domainRootPath, aggregateName, commandName));
+
+    const commandAuthRulesFiles = folders.includes(PathNames.commandAuthRulesFolder)
+        ? listFilesIn(PathTo.commandAuthRulesFolder(domainRootPath, aggregateName, commandName), '.commandAuthRule.ts')
+        : [];
+    const commandRulesFiles = folders.includes(PathNames.commandRulesFolder)
+        ? listFilesIn(PathTo.commandRulesFolder(domainRootPath, aggregateName, commandName), '.commandRule.ts')
+        : [];
+    const commandIndexRulesFiles = folders.includes(PathNames.indexRulesFolder)
+        ? listFilesIn(PathTo.indexRulesFolder(domainRootPath, aggregateName, commandName), '.indexRule.ts')
+        : [];
+    const commandAggregateRules =
+        (commandKind === 'update' || commandKind === 'upsert') && folders.includes(PathNames.aggregateRulesFolder)
+            ? listFilesIn(PathTo.aggregateRulesFolder(domainRootPath, aggregateName, commandName), '.aggregateRule.ts')
+            : [];
+    const commandAggregateAuthRules =
+        (commandKind === 'update' || commandKind === 'upsert') && folders.includes(PathNames.aggregateAuthRulesFolder)
+            ? listFilesIn(PathTo.aggregateAuthRulesFolder(domainRootPath, aggregateName, commandName), '.aggregateAuthRule.ts')
+            : [];
 
     return {
         commandName: commandName,
@@ -75,21 +75,36 @@ const instrospectCommand = (domainRootPath: string, aggregateName: string, comma
             functionName: `handle${voca.titleCase(commandName)}`,
             importName: `${voca.titleCase(commandName)}.handle`,
         },
-        commandRules:
-            listFilesIn(PathTo.commandRulesFolder(domainRootPath, aggregateName, commandName), '.commandRule.ts').map(
-                (fileName): FileInfo => ({
-                    functionName: fileName.replace('.commandRule.ts', ''),
-                    importName: fileName.replace('.ts', ''),
-                })
-            ) || [],
-        commandIndexRules:
-            listFilesIn(PathTo.indexRulesFolder(domainRootPath, aggregateName, commandName), '.indexRule.ts').map(
-                (fileName): FileInfo => ({
-                    functionName: fileName.replace('.indexRule.ts', ''),
-                    importName: fileName.replace('.ts', ''),
-                })
-            ) || [],
-        commandAggregateRules: commandAggregateRules,
+        commandAuthRules: commandAuthRulesFiles.map(
+            (fileName): FileInfo => ({
+                functionName: fileName.replace('.commandAuthRule.ts', ''),
+                importName: fileName.replace('.ts', ''),
+            })
+        ),
+        commandRules: commandRulesFiles.map(
+            (fileName): FileInfo => ({
+                functionName: fileName.replace('.commandRule.ts', ''),
+                importName: fileName.replace('.ts', ''),
+            })
+        ),
+        commandIndexRules: commandIndexRulesFiles.map(
+            (fileName): FileInfo => ({
+                functionName: fileName.replace('.indexRule.ts', ''),
+                importName: fileName.replace('.ts', ''),
+            })
+        ),
+        commandAggregateAuthRules: commandAggregateAuthRules.map(
+            (fileName): FileInfo => ({
+                functionName: fileName.replace('.aggregateAuthRule.ts', ''),
+                importName: fileName.replace('.ts', ''),
+            })
+        ),
+        commandAggregateRules: commandAggregateRules.map(
+            (fileName): FileInfo => ({
+                functionName: fileName.replace('.aggregateRule.ts', ''),
+                importName: fileName.replace('.ts', ''),
+            })
+        ),
         events:
             listFilesIn(PathTo.commandFolder(domainRootPath, aggregateName, commandName), '.event.ts').map(
                 (fileName) => {
@@ -117,7 +132,7 @@ export const introspectAggregate = (domainRootPath: string, aggregateName: strin
         aggregateTypeName: voca.titleCase(aggregateName),
         aggregateFileName: voca.titleCase(aggregateName),
         aggregateFolder: voca.camelCase(aggregateName),
-        commands: commandFolderNames.map((folderName) => instrospectCommand(domainRootPath, aggregateName, folderName)),
+        commands: commandFolderNames.map((folderName) => introspectCommand(domainRootPath, aggregateName, folderName)),
     };
 };
 
@@ -134,7 +149,7 @@ export const introspectDomain = (domainRootPath: string): AggregateInfo[] => {
             aggregateFileName: voca.titleCase(aggregateName),
             aggregateFolder: voca.camelCase(aggregateName),
             commands: commandFolderNames.map((folderName) =>
-                instrospectCommand(domainRootPath, aggregateName, folderName)
+                introspectCommand(domainRootPath, aggregateName, folderName)
             ),
         };
     });

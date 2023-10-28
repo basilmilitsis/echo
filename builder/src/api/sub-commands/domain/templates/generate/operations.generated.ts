@@ -1,3 +1,4 @@
+import * as voca from 'voca';
 import { AggregateInfo, EventStructure, FileInfo } from '@root/api/common';
 
 export type RuleFileInfo = {
@@ -6,7 +7,7 @@ export type RuleFileInfo = {
     importName: string;
 };
 
-type OpeartionCommandModel = {
+type OperationCommandModel = {
     commandKind: string;
     commandTypeName: string;
 
@@ -38,10 +39,11 @@ type OperationsModel = {
     aggregateTypeName: string;
     aggregateFileName: string;
     aggregateFolder: string;
+    aggregateStreamName: string;
 
     evolvers: OperationEvolverModel[];
     events: EventStructure[];
-    commands: OpeartionCommandModel[];
+    commands: OperationCommandModel[];
 };
 
 const createUniqueFunctionName = (commandName: string, functionName: string): string =>
@@ -52,6 +54,7 @@ export const buildModel_operations = (aggregateInfo: AggregateInfo): OperationsM
         aggregateTypeName: aggregateInfo.aggregateTypeName,
         aggregateFileName: aggregateInfo.aggregateFileName,
         aggregateFolder: aggregateInfo.aggregateFolder,
+        aggregateStreamName: voca.camelCase(aggregateInfo.aggregateTypeName),
 
         events: aggregateInfo.commands.map((command) => command.events).flat(),
 
@@ -79,6 +82,18 @@ export const buildModel_operations = (aggregateInfo: AggregateInfo): OperationsM
                 functionName: command.validator.functionName,
                 importName: command.validator.importName,
             },
+
+            commandAuthRules:
+            command.commandAuthRules.map((x) => ({
+                functionName: x.functionName,
+                uniqueFunctionName: createUniqueFunctionName(command.commandName, x.functionName),
+                importName: x.importName,
+            })) || [],
+            commandAuthRuleFunctionNames:
+            command.commandAuthRules
+                .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
+                .join(',') || '',
+
             commandRules:
                 command.commandRules.map((x) => ({
                     functionName: x.functionName,
@@ -101,6 +116,17 @@ export const buildModel_operations = (aggregateInfo: AggregateInfo): OperationsM
                     .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
                     .join(',') || '',
 
+            commandAggregateAuthRules:
+                command.commandAggregateAuthRules.map((x) => ({
+                    functionName: x.functionName,
+                    uniqueFunctionName: createUniqueFunctionName(command.commandName, x.functionName),
+                    importName: x.importName,
+                })) || [],
+            commandAggregateAuthRuleFunctionNames:
+                command.commandAggregateAuthRules
+                    .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
+                    .join(',') || '',
+                    
             commandAggregateRules:
                 command.commandAggregateRules.map((x) => ({
                     functionName: x.functionName,

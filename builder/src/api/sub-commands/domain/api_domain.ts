@@ -16,6 +16,8 @@ import { buildModel_handleCreate } from './templates/add-command/handle-create';
 import { buildModel_command } from './templates/add-command/command';
 import { buildModel_handleUpsert } from './templates/add-command/handle-upsert';
 import { buildModel_evolveUpsertEvent } from './templates/add-event/evolve-upsert';
+import { buildModel_commandAuthRule } from './templates/add-command-auth-rule/commandAuthRule';
+import { buildModel_aggregateAuthRule } from './templates/add-aggregate-auth-rule/aggregateAuthRule';
 
 export const api_domain = new commander.Command('domain');
 
@@ -69,13 +71,7 @@ api_domain
                                     `${voca.titleCase(commandName)}.validate.ts`,
                                     `${__dirname}/templates/add-command/validate.ts.ejs`,
                                     buildModel_validate(commandName, 'create')
-                                )
-                                .ensureFolder('commandRules', (folder) => {
-                                    folder.createStringFile('.gitkeep', '');
-                                })
-                                .ensureFolder('indexRules', (folder) => {
-                                    folder.createStringFile('.gitkeep', '');
-                                });
+                                );
                         });
                     });
                 });
@@ -111,16 +107,7 @@ api_domain
                                     `${voca.titleCase(commandName)}.validate.ts`,
                                     `${__dirname}/templates/add-command/validate.ts.ejs`,
                                     buildModel_validate(commandName, 'update')
-                                )
-                                .ensureFolder('commandRules', (folder) => {
-                                    folder.createStringFile('.gitkeep', '');
-                                })
-                                .ensureFolder('indexRules', (folder) => {
-                                    folder.createStringFile('.gitkeep', '');
-                                })
-                                .ensureFolder('aggregateRules', (folder) => {
-                                    folder.createStringFile('.gitkeep', '');
-                                });
+                                );
                         });
                     });
                 });
@@ -156,16 +143,7 @@ api_domain
                                     `${voca.titleCase(commandName)}.validate.ts`,
                                     `${__dirname}/templates/add-command/validate.ts.ejs`,
                                     buildModel_validate(commandName, 'upsert')
-                                )
-                                .ensureFolder('commandRules', (folder) => {
-                                    folder.createStringFile('.gitkeep', '');
-                                })
-                                .ensureFolder('indexRules', (folder) => {
-                                    folder.createStringFile('.gitkeep', '');
-                                })
-                                .ensureFolder('aggregateRules', (folder) => {
-                                    folder.createStringFile('.gitkeep', '');
-                                });
+                                );
                         });
                     });
                 });
@@ -212,6 +190,40 @@ api_domain
     });
 
 api_domain
+    .command('add-command-auth-rule')
+    .argument('aggregateName')
+    .argument('commandName')
+    .argument('ruleName')
+    .action((aggregateName, commandName, ruleName) => {
+        PathRules.ensureCurrentlyInProjectRoot();
+
+        new Writer(BuilderEnvironment.pwd)
+            .title('Adding command auth rule')
+            .existingFolder('src', (folder) => {
+                folder.existingFolder('domain', (folder) => {
+                    folder.existingFolder(voca.camelCase(aggregateName), (folder) => {
+                        folder.existingFolder(voca.camelCase(commandName), (folder) => {
+                            folder.ensureFolder('commandAuthRules', (folder) => {
+                                folder.createTemplateFile(
+                                    `${voca.camelCase(ruleName)}.commandAuthRule.ts`,
+                                    `${__dirname}/templates/add-command-auth-rule/commandAuthRule.ts.ejs`,
+                                    buildModel_commandAuthRule(
+                                        aggregateName,
+                                        commandName,
+                                        determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName),
+                                        ruleName
+                                    )
+                                );
+                            });
+                        });
+                    });
+                });
+            })
+            .close();
+    });
+
+
+api_domain
     .command('add-command-rule')
     .argument('aggregateName')
     .argument('commandName')
@@ -225,7 +237,7 @@ api_domain
                 folder.existingFolder('domain', (folder) => {
                     folder.existingFolder(voca.camelCase(aggregateName), (folder) => {
                         folder.existingFolder(voca.camelCase(commandName), (folder) => {
-                            folder.existingFolder('commandRules', (folder) => {
+                            folder.ensureFolder('commandRules', (folder) => {
                                 folder.createTemplateFile(
                                     `${voca.camelCase(ruleName)}.commandRule.ts`,
                                     `${__dirname}/templates/add-command-rule/commandRule.ts.ejs`,
@@ -258,7 +270,7 @@ api_domain
                 folder.existingFolder('domain', (folder) => {
                     folder.existingFolder(voca.camelCase(aggregateName), (folder) => {
                         folder.existingFolder(voca.camelCase(commandName), (folder) => {
-                            folder.existingFolder('indexRules', (folder) => {
+                            folder.ensureFolder('indexRules', (folder) => {
                                 folder.createTemplateFile(
                                     `${voca.camelCase(ruleName)}.indexRule.ts`,
                                     `${__dirname}/templates/add-index-rule/indexRule.ts.ejs`,
@@ -268,6 +280,39 @@ api_domain
                                         determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName),
                                         ruleName
                                     )
+                                );
+                            });
+                        });
+                    });
+                });
+            })
+            .close();
+    });
+
+api_domain
+    .command('add-aggregate-auth-rule')
+    .argument('aggregateName')
+    .argument('commandName')
+    .argument('ruleName')
+    .action((aggregateName, commandName, ruleName) => {
+        PathRules.ensureCurrentlyInProjectRoot();
+
+        const commandKind = determineCommandKind(BuilderEnvironment.pwd, aggregateName, commandName);
+        if (commandKind === 'create') {
+            throw new Error('Create commands cannot have an Aggregate Auth Rule');
+        }
+
+        new Writer(BuilderEnvironment.pwd)
+            .title('Adding aggregate auth rule')
+            .existingFolder('src', (folder) => {
+                folder.existingFolder('domain', (folder) => {
+                    folder.existingFolder(voca.camelCase(aggregateName), (folder) => {
+                        folder.existingFolder(voca.camelCase(commandName), (folder) => {
+                            folder.ensureFolder('aggregateAuthRules', (folder) => {
+                                folder.createTemplateFile(
+                                    `${voca.camelCase(ruleName)}.aggregateAuthRule.ts`,
+                                    `${__dirname}/templates/add-aggregate-auth-rule/aggregateAuthRule.ts.ejs`,
+                                    buildModel_aggregateAuthRule(aggregateName, commandName, commandKind, ruleName)
                                 );
                             });
                         });
@@ -296,7 +341,7 @@ api_domain
                 folder.existingFolder('domain', (folder) => {
                     folder.existingFolder(voca.camelCase(aggregateName), (folder) => {
                         folder.existingFolder(voca.camelCase(commandName), (folder) => {
-                            folder.existingFolder('aggregateRules', (folder) => {
+                            folder.ensureFolder('aggregateRules', (folder) => {
                                 folder.createTemplateFile(
                                     `${voca.camelCase(ruleName)}.aggregateRule.ts`,
                                     `${__dirname}/templates/add-aggregate-rule/aggregateRule.ts.ejs`,

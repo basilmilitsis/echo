@@ -6,6 +6,8 @@ import {
     CommandRuleError,
     ValidationError,
     AggregateLoadError,
+    CommandAggregateAuthRuleError,
+    CommandAuthRuleError,
 } from '@root/domain';
 
 export type ApiRestError = {
@@ -27,19 +29,19 @@ export const interpretAsApiRestError = (
             messages: err.validationErrors,
         });
     }
+    if (err instanceof CommandAuthRuleError) {
+        logger.error('CommandAuthRuleError', err);
+        return res.status(500).json({
+            result: 'error',
+            type: 'CommandAuthRuleError',
+            messages: err.ruleErrors,
+        });
+    }
     if (err instanceof CommandRuleError) {
         logger.error('CommandRuleError', err);
         return res.status(500).json({
             result: 'error',
             type: 'CommandRuleError',
-            messages: err.ruleErrors,
-        });
-    }
-    if (err instanceof CommandAggregateRuleError) {
-        logger.error('CommandAggregateRuleError', err);
-        return res.status(500).json({
-            result: 'error',
-            type: 'CommandAggregateRuleError',
             messages: err.ruleErrors,
         });
     }
@@ -57,6 +59,22 @@ export const interpretAsApiRestError = (
             result: 'error',
             type: 'AggregatLoadError',
             messages: ['Aggregate Load Error'],
+        });
+    }
+    if (err instanceof CommandAggregateRuleError) {
+        logger.error('CommandAggregateRuleError', err);
+        return res.status(500).json({
+            result: 'error',
+            type: 'CommandAggregateRuleError',
+            messages: err.ruleErrors,
+        });
+    }
+    if (err instanceof CommandAggregateAuthRuleError) {
+        logger.error('CommandAggregateAuthRuleError', err);
+        return res.status(500).json({
+            result: 'error',
+            type: 'CommandAggregateAuthRuleError',
+            messages: err.ruleErrors,
         });
     }
     if (err instanceof Error) {
