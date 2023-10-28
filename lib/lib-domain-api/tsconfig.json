@@ -8,7 +8,7 @@
         "paths": {
             "@root/*": ["./src/*"]
         },
-        "outDir": ".dist",
+        "outDir": ".build",
         "inlineSourceMap": true,
         "removeComments": true,
         "noEmitOnError": true,
@@ -19,7 +19,7 @@
         "declaration": true,
         "typeRoots": [
             "./node_modules/@types", 
-            "../lib-common/.dist/index.d.ts" /* Intellisense workaround - typescript does not deal well with symlinked files changing. Pointing directly to typings for project, not symlinked node_modules/@echo/...*/
+            "../lib-common/.build/index.d.ts" /* Intellisense workaround - typescript does not deal well with symlinked files changing. Pointing directly to typings for project, not symlinked node_modules/@echo/...*/
         ]
     },
     "include": ["src", "__tests__"]

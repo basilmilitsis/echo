@@ -1,4 +1,4 @@
-.dist
+.build
 .deploy
 node_modules
 src/_generated

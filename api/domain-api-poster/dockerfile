@@ -2,4 +2,4 @@ FROM node:20.5.0-alpine3.18
 RUN npm install pnpm -g
 WORKDIR /app
 COPY .deploy /app
-CMD ["node", "api/domain-api-poster/.dist/index.js"]
+CMD ["node", "api/domain-api-poster/.build/index.js"]

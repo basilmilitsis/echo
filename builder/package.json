@@ -5,14 +5,14 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "main": ".dist/index.js",
-    "types": ".dist/index.d.ts",
+    "main": ".build/index.js",
+    "types": ".build/index.d.ts",
     "bin": {
-        "builder": ".dist/index.js"
+        "builder": ".build/index.js"
     },
     "scripts": {
-        "build:clean": "pnpm custom:unlink && rm -rf .dist",
-        "build:assets:copy": "(cd ./src && find ./ -regex '.*\\.ejs$' -exec cp --parents {} ../.dist/ \\;)",
+        "build:clean": "pnpm custom:unlink && rm -rf .build",
+        "build:assets:copy": "(cd ./src && find ./ -regex '.*\\.ejs$' -exec cp --parents {} ../.build/ \\;)",
         "build:compile": "tsc --project tsconfig.build.json && tsc-alias",
         "build:post": "pnpm custom:link",
         "build": "pnpm build:clean && pnpm build:compile && pnpm build:assets:copy && pnpm build:post",

@@ -8,7 +8,7 @@
         "paths": {
             "@root/*": ["./src/*"]
         },
-        "outDir": ".dist",
+        "outDir": ".build",
         "inlineSourceMap": true,
         "removeComments": true,
         "noEmitOnError": true,

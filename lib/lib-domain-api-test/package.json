@@ -5,10 +5,10 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "main": ".dist/index.js",
-    "types": ".dist/index.d.ts",
+    "main": ".build/index.js",
+    "types": ".build/index.d.ts",
     "scripts": {
-        "build:clean": "rm -rf .dist",
+        "build:clean": "rm -rf .build",
         "build:generate": ":",
         "build:compile": "tsc --project tsconfig.build.json && tsc-alias",
         "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile",

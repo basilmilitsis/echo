@@ -80,7 +80,7 @@ api.command('create')
                                     additionalProjectsToInclude: [],
                                     additionalDependenciesToInclude: [],
                                     dependenciesToExclude: ['@types/*'],
-                                    patternsToInclude: ['.dist/**', 'package.json'],
+                                    patternsToInclude: ['.build/**', 'package.json'],
                                 });
                             }
                             return deployFile;

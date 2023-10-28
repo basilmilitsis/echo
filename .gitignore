@@ -6,7 +6,7 @@ stack/service/eventstore/logs
 
 **/_generated
 node_modules
-.dist
+.build
 .deploy
 .github
 
