@@ -9,6 +9,7 @@ export const handleCreatePost: HandleCreateCommand<CreatePost> = (
 ): CommandEvent[] => {
     return [
         buildPostCreated_V1(command.id, {
+            authorId: command.userId,
             text: command.text,
             images: command.images,
         }),

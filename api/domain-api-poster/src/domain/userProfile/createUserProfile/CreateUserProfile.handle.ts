@@ -10,7 +10,7 @@ export const handleCreateUserProfile: HandleCreateCommand<CreateUserProfile> = (
     return [
         buildUserProfileCreated_V1(command.id, {
             firstName: command.firstName,
-            lastname: command.lastname,
+            lastName: command.lastName,
         })
     ];
 };

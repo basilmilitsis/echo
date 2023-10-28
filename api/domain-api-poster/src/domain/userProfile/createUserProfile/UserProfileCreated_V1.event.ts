@@ -6,7 +6,7 @@ export enum EventType {
 
 export interface UserProfileCreatedData_V1 extends CommandEventData {
     firstName: string;
-    lastname: string;
+    lastName: string;
 }
 
 export interface UserProfileCreated_V1 extends CommandEvent {

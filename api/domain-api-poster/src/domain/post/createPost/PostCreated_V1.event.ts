@@ -5,6 +5,7 @@ export enum EventType {
 }
 
 export interface PostCreatedData_V1 extends CommandEventData {
+    authorId: Id;
     text: string;
     images: string[];
 }

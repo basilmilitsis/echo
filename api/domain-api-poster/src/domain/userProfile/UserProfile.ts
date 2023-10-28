@@ -7,7 +7,7 @@ export interface UserLocation {
 
 export interface UserProfile extends Aggregate {
     firstName: string;
-    lastname: string;
+    lastName: string;
     profilePictureUrl: string | undefined;
     location: UserLocation | undefined;
 }

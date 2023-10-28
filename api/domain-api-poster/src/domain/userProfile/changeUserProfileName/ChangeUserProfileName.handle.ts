@@ -12,7 +12,7 @@ export const handleChangeUserProfileName: HandleUpdateCommand<ChangeUserProfileN
     return [
         buildUserProfileNameChanged_V1(command.id, {
             firstName: command.firstName,
-            lastname: command.lastname,
+            lastName: command.lastName,
         })
     ];
 };

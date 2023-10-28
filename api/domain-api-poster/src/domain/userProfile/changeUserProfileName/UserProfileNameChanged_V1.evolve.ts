@@ -8,5 +8,5 @@ export const evolveUserProfileNameChanged_V1 = (
 ): UserProfile => ({
     ...aggregate,
     firstName: event.data.firstName,
-    lastname: event.data.lastname,
+    lastName: event.data.lastName,
 });
