@@ -10,7 +10,7 @@ export type Credentials = {
     roles: string[];
 };
 
-export interface OperationContext extends Record<string, Serializable> {
+export interface CommandMetadata extends Record<string, Serializable> {
     operationId: Id;
     correlationId: string | null;
     credentials: Credentials | null;

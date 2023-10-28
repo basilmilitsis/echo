@@ -5,14 +5,15 @@ import { BaseLogger } from '@echo/lib-common';
 import { 
     DefaultEventStream, 
     EventStream, 
-    CommandContext, 
+    CommandContext,
+    CommandMetadata, 
     interpretAsApiRestError, 
     DomainLogger,
     JwtToken,
     extractJwtStringFromHeader,
     verifyJwt,
     decodeJwt,
-    buildCommandContext,
+    buildCommandMetadata,
     ApiRestEnvironment,
 }  from '@echo/lib-domain-api';
 
@@ -63,6 +64,7 @@ const api = new OpenAPIBackend({
             res: ExpressRes
         ) => {           
             let domainLogger: DomainLogger;
+            let commandMetadata: CommandMetadata;
             try { 
                 let jwt: JwtToken | undefined = undefined;
                 const jwtString = extractJwtStringFromHeader(req.headers);
@@ -70,8 +72,8 @@ const api = new OpenAPIBackend({
                     verifyJwt(jwtString);
                     jwt = decodeJwt(jwtString);
                 }
-                const commandContext = buildCommandContext(uuidv4, jwt, {});
-                domainLogger = new DomainLogger(baseLogger, commandContext);
+                commandMetadata = buildCommandMetadata(uuidv4, jwt, {});
+                domainLogger = new DomainLogger(baseLogger, commandMetadata);
             }
             catch(err) {
                 baseLogger.error('Framework Error', err as Error /* TODO: make unknown */, { /* TODO: pass in some context */ });
@@ -85,7 +87,7 @@ const api = new OpenAPIBackend({
             try {
                 domainLogger.info(`<%=operation.operationId%>, body: ${JSON.stringify(req.body, null, 4)}`);
                 const context: CommandContext = { eventStream, generateUuid: uuidv4, logger: domainLogger };
-                await <%= operation.operationFunctionName %>(req.body, context);
+                await <%= operation.operationFunctionName %>(req.body, context, commandMetadata);
                 return res.status(200).json({ result: 'ok' });
             } catch (err) {
                 return interpretAsApiRestError(res, err, domainLogger);

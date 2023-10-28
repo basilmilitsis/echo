@@ -8,7 +8,7 @@ export * from './CommandRule';
 export * from './DomainEvent';
 export * from './EventStream';
 export * from './Id';
-export * from './OperationContext';
+export * from './CommandMetadata';
 export * from './HandleUpsertCommand';
 export * from './HandleCreateCommand';
 export * from './HandleUpdateCommand';

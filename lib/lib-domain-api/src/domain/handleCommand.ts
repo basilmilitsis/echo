@@ -17,14 +17,15 @@ import {
     CommandRule,
     HandleCreateCommand,
     DomainEvent,
-    EventStream,
     HandleUpdateCommand,
     ValidateCommand,
     HandleUpsertCommand,
+    CommandContext,
+    CommandMetadata,
 } from './types';
 
-const doValidation = <C extends Command>(command: C, validator: ValidateCommand<C>, logger: Logger): void => {
-    logger.localDiagnostic('running validator...');
+const doValidation = <C extends Command>(command: C, validator: ValidateCommand<C>, context: CommandContext): void => {
+    context.logger.localDiagnostic('running validator...');
     const validationErrors = validator(command);
     if (validationErrors.length > 0) {
         throw new ValidationError('ERROR: Validation Failed', validationErrors);
@@ -34,15 +35,15 @@ const doValidation = <C extends Command>(command: C, validator: ValidateCommand<
 const doCommandRules = <C extends Command>(
     command: C,
     commandRules: CommandRule<C>[] | undefined,
-    logger: Logger
+    context: CommandContext
 ): void => {
     if (!commandRules || commandRules.length === 0) {
         return;
     }
 
-    logger.localDiagnostic('running command rules: ');
+    context.logger.localDiagnostic('running command rules: ');
     for (let i = 0; i < commandRules.length; i++) {
-        logger.localDiagnostic(`- rule: ${i}`);
+        context.logger.localDiagnostic(`- rule: ${i}`);
         const commandRule = commandRules[i];
         const commandRuleErrors = commandRule(command);
         if (commandRuleErrors.length > 0) {
@@ -54,18 +55,17 @@ const doCommandRules = <C extends Command>(
 const doCommandIndexRules = async <C extends Command>(
     command: C,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
-    eventStream: EventStream,
-    logger: Logger
+    context: CommandContext
 ): Promise<void> => {
     if (!commandIndexRules || commandIndexRules.length === 0) {
         return;
     }
 
-    logger.localDiagnostic('running command index rules:');
+    context.logger.localDiagnostic('running command index rules:');
     for (let i = 0; i < commandIndexRules.length; i++) {
-        logger.localDiagnostic(`- rule: ${i}`);
+        context.logger.localDiagnostic(`- rule: ${i}`);
         const commandIndexRule = commandIndexRules[i];
-        const commandIndexRuleErrors = await commandIndexRule(command, eventStream);
+        const commandIndexRuleErrors = await commandIndexRule(command, context.eventStream);
         if (commandIndexRuleErrors.length > 0) {
             throw new CommandIndexRuleError('ERROR: Command Index Rule Failed', commandIndexRuleErrors);
         }
@@ -75,29 +75,27 @@ const doCommandIndexRules = async <C extends Command>(
 const loadAggregate = async <C extends Command, A extends Aggregate>(
     command: C,
     aggregateName: string,
-    eventStream: EventStream,
     evolvers: EvolverSetsForAggregate<A>[],
-    logger: Logger
+    context: CommandContext
 ): Promise<A> => {
-    const aggregateEvents = await eventStream.findEvents(aggregateName, command.id);
+    const aggregateEvents = await context.eventStream.findEvents(aggregateName, command.id);
     const aggregate: A = evolve(aggregateName, aggregateEvents, evolvers);
-    logger.localDiagnosticWithObject('aggregate', aggregate);
+    context.logger.localDiagnosticWithObject('aggregate', aggregate);
     return aggregate;
 };
 
 const tryLoadAggregate = async <C extends Command, A extends Aggregate>(
     command: C,
     aggregateName: string,
-    eventStream: EventStream,
     evolvers: EvolverSetsForAggregate<A>[],
-    logger: Logger
+    context: CommandContext
 ): Promise<A | undefined> => {
-    const aggregateEvents = await eventStream.findEvents(aggregateName, command.id);
+    const aggregateEvents = await context.eventStream.findEvents(aggregateName, command.id);
     if (!aggregateEvents || aggregateEvents.length === 0) {
         return undefined;
     }
     const aggregate: A = evolve(aggregateName, aggregateEvents, evolvers);
-    logger.localDiagnosticWithObject('aggregate', aggregate);
+    context.logger.localDiagnosticWithObject('aggregate', aggregate);
     return aggregate;
 };
 
@@ -105,15 +103,15 @@ const doCommandAggregateRules = <C extends Command, A extends Aggregate>(
     command: C,
     aggregate: A,
     commandAggregateRules: CommandAggregateRule<C, A>[] | undefined,
-    logger: Logger
+    context: CommandContext
 ): void => {
     if (!commandAggregateRules || commandAggregateRules.length === 0) {
         return;
     }
 
-    logger.localDiagnostic('running command aggregate rules:');
+    context.logger.localDiagnostic('running command aggregate rules:');
     for (let i = 0; i < commandAggregateRules.length; i++) {
-        logger.localDiagnostic(`- rule: ${i}`);
+        context.logger.localDiagnostic(`- rule: ${i}`);
         const commandAggregateRule = commandAggregateRules[i];
         const commandAggregateRuleErrors = commandAggregateRule(command, aggregate);
         if (commandAggregateRuleErrors.length > 0) {
@@ -121,18 +119,17 @@ const doCommandAggregateRules = <C extends Command, A extends Aggregate>(
         }
     }
 };
-const raiseEvents = async <C extends Command, A extends Aggregate>(
+
+const raiseEvents = async <C extends Command>(
     command: C,
     aggregateName: string,
     commandEvents: CommandEvent[],
-    eventStream: EventStream,
-    generateUuid: () => string,
-    logger: Logger
+    context: CommandContext
 ): Promise<void> => {
-    logger.localDiagnosticWithObjects('events to raise:', commandEvents);
+    context.logger.localDiagnosticWithObjects('events to raise:', commandEvents);
     const domainEvents: DomainEvent<string>[] = commandEvents.map(
         (x): DomainEvent<string> => ({
-            id: generateUuid(),
+            id: context.generateUuid(),
             type: x.type,
             //kind: DomainEventKind.Create,
             aggregateId: x.id,
@@ -142,8 +139,8 @@ const raiseEvents = async <C extends Command, A extends Aggregate>(
             },
         })
     );
-    await eventStream.addEvents(aggregateName, command.id, domainEvents);
-    logger.localDiagnosticWithObjects('raising domainEvents:', domainEvents);
+    await context.eventStream.addEvents(aggregateName, command.id, domainEvents);
+    context.logger.localDiagnosticWithObjects('raising domainEvents:', domainEvents);
 };
 
 export const handleCreateCommand = async <C extends Command, A extends Aggregate>(
@@ -153,29 +150,28 @@ export const handleCreateCommand = async <C extends Command, A extends Aggregate
     validator: ValidateCommand<C>,
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
-    eventStream: EventStream,
-    generateUuid: () => string,
-    logger: Logger
+    context: CommandContext,
+    metadata: CommandMetadata,
 ) => {
-    logger.localDiagnostic('========================================================================');
+    context.logger.localDiagnostic('========================================================================');
 
     //-- validator
-    doValidation(command, validator, logger);
+    doValidation(command, validator, context);
 
     //-- command rules
-    doCommandRules(command, commandRules, logger);
+    doCommandRules(command, commandRules, context);
 
     //-- command index rules
-    await doCommandIndexRules(command, commandIndexRules, eventStream, logger);
+    await doCommandIndexRules(command, commandIndexRules, context);
 
     //-- handle command
-    logger.localDiagnostic('handle command');
+    context.logger.localDiagnostic('handle command');
     const commandEvents = handle(command);
 
     //-- raise events
-    await raiseEvents(command, aggregateName, commandEvents, eventStream, generateUuid, logger);
+    await raiseEvents(command, aggregateName, commandEvents, context);
 
-    logger.localDiagnostic('========================================================================');
+    context.logger.localDiagnostic('========================================================================');
 };
 
 export const handleUpdateCommand = async <C extends Command, A extends Aggregate>(
@@ -187,38 +183,37 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
     commandAggregateRules: CommandAggregateRule<C, A>[] | undefined,
-    eventStream: EventStream,
-    generateUuid: () => string,
-    logger: Logger
+    context: CommandContext,
+    metadata: CommandMetadata,
 ) => {
-    logger.localDiagnostic('========================================================================');
+    context.logger.localDiagnostic('========================================================================');
 
     //-- validator
-    doValidation(command, validator, logger);
+    doValidation(command, validator, context);
 
     //-- command rules
-    doCommandRules(command, commandRules, logger);
+    doCommandRules(command, commandRules, context);
 
     //-- command index rules
-    await doCommandIndexRules(command, commandIndexRules, eventStream, logger);
+    await doCommandIndexRules(command, commandIndexRules, context);
 
     //-- load aggregate
-    const aggregate: A = await loadAggregate(command, aggregateName, eventStream, evolvers, logger);
+    const aggregate: A = await loadAggregate(command, aggregateName, evolvers, context);
     if (!aggregate) {
         throw new AggregateLoadError('ERROR: Aggregate not found');
     }
 
     //-- command aggregate rules
-    doCommandAggregateRules(command, aggregate, commandAggregateRules, logger);
+    doCommandAggregateRules(command, aggregate, commandAggregateRules, context);
 
     //-- handle command
-    logger.localDiagnostic('handle command');
+    context.logger.localDiagnostic('handle command');
     const commandEvents = handle(command, aggregate);
 
     //-- raise events
-    await raiseEvents(command, aggregateName, commandEvents, eventStream, generateUuid, logger);
+    await raiseEvents(command, aggregateName, commandEvents, context);
 
-    logger.localDiagnostic('========================================================================');
+    context.logger.localDiagnostic('========================================================================');
 };
 
 export const handleUpsertCommand = async <C extends Command, A extends Aggregate>(
@@ -230,34 +225,33 @@ export const handleUpsertCommand = async <C extends Command, A extends Aggregate
     commandRules: CommandRule<C>[] | undefined,
     commandIndexRules: CommandIndexRule<C>[] | undefined,
     commandAggregateRules: CommandAggregateRule<C, A>[] | undefined,
-    eventStream: EventStream,
-    generateUuid: () => string,
-    logger: Logger
+    context: CommandContext,
+    metadata: CommandMetadata,
 ) => {
-    logger.localDiagnostic('========================================================================');
+    context.logger.localDiagnostic('========================================================================');
 
     //-- validator
-    doValidation(command, validator, logger);
+    doValidation(command, validator, context);
 
     //-- command rules
-    doCommandRules(command, commandRules, logger);
+    doCommandRules(command, commandRules, context);
 
     //-- command index rules
-    await doCommandIndexRules(command, commandIndexRules, eventStream, logger);
+    await doCommandIndexRules(command, commandIndexRules, context);
 
     //-- load aggregate
-    const aggregate: A | undefined = await tryLoadAggregate(command, aggregateName, eventStream, evolvers, logger);
+    const aggregate: A | undefined = await tryLoadAggregate(command, aggregateName, evolvers, context);
     if (aggregate) {
         //-- command aggregate rules
-        doCommandAggregateRules(command, aggregate, commandAggregateRules, logger);
+        doCommandAggregateRules(command, aggregate, commandAggregateRules, context);
     }
 
     //-- handle command
-    logger.localDiagnostic('handle command');
+    context.logger.localDiagnostic('handle command');
     const commandEvents = handle(command, aggregate);
 
     //-- raise events
-    await raiseEvents(command, aggregateName, commandEvents, eventStream, generateUuid, logger);
+    await raiseEvents(command, aggregateName, commandEvents, context);
 
-    logger.localDiagnostic('========================================================================');
+    context.logger.localDiagnostic('========================================================================');
 };

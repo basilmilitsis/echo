@@ -1,11 +1,11 @@
-import { OperationContext } from '@root/domain';
+import { CommandMetadata } from '@root/domain';
 import { JwtToken } from '@root/jwt';
 
-export const buildCommandContext = (
+export const buildCommandMetadata = (
     generateUuid: () => string,
     jwt: JwtToken | undefined,
     requestMetadata: {} /* TODO */
-): OperationContext => ({
+): CommandMetadata => ({
     operationId: generateUuid(),
     correlationId: null,
     credentials: jwt

@@ -4,6 +4,7 @@ import {
     handleUpdateCommand,
     handleUpsertCommand,
     CommandContext,
+    CommandMetadata,
     DomainEvent,
 } from '@echo/lib-domain-api';
 
@@ -86,7 +87,7 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
     <% }) %>    
 
     <% if (command.commandKind === 'create') { %>  
-        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => 
+        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext, metadata: CommandMetadata) => 
             handleCreateCommand(
                 '<%= aggregateTypeName %>', 
                 command, 
@@ -98,13 +99,12 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
                 <% } %>,
                 [ <%= command.commandRuleFunctionNames %> ],
                 [ <%= command.commandIndexRuleFunctionNames %> ],
-                context.eventStream,
-                context.generateUuid,
-                context.logger
+                context,
+                metadata,
             );
     <% } %>
     <% if (command.commandKind === 'update') { %>  
-        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => 
+        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext, metadata: CommandMetadata) => 
             handleUpdateCommand(
                 '<%= aggregateTypeName %>', 
                 command, 
@@ -118,13 +118,12 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
                 [ <%= command.commandRuleFunctionNames %> ],
                 [ <%= command.commandIndexRuleFunctionNames %> ],
                 [ <%= command.commandAggregateRuleFunctionNames %> ],
-                context.eventStream,
-                context.generateUuid,
-                context.logger
+                context,
+                metadata,
             );
     <% } %>
     <% if (command.commandKind === 'upsert') { %>  
-        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext) => 
+        export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext, metadata: CommandMetadata) => 
             handleUpsertCommand(
                 '<%= aggregateTypeName %>', 
                 command, 
@@ -138,9 +137,8 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
                 [ <%= command.commandRuleFunctionNames %> ],
                 [ <%= command.commandIndexRuleFunctionNames %> ],
                 [ <%= command.commandAggregateRuleFunctionNames %> ],
-                context.eventStream,
-                context.generateUuid,
-                context.logger
+                context,
+                metadata,
             );
     <% } %>
 <% }) %>    
