@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import OpenAPIBackend, { UnknownParams, Context, Document } from 'openapi-backend';
 import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
+import helmet from "helmet";
 import { BaseLogger } from '@echo/lib-common';
 import { 
     DefaultEventStream, 
@@ -103,6 +104,7 @@ const api = new OpenAPIBackend({
 api.init();
 
 const app = express();
+app.use(helmet());
 app.use(express.json());
 
 // use as express middleware
