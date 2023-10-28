@@ -166,7 +166,7 @@ export const handleCreateCommand = async <C extends Command, A extends Aggregate
 
     //-- handle command
     context.logger.localDiagnostic('handle command');
-    const commandEvents = handle(command);
+    const commandEvents = handle(command, metadata, context);
 
     //-- raise events
     await raiseEvents(command, aggregateName, commandEvents, context);
@@ -208,7 +208,7 @@ export const handleUpdateCommand = async <C extends Command, A extends Aggregate
 
     //-- handle command
     context.logger.localDiagnostic('handle command');
-    const commandEvents = handle(command, aggregate);
+    const commandEvents = handle(command, aggregate, metadata, context);
 
     //-- raise events
     await raiseEvents(command, aggregateName, commandEvents, context);
@@ -248,7 +248,7 @@ export const handleUpsertCommand = async <C extends Command, A extends Aggregate
 
     //-- handle command
     context.logger.localDiagnostic('handle command');
-    const commandEvents = handle(command, aggregate);
+    const commandEvents = handle(command, aggregate, metadata, context);
 
     //-- raise events
     await raiseEvents(command, aggregateName, commandEvents, context);
