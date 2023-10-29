@@ -1,9 +1,6 @@
 .todo
 .misc
 
-stack/service/logging/elasticsearch/data
-stack/service/eventstore/logs
-
 **/_generated
 node_modules
 .build
