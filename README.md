@@ -44,9 +44,11 @@
         - [Upsert Command](#upsert-command)
     - [Command Validation](#command-validation)
     - [Command Rules](#command-rules)
+        - [Command Auth Rule](#command-auth-rule)
         - [Command Rule](#command-rule)
-        - [Index (Command) Rule](#index-command-rule)
-        - [Aggregate (Command) Rule](#aggregate-command-rule)
+        - [Aggregate Auth Rule](#aggregate-auth-rule)
+        - [Aggregate Rule](#aggregate-rule)
+        - [Index Rule](#index-rule)
     - [Command Handler](#command-handler)
   - [Concepts](#concepts)
     - [Command handling pipeline](#command-handling-pipeline)
@@ -61,7 +63,9 @@
       - [Add Update Command to Aggregate](#add-update-command-to-aggregate)
       - [Add Upsert Command to Aggregate](#add-upsert-command-to-aggregate)
       - [Add Event to Command](#add-event-to-command)
+      - [Add Command Auth Rule to Command](#add-command-auth-rule-to-command)
       - [Add Command Rule to Command](#add-command-rule-to-command)
+      - [Add Aggregate Auth Rule to Command](#add-aggregate-auth-rule-to-command)
       - [Add Aggregate Rule to Command](#add-aggregate-rule-to-command)
       - [Add Index Rule to Command](#add-index-rule-to-command)
   - [Debugging Domain API](#debugging-domain-api)
@@ -374,29 +378,37 @@ _Usage: [Add Upsert Command to Aggregate](#add-upsert-command-to-aggregate)_
 !!! info 
     Where possible, prefer the use of Create or Update as they are both more efficient and safer, as the framework can do checking to ensure Aggregate existence for you.
 
-
 ### Command Validation
 Logic to validate that the Command is syntactically valid.
 
 ### Command Rules
 Business (semantic) Rules to ensure that the result of the Command will not put the Aggregate into an invalid state.
 
+##### Command Auth Rule
+A Rule with logic that only requires access to the Command body and Caller's credentials.
+Called before standard Command Rules to ensure caller has required credentials before continuing.
+_Usage: [Add Command Auth Rule to Command](#add-command-auth-rule-to-command)_
+
 ##### Command Rule
-A specific type of Command Rule that only has access to the Command body itself. 
+A Rule with logic that only requires access to the Command body itself. 
 _Usage: [Add Command Rule to Command](#add-command-rule-to-command)_
 
-##### Index (Command) Rule
-A specific type of Command Rule that has access to the Command body and can query for the existence of other Aggregates by ID. 
-_Usage: [Add Index Rule to Command](#add-index-rule-to-command)_
+##### Aggregate Auth Rule
+A Rule with logic that only requires access to the Command body, Caller Credentials and Aggregate. 
+Called before standard Aggregate Rules to ensure caller has required credentials before continuing.
+_Usage: [Add Aggregate Auth Rule to Command](#add-aggregate-auth-rule-to-command)_
 
-##### Aggregate (Command) Rule
-A specific type of Command Rule that has access to the Command body and Aggregate. 
+##### Aggregate Rule
+A Rule with logic that only requires access to the Command body and Aggregate. 
 _Usage: [Add Aggregate Rule to Command](#add-aggregate-rule-to-command)_
+
+##### Index Rule
+A Rule with logic that only requires access to the Command body and has the ability to query for the existence of other Aggregates by ID. 
+_Usage: [Add Index Rule to Command](#add-index-rule-to-command)_
 
 ### Command Handler
 Logic to update the Aggregate by raising an event.
-The Command Handler will only be called if all Command Validation and applicable Command Rules succeeded.
-
+The Command Handler will only be called if all Command Validation and available Command Rules succeeded.
 
 ---
 
@@ -514,28 +526,41 @@ The Command Handler will only be called if all Command Validation and applicable
 |                 | _src/domain/user/changeUsername/UserCreated_V1.is.ts_      | event typeguard **(do not change)** |
 
 
-!!! bug AUTH COMMAND
+#### Add Command Auth Rule to Command
+| **command**      | `builder api domain add-command-auth-rule User CreateUser MustHaveRightsToChangeUser`       |                         |
+|:-----------------|:--------------------------------------------------------------------------------------------|:------------------------|
+| **run from**     | project root                                                                                |                         |
+| **add code to:** | _src/domain/user/createUser/commandAuthRules/mustHaveRightsToChangeUser.commandAuthRule.ts_ | command auth rule logic |
+
 
 #### Add Command Rule to Command
-|**command**      | `builder api domain add-command-rule User CreateUser BusinessUserMustHavePassport`  |                    |
-|:-----------------|:------------------------------------------------------------------------------------|:-------------------|
-|**run from**     | project root                                                                        |                    |
-|**add code to:** | _src/domain/user/createUser/indexRules/businessUserMustHavePassport.commandRule.ts_ | command rule logic |
+| **command**      | `builder api domain add-command-rule User ChangeUserName BusinessUserMustHavePassport`    |                    |
+|:-----------------|:------------------------------------------------------------------------------------------|:-------------------|
+| **run from**     | project root                                                                              |                    |
+| **add code to:** | _src/domain/user/changeUserName/commandRules/businessUserMustHavePassport.commandRule.ts_ | command rule logic |
 
-!!! bug AGGREGATE AUTH COMMAND
+
+#### Add Aggregate Auth Rule to Command
+| **command**       | `builder api domain add-aggregate-auth-rule Post PublishPost userMustOwnOfPost`         |                           |
+|:------------------|:----------------------------------------------------------------------------------------|:--------------------------|
+| **run from**      | project root                                                                            |                           |
+| **applicable to** | Update & Upsert Commands **only**                                                       |                           |
+| **add code to:**  | _src/domain/post/publishPost/aggregateAuthRules/userMustOwnOfPost.aggregateAuthRule.ts_ | aggregate auth rule logic |
+
 
 #### Add Aggregate Rule to Command
-|**command**       | `builder api domain add-aggregate-rule User ChangeUserName NewNameMustBeDifferent` |                      |
-|:------------------|:-----------------------------------------------------------------------------------|:---------------------|
-|**run from**      | project root                                                                       |                      |
-|**applicable to** | Update Commands **only**                                                           |                      |
-|**add code to:**  | _src/domain/user/createUser/indexRules/newNameMustBeDifferent.aggregateRule.ts_    | aggregate rule logic |
+| **command**       | `builder api domain add-aggregate-rule User ChangeUserName NewNameMustBeDifferent`      |                      |
+|:------------------|:----------------------------------------------------------------------------------------|:---------------------|
+| **run from**      | project root                                                                            |                      |
+| **applicable to** | Update & Upsert Commands **only**                                                       |                      |
+| **add code to:**  | _src/domain/user/changeUserName/aggregateRules/newNameMustBeDifferent.aggregateRule.ts_ | aggregate rule logic |
+
 
 #### Add Index Rule to Command
-|**command**      | `builder api domain add-index-rule User CreateUser MustHaveUniqueUserId`  |                  |
+| **command**      | `builder api domain add-index-rule User CreateUser MustHaveUniqueUserId`  |                  |
 |:-----------------|:--------------------------------------------------------------------------|:-----------------|
-|**run from**     | project root                                                              |                  |
-|**add code to:** | _src/domain/user/createUser/indexRules/mustHaveUniqueUserId.indexRule.ts_ | index rule logic |
+| **run from**     | project root                                                              |                  |
+| **add code to:** | _src/domain/user/createUser/indexRules/mustHaveUniqueUserId.indexRule.ts_ | index rule logic |
 
 
 ---
