@@ -25,11 +25,15 @@
 - [Roadmap](#roadmap)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
-  - [Pull Repo](#pull-repo)
+  - [Clone Repo](#clone-repo)
   - [Open in VsCode](#open-in-vscode)
   - [Setup](#setup)
-  - [Running Solution (in containers)](#running-solution-in-containers)
-  - [Container Links](#container-links)
+  - [Run](#run)
+      - [Run Locally](#run-locally)
+      - [Debug Locally](#debug-locally)
+      - [Run In container](#run-in-container)
+      - [Attach Debugger to a running Container](#attach-debugger-to-a-running-container)
+      - [Container Links](#container-links)
   - [Calling "Poster" Domain API](#calling-poster-domain-api)
 - [Solution Structure](#solution-structure)
 - [Domain API](#domain-api)
@@ -68,9 +72,6 @@
       - [Add Aggregate Auth Rule to Command](#add-aggregate-auth-rule-to-command)
       - [Add Aggregate Rule to Command](#add-aggregate-rule-to-command)
       - [Add Index Rule to Command](#add-index-rule-to-command)
-  - [Debugging Domain API](#debugging-domain-api)
-      - [Debugging outside of container](#debugging-outside-of-container)
-      - [Debugging inside of container](#debugging-inside-of-container)
 
 
 ---
@@ -234,30 +235,55 @@ The goal of this pattern is to enable a Development process keenly focused on on
   </tr>
 </table>
 
-## Pull Repo
+## Clone Repo
 !!! bug todo
-- `git pull ...`
+- `git clone git@github.com:Warpeeg/echo.git`
 - `cd event-sourcing`
+
 ## Open in VsCode
 - `vscode .`
 
 !!! tip Use VSCode workspaces
     For an optimised view of the solution, highly recommend opening as a workspace:
      `File` > `Open workspace from File` > select `.code-workspace`
+
 ## Setup
 - `rush install`
-- `rush build`
-## Running Solution (in containers)
-- `rush build`
-- `rush package`
+
+## Run
+
+#### Run Locally
 - `rush start-service-stack` (if not already running)
-- `rush start-api-stack`
-- _...when finished using APIs_
-- `rush stop-api-stack`
-- _...when finished using Services_
+- `rush build`
+- `cd api\domain-api-poster`
+- `pnpm dev:start`
+- _...when finished..._
 - `rush stop-service-stack`
 
-## Container Links
+!!! tip if making code changes to `domain-api-poster`, no need to rebuild the entire solution, you can run `pnpm build` in `api\domain-api-poster`
+
+#### Debug Locally
+- `rush start-service-stack` (if not already running)
+- `rush build`
+- from VsCode "Run and Debug" tab, launch `local:launch (⭕api-domain-poster)`
+- _...when finished..._
+- `rush stop-service-stack`
+
+!!! bug improve debugging experience
+    🚩 ability debug project dependencies (e.g. lib-domain-api)
+
+#### Run In container
+- `rush start-service-stack` (if not already running)
+- `rush package`
+- `rush start-api-stack`
+- _...when finished..._
+- `rush stop-api-stack`
+- `rush stop-service-stack`
+
+#### Attach Debugger to a running Container
+- from VsCode's "Run and Debug" tab, launch `docker:attach (⭕api-domain-poster)`
+
+#### Container Links
 | service           | link                     | description
 | ---               | ---                      | ---
 | domain-api-poster | http://localhost:4002    | "poster" domain api 
@@ -562,34 +588,6 @@ The Command Handler will only be called if all Command Validation and available 
 | **run from**     | project root                                                              |                  |
 | **add code to:** | _src/domain/user/createUser/indexRules/mustHaveUniqueUserId.indexRule.ts_ | index rule logic |
 
-
----
-
-
-## Debugging Domain API
-
-#### Debugging outside of container
-- `rush build` (if dependant projects are not up to date)
-- `rush start-service-stack` (if not already running)
-- `pnpm build`
-- `pnpm start`
-- _once finished running_
-- `rush stop-service-stack`
-
-!!! bug improve debugging experience
-    🚩 ability debug project dependencies (e.g. lib-domain-api)
-
-#### Debugging inside of container
-- `rush build` (if dependant projects are not up to date)
-- `rush package`
-- `rush start-service-stack` (if not already running)
-- `rush start-api-stack`
-- select appropriate `docker:attach` to debug API in container
-- _once finished running_
-- `rush stop-service-stack`
-- `rush stop-api-stack`
-
-!!! bug improve debugging experience
 
 ---
 ---
