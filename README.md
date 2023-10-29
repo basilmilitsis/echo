@@ -6,20 +6,32 @@
   A framework that echoes your events to multiple destinations and projections.
   </span>
 </span>
-🆆🅾🆁🅺 🅸🅽 🅿🆁🅾🅶🆁🅴🆂🆂
 
 ---
 
-# TODO:
-> Include vscode plugins etc to install to read this
+!!! tip Viewing this README.md
+    Recommend using vscode extension ==Markdown Preview Enhanced== to view this README.md
 
 ---
 
 # Table Of Contents
-- [TODO:](#todo)
 - [Table Of Contents](#table-of-contents)
 - [Overview](#overview)
+  - [Intro](#intro)
+  - [Framework](#framework)
+  - [Domain APIs](#domain-apis)
+  - [Stream Projectors](#stream-projectors)
+  - [Query APIs](#query-apis)
 - [Roadmap](#roadmap)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Pull Repo](#pull-repo)
+  - [Open in VsCode](#open-in-vscode)
+  - [Setup](#setup)
+  - [Running Solution (in containers)](#running-solution-in-containers)
+  - [Container Links](#container-links)
+  - [Calling "Poster" Domain API](#calling-poster-domain-api)
+- [Solution Structure](#solution-structure)
 - [Domain API](#domain-api)
   - [Glossary of Terms](#glossary-of-terms)
     - [Domain](#domain)
@@ -36,13 +48,12 @@
         - [Index (Command) Rule](#index-command-rule)
         - [Aggregate (Command) Rule](#aggregate-command-rule)
     - [Command Handler](#command-handler)
-  - [Command handling pipeline](#command-handling-pipeline)
-  - [Evolvers](#evolvers)
-- [Basic Usage](#basic-usage)
-    - [Setup Solution](#setup-solution)
-    - [Running Solution (in containers)](#running-solution-in-containers)
-    - [Container Links](#container-links)
-- [Development Usage](#development-usage)
+  - [Concepts](#concepts)
+    - [Command handling pipeline](#command-handling-pipeline)
+    - [Evolvers](#evolvers)
+    - [Basic Build Process](#basic-build-process)
+  - [Project Structure](#project-structure)
+- [Domain API Development](#domain-api-development)
   - [Creating/Updating Domain API](#creatingupdating-domain-api)
       - [Add Domain API](#add-domain-api)
       - [Add Aggregate to Domain](#add-aggregate-to-domain)
@@ -51,13 +62,92 @@
       - [Add Upsert Command to Aggregate](#add-upsert-command-to-aggregate)
       - [Add Event to Command](#add-event-to-command)
       - [Add Command Rule to Command](#add-command-rule-to-command)
-      - [Add Index Rule to Command](#add-index-rule-to-command)
       - [Add Aggregate Rule to Command](#add-aggregate-rule-to-command)
+      - [Add Index Rule to Command](#add-index-rule-to-command)
   - [Debugging Domain API](#debugging-domain-api)
       - [Debugging outside of container](#debugging-outside-of-container)
       - [Debugging inside of container](#debugging-inside-of-container)
 
+
 ---
+
+# Overview
+🆆🅾🆁🅺 🅸🅽 🅿🆁🅾🅶🆁🅴🆂🆂
+
+## Intro
+This is a POC framework to explore a simple event-sourcing framework, it aims to provide:
+  - a CLI tool to create and manage APIs
+  - an Event-Sourcing Domain API framework that supports an Aggregates, Commands, Events, Validation, Rules, etc
+  - an Event Stream Projectors API framework that supports projecting events into a relation DB
+  - a Query API backed by projected data
+  - the ability Log in, and to secure Commands/Queries with JWT's
+
+![Alt text](docs/overview.drawio.svg)
+
+
+## Framework
+
+Major technologies used and their purpose in the Framework:
+
+| Tech           | Purpose                                                                                     |
+|:---------------|:--------------------------------------------------------------------------------------------|
+| Typescript     | Type safety is important :)                                                                 |
+| Rushjs         | Allows management of the solution as a mono-repo                                            |
+| pnpm           | Provides improvements (such as speed) over standard npm                                     |
+| Commanderjs    | Used to create a Framework-wide CLI tool, where much of the code-generation is implemented  |
+| Express        | Used to run Domain APIs                                                                     |
+| EventstoreDB   | Used as the database for events raised by Domain APIs                                       |
+| ELK stack      | API's log ElasticSearch via Logstash. Logs can be easily searched through in Kibana         |
+| Docker Compose | Used to run the "service stack" (EventstoreDb, ELK)                                         |
+| Docker         | Used to package each API for deployment                                                     |
+
+!!! tip More detail found here: [Solution Structure](#solution-structure)
+
+
+## Domain APIs
+
+!!! abstract Disclaimers
+    This framework POC is mixing various concepts from Event Sourcing, DDD and CQRS, and the patterns are heavily inspired by other people's work and thinking.
+
+The framework is attempting to follow many of the core principles of Event Sourcing, DDD and CQRS while using more functional language techniques, and an extensive use of code generation, supported by opinionated folder and file naming conventions.
+
+Instead of using Classes and Methods to model Aggregates and Commands, the framework decomposes this into a folder structure along the lines of:
+```
+📂<aggregate>                            // contains Aggregate & one or more Commands
+ ├─📄<aggregate>.ts                      // Aggregate Shape      
+ ├─📂<command>                           // One of the Commands to update the Aggregate 
+ ┊  ├─📂commandRules
+ ┊  ├─📂indexRules
+ ┊  ├─📂aggregateRules
+ ┊  ├─📄<command>.handle.ts               // Command handler
+ ┊  ├─📄<command>.command.ts              // Command shape
+ ┊  ├─📄<command>.validate.ts             // Command validator
+ ┊  ├─📄<eventA>_V1.event.ts              // Event shape & builder
+ ┊  └─📄<eventA>_V1.evolve.ts             // Evolve aggregate with this event
+ ├─📂<command>     
+ ├─📂<command>     
+ └─📂...   
+```
+Code generation is used to parse these folder structures and produce a file that can be used to interact with the domain programmatically. Commands are processed in a consistent way applying: validation, rules, aggregate loading and command handling. 
+
+Further code generation produces another file that allows interaction with the Domain through an API, by wrapping Domain Commands as Put/Post methods on an Express server. Hence this Framework naming these Domains as "Domain APIs".
+
+The goal of this pattern is to enable a Development process keenly focused on only needing to write Business Logic in a simple standardised pattern, while code generation abstracts away Framework and API logic.  
+
+!!! tip More detail found here: [Domain API](#domain-api)
+
+## Stream Projectors
+
+!!! bug Will be implemented in future
+
+## Query APIs
+
+!!! bug Will be implemented in future
+
+---
+---
+
+# Roadmap
 
 <pre style="line-height: 1.1;">
 ████████████████████████████████████████████████████████████
@@ -70,26 +160,6 @@
 ▀▄▄▄▀▀▀▄▄▀▄▄▀▄▄▄▄▀▄▄▄▄▄▀▄▄▀▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▀▀▄▄▀▀▄▄▀▀
 </pre>
 
-
----
-
-# Overview
-> // TODO
-
-
-
-**Goal:** A project to explore a simple event-sourcing framework.
-> // TODO: mixing DDD & CQRS principles, with simplifications to model domain as an API, and using code-generation
-
-> // TODO: Tech used: Rush, Docker, Commander, ...
-
-
-![Alt text](docs/overview.drawio.svg)
-
----
----
-
-# Roadmap
 **Initial Scope**
   - [X] Improve debug experience in container 
   - [ ] cleanup (TODO's sprinkled in code)
@@ -101,10 +171,164 @@
     - [ ] folder structures
     - [ ] folder & file names
 
-**Future Scope**
-- [ ] queries
-- [ ] processor
-- [ ] event schema migration and synchronization
+**Future Scope (major features)**
+- [ ] Event Projector APIs
+- [ ] Query APIs
+- [ ] Event schema migration and synchronization
+
+---
+---
+
+# Getting Started
+## Prerequisites
+
+!!! Warning OS support
+    Only tested on Linux/WSL
+
+
+
+
+<table>
+  <tr style="background-color: #eee; font-weight: bold">
+    <td></td>
+    <td>Linux/WSL</td>
+    <td>Windows</td>
+    <td>MacOS</td>
+  </tr>
+  <tr>
+    <td style="background-color: #eee; font-weight: bold">WSL</td>
+    <td>n/a</td>
+    <td><a href="https://learn.microsoft.com/en-us/windows/wsl/install">WSL</a></td>
+    <td>n/a</td>
+  </tr>
+  <tr>
+    <td style="background-color: #eee; font-weight: bold">Docker</td>
+    <td><a href="https://docs.docker.com/engine/install">Docker Engine</a></td>
+    <td><a href="https://docs.docker.com/desktop/install/windows-install">Docker Desktop</a></td>
+    <td>TBD</td>
+  </tr>
+  <tr>
+    <td style="background-color: #eee; font-weight: bold">node</td>
+    <td colspan=3>
+        <div>install node 20.5.0 (or higher) globally</div>
+        <i>(recommend using <a href="https://github.com/nvm-sh/nvm">NVM</a> to install node)</i>
+    </td>
+  </tr>
+  <tr>
+    <td style="background-color: #eee; font-weight: bold">pnpm</td>
+    <td colspan=3>
+        <div>Install <a href="https://pnpm.io/installation">pnpm</a> globally</div>
+        <i>or simply: <code>npm i -g pnpm</code></i>
+    </td>
+  </tr>
+  <tr rowspan=2>
+    <td style="background-color: #eee; font-weight: bold">rushjs</td>
+    <td colspan=3>
+        <div>Install <a href="https://rushjs.io/pages/intro/get_started">rushjs</a> globally</div>
+        <i>or simply: <code>npm install -g @microsoft/rush</code></i>
+    </td>
+  </tr>
+</table>
+
+## Pull Repo
+!!! bug todo
+- `git pull ...`
+- `cd event-sourcing`
+## Open in VsCode
+- `vscode .`
+
+!!! tip Use VSCode workspaces
+    For an optimised view of the solution, highly recommend opening as a workspace:
+     `File` > `Open workspace from File` > select `.code-workspace`
+## Setup
+- `rush install`
+- `rush build`
+## Running Solution (in containers)
+- `rush build`
+- `rush package`
+- `rush start-service-stack` (if not already running)
+- `rush start-api-stack`
+- _...when finished using APIs_
+- `rush stop-api-stack`
+- _...when finished using Services_
+- `rush stop-service-stack`
+
+## Container Links
+| service           | link                     | description
+| ---               | ---                      | ---
+| domain-api-poster | http://localhost:4002    | "poster" domain api 
+| eventstoreDB      | http://localhost:2113    | eventstoreDB
+| logview           | http://localhost:5601    | kibana to view logs
+
+## Calling "Poster" Domain API
+
+!!! tip Use any API client that you like, this document assumes VSCode's "Rest Client"
+
+!!! note JWTs
+    Take note of commands that require JWT's
+    In future there will be a login API, until then, the example `.http` files have pre-made JWT's.
+    If wanting to use a different API Client, the required JWT structure is:
+    ```
+    {
+      "sub": "Some GUID",
+      "firstName": "Joe",
+      "lastName": "Soap",
+      "iat": 1516239022
+    }
+    ```
+
+- Install VSCode extension "REST Client"
+- Open `event-sourcing/api/domain-api-poster/__http__/userProfile.http`
+- Run "Create a User Profile"
+- Run "Change Name"
+- Open `event-sourcing/api/domain-api-poster/__http__/post.http`
+- Run "Create Post"
+- Run "Publish Post"
+
+!!! bug expand on this
+
+!!! tip open EventstoreDB to view events http://localhost:2113/web/index.html#/streams
+
+---
+---
+
+
+# Solution Structure
+```
+├─📂api
+┊  ├─📂domain-api-poster          // example/POC Domain API
+┊  └─📂<new domains>              // 🎯 new Domain APIs go here! (see Project Structure below)
+├─📂builder                       // cli tool to add & update Domain API's
+├─📂common                        // rushjs related files
+┊  ├─..
+┊  └─📂config
+┊     └──📂rush
+┊         ├─📄deploy.json         // builder updates with new Domain API's
+┊         ├─📄command-line.json   // rush start-service-stack (etc) configured here 
+┊         └─...
+┊   
+├─📂docs                          // supporting files for README.md
+├─📂lib
+┊  ├─📂lib-common                 // Common library for all projects
+┊  ├─📂lib-domain-api             // Common library for Domain API's
+┊  └─📂lib-domain-api-test        // Common library for Domain API test components
+├─📂stack
+┊  ├─📂api
+┊  ┊  ├─🐳docker-compose.yml      // contains all Domain API's (updated by builder)
+┊  ┊  ├─📄start.sh                // referenced by rush command-line.json
+┊  ┊  └─📄stop.sh                 // referenced by rush command-line.json
+┊  └─📂service
+┊     ├─📂eventstore              // docker-compose managing EventstoreDB
+┊     ├─📂logging                 // docker-compose managing ELK stack
+┊     ├─📄start.sh                // referenced by rush command-line.json
+┊     ├─📄stop.sh                 // referenced by rush command-line.json
+┊     └─...
+├─📄.code-workspace               // builder updates with new Domain API's
+├─ ...
+├─📄README.md                     // 📍you are here!
+└─📄rush.json                     // builder updates with new Domain API's
+```
+
 
 ---
 ---
@@ -137,15 +361,19 @@ _Usage: [Add Create Command to Aggregate](#add-create-command-to-aggregate)_
 
 ##### Update Command
 A specific type of Command that results in the **change** of an Aggregate.
+
 _Usage: [Add Update Command to Aggregate](#add-update-command-to-aggregate)_
 
 ##### Upsert Command
 A specific type of Command that results in the **creation or change** of an Aggregate.
 An Aggregate will be created if it does not exist.
 If an Aggregate exists, it will be updated.
-> Prefer the use of Create or Update as they are both more efficient and safer, as the framework can do checking to ensure Aggregate existence for you.
-> 
+
 _Usage: [Add Upsert Command to Aggregate](#add-upsert-command-to-aggregate)_
+
+!!! info 
+    Where possible, prefer the use of Create or Update as they are both more efficient and safer, as the framework can do checking to ensure Aggregate existence for you.
+
 
 ### Command Validation
 Logic to validate that the Command is syntactically valid.
@@ -172,51 +400,72 @@ The Command Handler will only be called if all Command Validation and applicable
 
 ---
 
-## Command handling pipeline
-> // TODO
+## Concepts
+### Command handling pipeline
+!!! bug Expand on this
 
 ![Alt text](docs/command-processing.drawio.svg)
 
----
-
-## Evolvers
-> // TODO
+### Evolvers
+!!! bug Expand on this
 
 ![Alt text](docs/evolvers.drawio.svg)
 
----
----
-
-# Basic Usage
-### Setup Solution
-- install docker/docker-desktop
-- install node 20.5.0 _**(recommend using nvm)**_
-- install rush globally
-- install pnpm globally
-- `rush install`
-- `rush build`
-> // TODO: add detailed steps
-### Running Solution (in containers)
-- `rush build`
-- `rush package`
-- `rush start-service-stack` (if not already running)
-- `rush start-api-stack`
-- _...once finished running_
-- `rush stop-service-stack`
-- `rush stop-api-stack`
-
-### Container Links
-| service       | link                     | description
-| ---           | ---                      | ---
-| logstash      | http://localhost:5000    | logstash
-| logsearch     | http://localhost:9200    | elasticsearch
-| logview       | http://localhost:5601    | kibana
-| domain-api    | http://localhost:4001    | domain api
+### Basic Build Process
+!!! bug Expand on this
 
 ---
+
+## Project Structure
+```
+├─...
+├─🐳dockerfile                                    // used to build docker image of Domain API
+├─📄package.json                                  // rush allows standardized scripts to run globally (e.g. rush build) 
+├─📄tsconfig.build.json                           // tsconfig used for build
+├─📄tsconfig.json                                 // tsconfig used for tests
+├─📂.vscode                                       // vscode files to allow debugging etc
+├─📂.deploy                                       // created on running `rush package`
+├─📂.build                                        // created on running `rush build` or `pnpm build`
+└─📂src
+   ├─📄index.ts                                   // root file
+   ├─📂_generated                                 // generated API & Domain files go here
+   └─📂domain                                     // contains folders representing aggregates
+      ├─📂...  
+      ├─📂...  
+      └─📂<aggregate>                             // contains Aggregate & Commands
+         ├─📄<aggregate>.ts                       // Aggregate Shape
+         ├─📂... 
+         ├─📂...          
+         └─📂<command>                            // A Command for Aggregate
+            ├─📂commandAuthRules                  // Contains Command Auth Rules
+            ┊  ├─📄<name>.commandAuthRule.ts
+            ┊  └─...
+            ├─📂commandRules                      // Contains Command Rules
+            ┊  ├─📄<name>.commandRule.ts
+            ┊  └─...
+            ├─📂aggregateAuthRules                // Contains Aggregate Auth Rules
+            ┊  ├─📄<name>.aggregateAuthRule.ts
+            ┊  └─...
+            ├─📂aggregateRules                    // Contains Aggregate Rules
+            ┊  ├─📄<name>.aggregateRule.ts
+            ┊  └─...
+            ├─📂indexRules                        // Contains Index Rules
+            ┊  ├─📄<name>.indexRule.ts
+            ┊  └─...
+            ├─📄<command>.handle.ts               // Command handler
+            ├─📄<command>.command.ts              // Command shape
+            ├─📄<command>.validate.ts             // Command validator
+            ├─📄<eventA>_V1.event.ts              // Event shape & builder
+            ├─📄<eventA>_V1.evolve.ts             // Evolve aggregate with this event
+            ├─📄<eventA>_V2.event.ts              // V2 of this event
+            ├─📄<eventA>_V2.evolve.ts
+            ├─📄<eventB>_V2.event.ts              // Ability to raise more than one event is supported
+            └─📄<eventB>_V2.evolve.ts
+```
+
 ---
 
-# Development Usage
+# Domain API Development
 
 ## Creating/Updating Domain API
 
@@ -264,17 +513,16 @@ The Command Handler will only be called if all Command Validation and applicable
 |                 | _src/domain/user/changeUsername/UserCreated_V1.build.ts_   | build event **(do not change)**     |
 |                 | _src/domain/user/changeUsername/UserCreated_V1.is.ts_      | event typeguard **(do not change)** |
 
+
+!!! bug AUTH COMMAND
+
 #### Add Command Rule to Command
 |**command**      | `builder api domain add-command-rule User CreateUser BusinessUserMustHavePassport`  |                    |
 |:-----------------|:------------------------------------------------------------------------------------|:-------------------|
 |**run from**     | project root                                                                        |                    |
 |**add code to:** | _src/domain/user/createUser/indexRules/businessUserMustHavePassport.commandRule.ts_ | command rule logic |
 
-#### Add Index Rule to Command
-|**command**      | `builder api domain add-index-rule User CreateUser MustHaveUniqueUserId`  |                  |
-|:-----------------|:--------------------------------------------------------------------------|:-----------------|
-|**run from**     | project root                                                              |                  |
-|**add code to:** | _src/domain/user/createUser/indexRules/mustHaveUniqueUserId.indexRule.ts_ | index rule logic |
+!!! bug AGGREGATE AUTH COMMAND
 
 #### Add Aggregate Rule to Command
 |**command**       | `builder api domain add-aggregate-rule User ChangeUserName NewNameMustBeDifferent` |                      |
@@ -282,6 +530,12 @@ The Command Handler will only be called if all Command Validation and applicable
 |**run from**      | project root                                                                       |                      |
 |**applicable to** | Update Commands **only**                                                           |                      |
 |**add code to:**  | _src/domain/user/createUser/indexRules/newNameMustBeDifferent.aggregateRule.ts_    | aggregate rule logic |
+
+#### Add Index Rule to Command
+|**command**      | `builder api domain add-index-rule User CreateUser MustHaveUniqueUserId`  |                  |
+|:-----------------|:--------------------------------------------------------------------------|:-----------------|
+|**run from**     | project root                                                              |                  |
+|**add code to:** | _src/domain/user/createUser/indexRules/mustHaveUniqueUserId.indexRule.ts_ | index rule logic |
 
 
 ---
@@ -296,15 +550,21 @@ The Command Handler will only be called if all Command Validation and applicable
 - `pnpm start`
 - _once finished running_
 - `rush stop-service-stack`
+
+!!! bug improve debugging experience
+    🚩 ability debug project dependencies (e.g. lib-domain-api)
+
 #### Debugging inside of container
-> // TODO: improve experience
 - `rush build` (if dependant projects are not up to date)
 - `rush package`
 - `rush start-service-stack` (if not already running)
 - `rush start-api-stack`
+- select appropriate `docker:attach` to debug API in container
 - _once finished running_
 - `rush stop-service-stack`
 - `rush stop-api-stack`
+
+!!! bug improve debugging experience
 
 ---
 ---
