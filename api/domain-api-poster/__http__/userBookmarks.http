@@ -1,0 +1,29 @@
+@port = 4002
+
+@user123Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMiLCJmaXJzdE5hbWUiOiJKb2UiLCJsYXN0TmFtZSI6IlNvYXAiLCJlbWFpbCI6ImpvZUBzb2FwLmNvbSIsImlhdCI6MTUxNjIzOTAyMn0.J5DCjDxYUqN04vXmvPmxom_3cgudrjExYRSvx4NbOv8
+@user123Id = 123
+@post789Id = 789
+
+
+###
+
+PUT http://localhost:{{port}}/bookmarkPost
+content-type: application/json
+Authorization: Bearer {{user123Token}}
+
+{
+    "id": "{{user123Id}}",
+    "postId": "{{post789Id}}"
+}
+
+
+###
+
+PUT http://localhost:{{port}}/unbookmarkPost
+content-type: application/json
+Authorization: Bearer {{user123Token}}
+
+{
+    "id": "{{user123Id}}",
+    "postId": "{{post789Id}}"
+}

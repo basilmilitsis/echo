@@ -1,0 +1,31 @@
+@port = 4002
+
+@user123Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMiLCJmaXJzdE5hbWUiOiJKb2UiLCJsYXN0TmFtZSI6IlNvYXAiLCJlbWFpbCI6ImpvZUBzb2FwLmNvbSIsImlhdCI6MTUxNjIzOTAyMn0.J5DCjDxYUqN04vXmvPmxom_3cgudrjExYRSvx4NbOv8
+@user123Id = 123
+
+
+### Create User Profile
+
+POST http://localhost:{{port}}/createUserProfile
+content-type: application/json
+
+{
+    "id": "{{user123Id}}",
+    "firstName": "Joe", 
+    "lastName": "Soap"
+}
+
+
+### Change Name
+
+PUT http://localhost:{{port}}/changeUserProfileName
+content-type: application/json
+Authorization: Bearer {{user123Token}}
+
+{
+    "id": "{{user123Id}}",
+    "firstName": "Joe",
+    "lastName": "Soapy"
+}
+
+###

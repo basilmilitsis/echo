@@ -1,0 +1,52 @@
+@port = 4002
+
+@user123Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMiLCJmaXJzdE5hbWUiOiJKb2UiLCJsYXN0TmFtZSI6IlNvYXAiLCJlbWFpbCI6ImpvZUBzb2FwLmNvbSIsImlhdCI6MTUxNjIzOTAyMn0.J5DCjDxYUqN04vXmvPmxom_3cgudrjExYRSvx4NbOv8
+@user123Id = 123
+@post789Id = 789
+
+
+### Create Post
+
+POST http://localhost:{{port}}/createPost
+content-type: application/json
+Authorization: Bearer {{user123Token}}
+
+{
+    "id": "{{post789Id}}",
+    "userId": "{{user123Id}}", 
+    "text": "text...",
+    "images": []
+}
+
+
+### Publish Post
+
+PUT http://localhost:{{port}}/publishPost
+content-type: application/json
+Authorization: Bearer {{user123Token}}
+
+{
+    "id": "{{post789Id}}"
+}
+
+###
+
+PUT http://localhost:{{port}}/changeTitleOfPost
+content-type: application/json
+Authorization: Bearer {{user123Token}}
+
+{
+    "id": "{{post789Id}}",
+    "title": "new title"
+}
+
+###
+
+PUT http://localhost:{{port}}/archivePost
+content-type: application/json
+Authorization: Bearer {{user123Token}}
+
+{
+    "id": "{{post789Id}}"
+}
+
