@@ -1,23 +1,5 @@
 version: '3.8'
 services:
-  domain-api:
-    image: domain-api:1.0.0
-    container_name: domain-api
-    networks:
-      - net
-    ports:
-      - '4001:4001'
-      - '4101:9229'
-    working_dir: /app/api/domain-api
-    command: npm run dev:start
-    environment:
-      PRODUCTION: false
-      LOG_TO_HOST: logstash
-      LOG_TO_PORT: 5000
-      APIREST_API_PORT: 4001
-      APIREST_EVENTSTOREDB_HOST: eventstoredb
-      APIREST_EVENTSTOREDB_PORT: 2113
-      APIREST_JWT_SECRET_KEY: secret
   domain-api-poster:
     image: domain-api-poster:1.0.0
     container_name: domain-api-poster

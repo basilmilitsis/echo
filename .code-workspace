@@ -25,10 +25,6 @@
       "path": "lib/lib-domain-api-test"
     },
     {
-      "name": "⭕api/domain-api",
-      "path": "api/domain-api"
-    },
-    {
       "name": "⭕api/domain-api-poster",
       "path": "api/domain-api-poster"
     }

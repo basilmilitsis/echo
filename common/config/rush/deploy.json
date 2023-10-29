@@ -6,18 +6,6 @@
   ],
   "projectSettings": [
     {
-      "projectName": "@echo/domain-api",
-      "additionalProjectsToInclude": [],
-      "additionalDependenciesToInclude": [],
-      "dependenciesToExclude": [
-        "@types/*"
-      ],
-      "patternsToInclude": [
-        ".build/**",
-        "package.json"
-      ]
-    },
-    {
       "projectName": "@echo/lib-domain-api",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
