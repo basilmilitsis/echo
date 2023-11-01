@@ -1,4 +1,4 @@
-import { BaseLogger, Logger, Serializable } from '@echo/lib-common';
+import { BaseLogger, Logger } from '@echo/lib-common';
 import { CommandMetadata } from './types';
 
 export class DomainLogger implements Logger {

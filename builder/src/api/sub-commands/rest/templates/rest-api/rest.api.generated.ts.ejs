@@ -3,20 +3,7 @@ import OpenAPIBackend, { UnknownParams, Context, Document } from 'openapi-backen
 import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
 import helmet from "helmet";
 import { BaseLogger } from '@echo/lib-common';
-import { 
-    DefaultEventStream, 
-    EventStream, 
-    CommandContext,
-    CommandMetadata, 
-    interpretAsApiRestError, 
-    DomainLogger,
-    JwtToken,
-    extractJwtStringFromHeader,
-    verifyJwt,
-    decodeJwt,
-    buildCommandMetadata,
-    ApiRestEnvironment,
-}  from '@echo/lib-domain-api';
+import { DefaultEventStream, EventStream, ApiRestEnvironment, handleRequest } from '@echo/lib-domain-api';
 
 //---------------------------
 
@@ -63,37 +50,7 @@ const api = new OpenAPIBackend({
             c: Context<<%= operation.commandType %>, UnknownParams, UnknownParams, UnknownParams, UnknownParams, Document>,
             req: ExpressReq<any, <%= operation.commandType %>, any, any, any>,
             res: ExpressRes
-        ) => {           
-            let domainLogger: DomainLogger;
-            let commandMetadata: CommandMetadata;
-            try { 
-                let jwt: JwtToken | undefined = undefined;
-                const jwtString = extractJwtStringFromHeader(req.headers);
-                if(jwtString) {
-                    verifyJwt(jwtString);
-                    jwt = decodeJwt(jwtString);
-                }
-                commandMetadata = buildCommandMetadata(uuidv4, jwt, {});
-                domainLogger = new DomainLogger(baseLogger, commandMetadata);
-            }
-            catch(err) {
-                baseLogger.error('Framework Error', err as Error /* TODO: make unknown */, { /* TODO: pass in some context */ });
-                return res.status(500).json({
-                    result: 'error',
-                    type: 'Error',
-                    messages: ['Error... TBD'], // TODO: 
-                });
-            }
-
-            try {
-                domainLogger.info(`<%=operation.operationId%>, body: ${JSON.stringify(req.body, null, 4)}`);
-                const context: CommandContext = { eventStream, generateUuid: uuidv4, logger: domainLogger };
-                await <%= operation.operationFunctionName %>(req.body, context, commandMetadata);
-                return res.status(200).json({ result: 'ok' });
-            } catch (err) {
-                return interpretAsApiRestError(res, err, domainLogger);
-            }
-        },
+        ) => handleRequest(c, req, res,  <%=operation.operationFunctionName%>, baseLogger, uuidv4, eventStream),
         <% }) %>
     },
 });

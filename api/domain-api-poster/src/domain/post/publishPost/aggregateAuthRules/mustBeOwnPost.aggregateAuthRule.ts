@@ -1,8 +1,8 @@
-import { CommandAggregateAuthRule, CommandMetadata } from '@echo/lib-domain-api';
+import { EvaluateCommandAggregateAuthRule, CommandMetadata } from '@echo/lib-domain-api';
 import { Post } from '@root/domain/post/Post';
 import { PublishPost } from '@root/domain/post/publishPost/PublishPost.update.command';
 
-export const mustBeOwnPost: CommandAggregateAuthRule<PublishPost, Post> = (
+export const mustBeOwnPost: EvaluateCommandAggregateAuthRule<PublishPost, Post> = (
     command: PublishPost,
     aggregate: Post,
     metadata: CommandMetadata

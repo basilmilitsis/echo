@@ -1,7 +1,7 @@
-import { CommandAggregateRule } from "@echo/lib-domain-api";
+import { EvaluateCommandAggregateRule } from "@echo/lib-domain-api";
 import { <%=aggregateName%> } from "@root/domain/<%=aggregateFolderName%>/<%=aggregateFileName%>";
 import { <%=commandName%> } from "@root/domain/<%=aggregateFolderName%>/<%=commandFolderName%>/<%=commandFileName%>";
 
-export const <%=ruleFunctionName%>: CommandAggregateRule<<%=commandName%>, <%=aggregateName%>> = (command: <%=commandName%>, aggregate: <%=aggregateName%>): string[] => {
+export const <%=ruleFunctionName%>: EvaluateCommandAggregateRule<<%=commandName%>, <%=aggregateName%>> = (command: <%=commandName%>, aggregate: <%=aggregateName%>): string[] => {
     return [];
 } 

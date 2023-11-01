@@ -1,6 +1,6 @@
-import { CommandRule } from "@echo/lib-domain-api";
+import { EvaluateCommandRule } from "@echo/lib-domain-api";
 import { <%=commandName%> } from "@root/domain/<%=aggregateFolderName%>/<%=commandFolderName%>/<%=commandFileName%>";
 
-export const <%=ruleFunctionName%>: CommandRule<<%=commandName%>> = (command: <%=commandName%>): string[] => {
+export const <%=ruleFunctionName%>: EvaluateCommandRule<<%=commandName%>> = (command: <%=commandName%>): string[] => {
     return [];
 } 

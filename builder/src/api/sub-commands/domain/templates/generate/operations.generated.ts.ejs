@@ -1,8 +1,8 @@
 import {
     EvolverSetsForAggregate,
-    handleCreateCommand,
-    handleUpdateCommand,
-    handleUpsertCommand,
+    runCreateCommand,
+    runUpdateCommand,
+    runUpsertCommand,
     CommandContext,
     CommandMetadata,
     DomainEvent,
@@ -94,50 +94,50 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
 
     <% if (command.commandKind === 'create') { %>  
         export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext, metadata: CommandMetadata) => 
-            handleCreateCommand(
-                '<%= aggregateStreamName %>', 
-                command, 
-                <%= command.handleFunctionName %>, 
-                <%= command.validator.functionName %>,
-                [ <%= command.commandAuthRuleFunctionNames %> ],
-                [ <%= command.commandRuleFunctionNames %> ],
-                [ <%= command.commandIndexRuleFunctionNames %> ],
-                context,
-                metadata,
-            );
+            runCreateCommand({
+                aggregateName: '<%= aggregateStreamName %>', 
+                command: command, 
+                handle: <%= command.handleFunctionName %>, 
+                validator: <%= command.validator.functionName %>,
+                commandAuthRules: [ <%= command.commandAuthRuleFunctionNames %> ],
+                commandRules: [ <%= command.commandRuleFunctionNames %> ],
+                commandIndexRules: [ <%= command.commandIndexRuleFunctionNames %> ],
+                context: context,
+                metadata: metadata,
+            });
     <% } %>
     <% if (command.commandKind === 'update') { %>  
         export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext, metadata: CommandMetadata) => 
-            handleUpdateCommand(
-                '<%= aggregateStreamName %>', 
-                command, 
-                commandEventEvolvers, 
-                <%= command.handleFunctionName %>, 
-                <%= command.validator.functionName %>,
-                [ <%= command.commandAuthRuleFunctionNames %> ],
-                [ <%= command.commandRuleFunctionNames %> ],
-                [ <%= command.commandIndexRuleFunctionNames %> ],
-                [ <%= command.commandAggregateAuthRuleFunctionNames %> ],
-                [ <%= command.commandAggregateRuleFunctionNames %> ],
-                context,
-                metadata,
-            );
+            runUpdateCommand({
+                aggregateName: '<%= aggregateStreamName %>', 
+                command: command, 
+                evolvers: commandEventEvolvers, 
+                handle: <%= command.handleFunctionName %>, 
+                validator: <%= command.validator.functionName %>,
+                commandAuthRules: [ <%= command.commandAuthRuleFunctionNames %> ],
+                commandRules: [ <%= command.commandRuleFunctionNames %> ],
+                commandIndexRules: [ <%= command.commandIndexRuleFunctionNames %> ],
+                commandAggregateAuthRules: [ <%= command.commandAggregateAuthRuleFunctionNames %> ],
+                commandAggregateRules: [ <%= command.commandAggregateRuleFunctionNames %> ],
+                context: context,
+                metadata: metadata,
+            });
     <% } %>
     <% if (command.commandKind === 'upsert') { %>  
         export const <%= command.operationFunctionName %> = (command: <%= command.commandTypeName %>, context: CommandContext, metadata: CommandMetadata) => 
-            handleUpsertCommand(
-                '<%= aggregateStreamName %>', 
-                command, 
-                commandEventEvolvers, 
-                <%= command.handleFunctionName %>, 
-                <%= command.validator.functionName %>,
-                [ <%= command.commandAuthRuleFunctionNames %> ],
-                [ <%= command.commandRuleFunctionNames %> ],
-                [ <%= command.commandIndexRuleFunctionNames %> ],
-                [ <%= command.commandAggregateAuthRuleFunctionNames %> ],
-                [ <%= command.commandAggregateRuleFunctionNames %> ],
-                context,
-                metadata,
-            );
+            runUpsertCommand({
+                aggregateName: '<%= aggregateStreamName %>', 
+                command: command, 
+                evolvers: commandEventEvolvers, 
+                handle: <%= command.handleFunctionName %>, 
+                validator: <%= command.validator.functionName %>,
+                commandAuthRules: [ <%= command.commandAuthRuleFunctionNames %> ],
+                commandRules: [ <%= command.commandRuleFunctionNames %> ],
+                commandIndexRules: [ <%= command.commandIndexRuleFunctionNames %> ],
+                commandAggregateAuthRules: [ <%= command.commandAggregateAuthRuleFunctionNames %> ],
+                commandAggregateRules: [ <%= command.commandAggregateRuleFunctionNames %> ],
+                context: context,
+                metadata: metadata,
+            });
     <% } %>
 <% }) %>    

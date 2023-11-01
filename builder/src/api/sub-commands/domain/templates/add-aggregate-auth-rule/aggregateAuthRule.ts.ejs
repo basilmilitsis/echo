@@ -1,8 +1,8 @@
-import { CommandAggregateAuthRule, CommandMetadata } from "@echo/lib-domain-api";
+import { EvaluateCommandAggregateAuthRule, CommandMetadata } from "@echo/lib-domain-api";
 import { <%=aggregateName%> } from "@root/domain/<%=aggregateFolderName%>/<%=aggregateFileName%>";
 import { <%=commandName%> } from "@root/domain/<%=aggregateFolderName%>/<%=commandFolderName%>/<%=commandFileName%>";
 
-export const <%=ruleFunctionName%>: CommandAggregateAuthRule<<%=commandName%>, <%=aggregateName%>> = (
+export const <%=ruleFunctionName%>: EvaluateCommandAggregateAuthRule<<%=commandName%>, <%=aggregateName%>> = (
     command: <%=commandName%>, 
     aggregate: <%=aggregateName%>,
     metadata: CommandMetadata): string[] => {

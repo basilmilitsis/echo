@@ -1,4 +1,4 @@
-import { Aggregate, DomainEvent } from './types';
+import { Aggregate, DomainEvent } from '../types';
 
 export type AggregateCreateEventEvolver<A extends Aggregate = Aggregate> = (event: DomainEvent<string>) => A;
 export type AggregateUpdateEventEvolver<A extends Aggregate = Aggregate> = (state: A, event: DomainEvent<string>) => A;
