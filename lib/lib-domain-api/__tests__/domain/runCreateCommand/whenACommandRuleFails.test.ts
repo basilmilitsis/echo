@@ -12,7 +12,7 @@ describe('when a command rule fails', () => {
         const baseLogger = new MockBaseLogger();
 
         const input = createHandleRequestInputBuilder(raiseEvents, response, baseLogger)
-            .toCreateAggregate('Post')
+            .toCreateAggregate('post')
             .withCommand({ id: '123' })
             .withJwt()
             .withValidator((command: Command) => [])
