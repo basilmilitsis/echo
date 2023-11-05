@@ -39,6 +39,13 @@
       "description": "Package containers for all projects",
       "commandKind": "bulk",
       "enableParallelism": true
+    },
+    {
+      "name": "test:unit",
+      "summary": "Run all unit tests",
+      "description": "Run all unit tests",
+      "commandKind": "bulk",
+      "enableParallelism": true
     }
   ],
   "parameters": []

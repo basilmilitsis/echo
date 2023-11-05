@@ -19,7 +19,7 @@
         "package": ":",
         "custom:link": "npm link",
         "custom:unlink": "npm uninstall --global",
-        "test": "jest",
+        "test:unit": "jest",
         "dev:start": "node --inspect=0.0.0.0:9229 .",
         "dev": "pnpm build && pnpm dev:start",
         "start": "node ."

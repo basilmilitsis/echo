@@ -118,8 +118,8 @@ api.command('create')
                     .createTemplateFile('.gitignore', `${__dirname}/templates/create/.gitignore.ejs`, {})
                     .createTemplateFile('.env', `${__dirname}/templates/create/.env.ejs`, { apiPort: apiPort })
                     .createTemplateFile('.eslintrc.json', `${__dirname}/templates/create/.eslintrc.json.ejs`, {})
-                    .createTemplateFile('.jest.config.js', `${__dirname}/templates/create/jest.config.js.ejs`, {})
-                    .createTemplateFile('.jest.env.js', `${__dirname}/templates/create/jest.env.js.ejs`, {})
+                    .createTemplateFile('jest.config.js', `${__dirname}/templates/create/jest.config.js.ejs`, {})
+                    .createTemplateFile('jest.env.js', `${__dirname}/templates/create/jest.env.js.ejs`, {})
                     .createTemplateFile('.prettierrc.json', `${__dirname}/templates/create/.prettierrc.json.ejs`, {})
                     .createTemplateFile('dockerfile', `${__dirname}/templates/create/dockerfile.ejs`, {
                         apiName: apiName,
