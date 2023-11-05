@@ -2,8 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 import OpenAPIBackend, { UnknownParams, Context, Document } from 'openapi-backend';
 import express, { Request as ExpressReq, Response as ExpressRes } from 'express';
 import helmet from "helmet";
-import { BaseLogger } from '@echo/lib-common';
-import { DefaultEventStream, EventStream, ApiRestEnvironment, handleRequest } from '@echo/lib-domain-api';
+import { DefaultBaseLogger } from '@echo/lib-common';
+import { DefaultEventStream, EventStream, ApiRestEnvironment, handleRequest, CommandRestApiResult } from '@echo/lib-domain-api';
 
 //---------------------------
 
@@ -23,7 +23,7 @@ import { <%=command.commandType%> } from '@root/domain/<%=command.aggregateFolde
 
 //---------------------------
 
-const baseLogger = new BaseLogger();
+const baseLogger = new DefaultBaseLogger();
 const eventStream: EventStream = new DefaultEventStream(baseLogger);
 
 //---------------------------
@@ -47,10 +47,18 @@ const api = new OpenAPIBackend({
 
         <% operationHandlers.forEach(function (operation) { %>
         <%=operation.operationId%>: async (
-            c: Context<<%= operation.commandType %>, UnknownParams, UnknownParams, UnknownParams, UnknownParams, Document>,
-            req: ExpressReq<any, <%= operation.commandType %>, any, any, any>,
+            _c: Context<<%=operation.commandType%>, UnknownParams, UnknownParams, UnknownParams, UnknownParams, Document>,
+            req: ExpressReq<any, CommandRestApiResult, <%=operation.commandType%>, any, any>,
             res: ExpressRes
-        ) => handleRequest(c, req, res,  <%=operation.operationFunctionName%>, baseLogger, uuidv4, eventStream),
+        ) => handleRequest({
+            requestBody: req.body,
+            requestHeaders: req.headers,
+            response: res,
+            commandRunner: <%=operation.operationFunctionName%>,
+            baseLogger: baseLogger,
+            uuidv4: uuidv4,
+            eventStream: eventStream,
+        }),
         <% }) %>
     },
 });

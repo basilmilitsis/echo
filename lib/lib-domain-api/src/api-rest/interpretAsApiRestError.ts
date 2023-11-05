@@ -49,7 +49,7 @@ export const interpretAsApiRestError = (
         logger.error('CommandIndexRuleError', err);
         return res.status(500).json({
             result: 'error',
-            type: 'CommandAggregateRuleError',
+            type: 'CommandIndexRuleError',
             messages: err.ruleErrors,
         });
     }
@@ -82,7 +82,7 @@ export const interpretAsApiRestError = (
         return res.status(500).json({
             result: 'error',
             type: 'Error',
-            messages: ['Error... TBD'], // TODO: deal with caught errors
+            messages: ['Interpret Error... TBD'], // TODO: deal with caught errors
         });
     }
 

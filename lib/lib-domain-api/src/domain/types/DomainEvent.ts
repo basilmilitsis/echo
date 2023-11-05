@@ -7,6 +7,10 @@ import { Id } from './Id';
 //     Update = 'Update'
 //}
 
+export interface DomainEventMetadata {
+    correlationId?: Id;
+}
+
 export interface DomainEvent<T extends string, D extends CommandEventData = CommandEventData> {
     aggregateId: Id;
 
@@ -15,7 +19,5 @@ export interface DomainEvent<T extends string, D extends CommandEventData = Comm
     //kind: DomainEventKind;
 
     data: D;
-    meta: {
-        correlationId?: Id;
-    };
+    meta: DomainEventMetadata;
 }

@@ -23,44 +23,43 @@ import { <%= event.evolveFunction %> } from "@root/domain/<%=aggregateFolder%>/<
 import { <%= event.isFunctionName %> } from "@root/domain/<%=aggregateFolder%>/<%=event.commandFolder%>/<%= event.eventFileName %>";
 <% }) %>
 
-export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName %>>[] = [
-    {
-        aggregateName: '<%= aggregateStreamName %>',
-        createEventEvolverSets: [
-            <% events.filter(e => e.eventKind === 'create').forEach(function (event) { %>
-            {
-                eventName: '<%= event.eventType %>',
-                evolver: (event: DomainEvent<string>) => {
-                    if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
-                    return <%= event.evolveFunction %>(event)
-                },
+export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName %>> = {
+    aggregateName: '<%= aggregateStreamName %>',
+    createEventEvolverSets: [
+        <% events.filter(e => e.eventKind === 'create').forEach(function (event) { %>
+        {
+            eventName: '<%= event.eventType %>',
+            evolver: (event: DomainEvent<string>) => {
+                if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
+                return <%= event.evolveFunction %>(event)
             },
-            <% }) %>
-        ],
-        updateEventEvolverSets: [
-            <% events.filter(e => e.eventKind === 'update').forEach(function (event) { %>
-            {
-                eventName: '<%= event.eventType %>',
-                evolver: (state: <%= aggregateTypeName %>, event: DomainEvent<string>) => {
-                    if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
-                    return <%= event.evolveFunction %>(state, event)
-                },
+        },
+        <% }) %>
+    ],
+    updateEventEvolverSets: [
+        <% events.filter(e => e.eventKind === 'update').forEach(function (event) { %>
+        {
+            eventName: '<%= event.eventType %>',
+            evolver: (state: <%= aggregateTypeName %>, event: DomainEvent<string>) => {
+                if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
+                return <%= event.evolveFunction %>(state, event)
             },
-            <% }) %>
-        ],
-        upsertEventEvolverSets: [
-            <% events.filter(e => e.eventKind === 'upsert').forEach(function (event) { %>
-            {
-                eventName: '<%= event.eventType %>',
-                evolver: (state: <%= aggregateTypeName %> | undefined, event: DomainEvent<string>) => {
-                    if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
-                    return <%= event.evolveFunction %>(state, event)
-                },
+        },
+        <% }) %>
+    ],
+    upsertEventEvolverSets: [
+        <% events.filter(e => e.eventKind === 'upsert').forEach(function (event) { %>
+        {
+            eventName: '<%= event.eventType %>',
+            evolver: (state: <%= aggregateTypeName %> | undefined, event: DomainEvent<string>) => {
+                if (!<%= event.isFunctionName %>(event)) throw new Error('Invalid event for <%= event.eventType %>');
+                return <%= event.evolveFunction %>(state, event)
             },
-            <% }) %>
-        ],
-    },
-];
+        },
+        <% }) %>
+    ],
+};
+
 
 
 //--------------------------------

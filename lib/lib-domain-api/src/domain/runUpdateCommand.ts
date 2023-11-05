@@ -27,7 +27,7 @@ import { EvolverSetsForAggregate } from './commandPipelineSteps/evolve';
 export type RunUpdateCommandInput<C extends Command, A extends Aggregate> = {
     aggregateName: string,
     command: C,
-    evolvers: EvolverSetsForAggregate<A>[],
+    evolvers: EvolverSetsForAggregate<A>,
     handle: HandleUpdateCommand<C, A>,
     validator: ValidateCommand<C>,
     commandAuthRules: EvaluateCommandAuthRule<C>[] | undefined,
