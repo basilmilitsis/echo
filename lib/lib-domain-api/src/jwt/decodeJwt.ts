@@ -4,9 +4,7 @@ import { JwtToken } from './JwtToken';
 
 export const decodeJwt = (jwtTokenString: string): JwtToken => {
     try { 
-        console.log('!!!! jwtTokenString', jwtTokenString);
         const token = jwt.decode(jwtTokenString);
-        console.log('!!!! token', token);
         if(!token) {
             throw new JwtError('Could not decode token', undefined);
         }
