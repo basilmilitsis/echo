@@ -1,6 +1,6 @@
-import { EventStream, EvaluateCommandIndexRule } from "@echo/lib-domain-api";
+import { EventStream, EvaluateIndexRule } from "@echo/lib-domain-api";
 import { UnlikePost } from "@root/domain/postLikes/unlikePost/UnlikePost.upsert.command";
 
-export const postMustExist: EvaluateCommandIndexRule<UnlikePost> = async (command: UnlikePost, eventStream: EventStream): Promise<string[]> => {
+export const postMustExist: EvaluateIndexRule<UnlikePost> = async (command: UnlikePost, eventStream: EventStream): Promise<string[]> => {
     return [];
 }   

@@ -27,9 +27,9 @@ export type CommandInfo = {
     handle: FileInfo;
     commandAuthRules: FileInfo[];
     commandRules: FileInfo[];
-    commandIndexRules: FileInfo[];
-    commandAggregateAuthRules: FileInfo[];
-    commandAggregateRules: FileInfo[];
+    indexRules: FileInfo[];
+    aggregateAuthRules: FileInfo[];
+    aggregateRules: FileInfo[];
     events: EventStructure[];
 };
 export type AggregateInfo = {
@@ -49,14 +49,14 @@ const introspectCommand = (domainRootPath: string, aggregateName: string, comman
     const commandRulesFiles = folders.includes(PathNames.commandRulesFolder)
         ? listFilesIn(PathTo.commandRulesFolder(domainRootPath, aggregateName, commandName), '.commandRule.ts')
         : [];
-    const commandIndexRulesFiles = folders.includes(PathNames.indexRulesFolder)
+    const indexRulesFiles = folders.includes(PathNames.indexRulesFolder)
         ? listFilesIn(PathTo.indexRulesFolder(domainRootPath, aggregateName, commandName), '.indexRule.ts')
         : [];
-    const commandAggregateRules =
+    const aggregateRules =
         (commandKind === 'update' || commandKind === 'upsert') && folders.includes(PathNames.aggregateRulesFolder)
             ? listFilesIn(PathTo.aggregateRulesFolder(domainRootPath, aggregateName, commandName), '.aggregateRule.ts')
             : [];
-    const commandAggregateAuthRules =
+    const aggregateAuthRules =
         (commandKind === 'update' || commandKind === 'upsert') && folders.includes(PathNames.aggregateAuthRulesFolder)
             ? listFilesIn(PathTo.aggregateAuthRulesFolder(domainRootPath, aggregateName, commandName), '.aggregateAuthRule.ts')
             : [];
@@ -87,19 +87,19 @@ const introspectCommand = (domainRootPath: string, aggregateName: string, comman
                 importName: fileName.replace('.ts', ''),
             })
         ),
-        commandIndexRules: commandIndexRulesFiles.map(
+        indexRules: indexRulesFiles.map(
             (fileName): FileInfo => ({
                 functionName: fileName.replace('.indexRule.ts', ''),
                 importName: fileName.replace('.ts', ''),
             })
         ),
-        commandAggregateAuthRules: commandAggregateAuthRules.map(
+        aggregateAuthRules: aggregateAuthRules.map(
             (fileName): FileInfo => ({
                 functionName: fileName.replace('.aggregateAuthRule.ts', ''),
                 importName: fileName.replace('.ts', ''),
             })
         ),
-        commandAggregateRules: commandAggregateRules.map(
+        aggregateRules: aggregateRules.map(
             (fileName): FileInfo => ({
                 functionName: fileName.replace('.aggregateRule.ts', ''),
                 importName: fileName.replace('.ts', ''),

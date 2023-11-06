@@ -311,7 +311,7 @@ api_domain
                             folder.ensureFolder('aggregateAuthRules', (folder) => {
                                 folder.createTemplateFile(
                                     `${voca.camelCase(ruleName)}.aggregateAuthRule.ts`,
-                                    `${__dirname}/templates/add-aggregate-auth-rule/aggregateAuthRule.ts.ejs`,
+                                    `${__dirname}/templates/add-aggregate-auth-rule/${commandKind}.aggregateAuthRule.ts.ejs`,
                                     buildModel_aggregateAuthRule(aggregateName, commandName, commandKind, ruleName)
                                 );
                             });
@@ -344,7 +344,7 @@ api_domain
                             folder.ensureFolder('aggregateRules', (folder) => {
                                 folder.createTemplateFile(
                                     `${voca.camelCase(ruleName)}.aggregateRule.ts`,
-                                    `${__dirname}/templates/add-aggregate-rule/aggregateRule.ts.ejs`,
+                                    `${__dirname}/templates/add-aggregate-rule/${commandKind}.aggregateRule.ts.ejs`,
                                     buildModel_aggregateRule(aggregateName, commandName, commandKind, ruleName)
                                 );
                             });

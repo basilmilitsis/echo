@@ -1,21 +1,21 @@
 import {
     Aggregate,
     Command,
-    EvaluateCommandAggregateRule,
-    EvaluateCommandIndexRule,
-    EvaluateCommandRule,
-    HandleUpdateCommand,
-    ValidateCommand,
     CommandContext,
     CommandMetadata,
+    ValidateCommand,
+    HandleUpdateCommand,
     EvaluateCommandAuthRule,
-    EvaluateCommandAggregateAuthRule,
+    EvaluateCommandRule,
+    EvaluateUpdateAggregateAuthRule,
+    EvaluateUpdateAggregateRule,
+    EvaluateIndexRule,
 } from './types';
 import {
-    evaluateCommandAggregateAuthRules,
-    evaluateCommandAggregateRules,
+    evaluateUpdateAggregateAuthRules,
+    evaluateUpdateAggregateRules,
     evaluateCommandAuthRules,
-    evaluateCommandIndexRules,
+    evaluateIndexRules,
     evaluateCommandRules,
     evaluateValidation,
     loadAggregate,
@@ -32,9 +32,9 @@ export type RunUpdateCommandInput<C extends Command, A extends Aggregate> = {
     validator: ValidateCommand<C>,
     commandAuthRules: EvaluateCommandAuthRule<C>[] | undefined,
     commandRules: EvaluateCommandRule<C>[] | undefined,
-    commandIndexRules: EvaluateCommandIndexRule<C>[] | undefined,
-    commandAggregateAuthRules: EvaluateCommandAggregateAuthRule<C, A>[] | undefined,
-    commandAggregateRules: EvaluateCommandAggregateRule<C, A>[] | undefined,
+    indexRules: EvaluateIndexRule<C>[] | undefined,
+    aggregateAuthRules: EvaluateUpdateAggregateAuthRule<C, A>[] | undefined,
+    aggregateRules: EvaluateUpdateAggregateRule<C, A>[] | undefined,
     context: CommandContext,
     metadata: CommandMetadata
 }
@@ -58,13 +58,13 @@ export const runUpdateCommand = async <C extends Command, A extends Aggregate>(i
     }
 
     //-- command aggregate auth rules
-    evaluateCommandAggregateAuthRules(input.command, aggregate, input.commandAggregateAuthRules, input.metadata, input.context);
+    evaluateUpdateAggregateAuthRules(input.command, aggregate, input.aggregateAuthRules, input.metadata, input.context);
 
     //-- command aggregate rules
-    evaluateCommandAggregateRules(input.command, aggregate, input.commandAggregateRules, input.context);
+    evaluateUpdateAggregateRules(input.command, aggregate, input.aggregateRules, input.context);
 
     //-- command index rules
-    await evaluateCommandIndexRules(input.command, input.commandIndexRules, input.context);
+    await evaluateIndexRules(input.command, input.indexRules, input.context);
 
     //-- handle command
     input.context.logger.localDiagnostic('handle command');

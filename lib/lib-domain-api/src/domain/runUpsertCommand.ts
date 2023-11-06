@@ -1,21 +1,21 @@
 import {
     Aggregate,
     Command,
-    EvaluateCommandAggregateRule,
-    EvaluateCommandIndexRule,
-    EvaluateCommandRule,
     ValidateCommand,
-    HandleUpsertCommand,
     CommandContext,
     CommandMetadata,
+    HandleUpsertCommand,
     EvaluateCommandAuthRule,
-    EvaluateCommandAggregateAuthRule,
+    EvaluateCommandRule,
+    EvaluateUpsertAggregateAuthRule,
+    EvaluateUpsertAggregateRule,
+    EvaluateIndexRule,
 } from './types';
 import {
-    evaluateCommandAggregateAuthRules,
-    evaluateCommandAggregateRules,
+    evaluateUpsertAggregateAuthRules,
+    evaluateUpsertAggregateRules,
     evaluateCommandAuthRules,
-    evaluateCommandIndexRules,
+    evaluateIndexRules,
     evaluateCommandRules,
     evaluateValidation,
     raiseEvents,
@@ -31,9 +31,9 @@ export type RunUpsertCommandInput<C extends Command, A extends Aggregate> = {
     validator: ValidateCommand<C>;
     commandAuthRules: EvaluateCommandAuthRule<C>[] | undefined;
     commandRules: EvaluateCommandRule<C>[] | undefined;
-    commandIndexRules: EvaluateCommandIndexRule<C>[] | undefined;
-    commandAggregateAuthRules: EvaluateCommandAggregateAuthRule<C, A>[] | undefined;
-    commandAggregateRules: EvaluateCommandAggregateRule<C, A>[] | undefined;
+    indexRules: EvaluateIndexRule<C>[] | undefined;
+    aggregateAuthRules: EvaluateUpsertAggregateAuthRule<C, A>[] | undefined;
+    aggregateRules: EvaluateUpsertAggregateRule<C, A>[] | undefined;
     context: CommandContext;
     metadata: CommandMetadata;
 };
@@ -51,17 +51,28 @@ export const runUpsertCommand = async <C extends Command, A extends Aggregate>(i
     evaluateCommandRules(input.command, input.commandRules, input.context);
 
     //-- load aggregate
-    const aggregate: A | undefined = await tryLoadAggregate(input.command, input.aggregateName, input.evolvers, input.context);
+    const aggregate: A | undefined = await tryLoadAggregate(
+        input.command,
+        input.aggregateName,
+        input.evolvers,
+        input.context
+    );
     if (aggregate) {
         //-- command aggregate auth rules
-        evaluateCommandAggregateAuthRules(input.command, aggregate, input.commandAggregateAuthRules, input.metadata, input.context);
+        evaluateUpsertAggregateAuthRules(
+            input.command,
+            aggregate,
+            input.aggregateAuthRules,
+            input.metadata,
+            input.context
+        );
 
         //-- command aggregate rules
-        evaluateCommandAggregateRules(input.command, aggregate, input.commandAggregateRules, input.context);
+        evaluateUpsertAggregateRules(input.command, aggregate, input.aggregateRules, input.context);
     }
 
     //-- command index rules
-    await evaluateCommandIndexRules(input.command, input.commandIndexRules, input.context);
+    await evaluateIndexRules(input.command, input.indexRules, input.context);
 
     //-- handle command
     input.context.logger.localDiagnostic('handle command');

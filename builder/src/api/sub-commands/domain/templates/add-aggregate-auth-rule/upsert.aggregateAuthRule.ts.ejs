@@ -1,10 +1,10 @@
-import { EvaluateCommandAggregateAuthRule, CommandMetadata } from "@echo/lib-domain-api";
+import { EvaluateUpsertAggregateAuthRule, CommandMetadata } from "@echo/lib-domain-api";
 import { <%=aggregateName%> } from "@root/domain/<%=aggregateFolderName%>/<%=aggregateFileName%>";
 import { <%=commandName%> } from "@root/domain/<%=aggregateFolderName%>/<%=commandFolderName%>/<%=commandFileName%>";
 
-export const <%=ruleFunctionName%>: EvaluateCommandAggregateAuthRule<<%=commandName%>, <%=aggregateName%>> = (
+export const <%=ruleFunctionName%>: EvaluateUpsertAggregateAuthRule<<%=commandName%>, <%=aggregateName%>> = (
     command: <%=commandName%>, 
-    aggregate: <%=aggregateName%>,
+    aggregate: <%=aggregateName%> | undefined,
     metadata: CommandMetadata): string[] => {
     return [];
 } 

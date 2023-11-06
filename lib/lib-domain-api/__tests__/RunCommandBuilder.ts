@@ -2,10 +2,8 @@ import {
     Command,
     EvaluateCommandAuthRule,
     EvaluateCommandRule,
-    EvaluateCommandAggregateRule,
     Aggregate,
-    EvaluateCommandAggregateAuthRule,
-    EvaluateCommandIndexRule,
+    EvaluateIndexRule,
     EventStream,
     ValidateCommand,
     DomainEvent,
@@ -17,6 +15,10 @@ import {
     HandleUpsertCommand,
     EvolverSetsForAggregate,
     CommandEventData,
+    EvaluateUpdateAggregateRule,
+    EvaluateUpdateAggregateAuthRule,
+    EvaluateUpsertAggregateRule,
+    EvaluateUpsertAggregateAuthRule,
 } from '@root/domain';
 import { HandleRequestInput } from '@root/api-rest';
 import httpMocks from 'node-mocks-http';
@@ -52,7 +54,7 @@ interface HandleRequestInput_ForCreateCommand<C extends Command, A extends Aggre
 
     withCommandAuthRules(commandAuthRules: EvaluateCommandAuthRule<C>[]): HandleRequestInput_ForCreateCommand<C, A>;
     withCommandRules(commandRules: EvaluateCommandRule<C>[]): HandleRequestInput_ForCreateCommand<C, A>;
-    withIndexRules(commandIndexRules: EvaluateCommandIndexRule<C>[]): HandleRequestInput_ForCreateCommand<C, A>;
+    withIndexRules(indexRules: EvaluateIndexRule<C>[]): HandleRequestInput_ForCreateCommand<C, A>;
 
     build(): HandleRequestInput<C>;
 }
@@ -75,13 +77,13 @@ interface HandleRequestInput_ForUpdateCommand<C extends Command, A extends Aggre
 
     withCommandAuthRules(commandAuthRules: EvaluateCommandAuthRule<C>[]): HandleRequestInput_ForUpdateCommand<C, A>;
     withCommandRules(commandRules: EvaluateCommandRule<C>[]): HandleRequestInput_ForUpdateCommand<C, A>;
-    withIndexRules(commandIndexRules: EvaluateCommandIndexRule<C>[]): HandleRequestInput_ForUpdateCommand<C, A>;
+    withIndexRules(indexRules: EvaluateIndexRule<C>[]): HandleRequestInput_ForUpdateCommand<C, A>;
 
-    withAggregateAuthRules(
-        commandAggregateAuthRules: EvaluateCommandAggregateAuthRule<C, A>[]
+    withUpdateAggregateAuthRules(
+        aggregateAuthRules: EvaluateUpdateAggregateAuthRule<C, A>[]
     ): HandleRequestInput_ForUpdateCommand<C, A>;
-    withAggregateRules(
-        commandAggregateRules: EvaluateCommandAggregateRule<C, A>[]
+    withUpdateAggregateRules(
+        aggregateRules: EvaluateUpdateAggregateRule<C, A>[]
     ): HandleRequestInput_ForUpdateCommand<C, A>;
 
     build(): HandleRequestInput<C>;
@@ -105,13 +107,13 @@ interface HandleRequestInput_ForUpsertCommand<C extends Command, A extends Aggre
 
     withCommandAuthRules(commandAuthRules: EvaluateCommandAuthRule<C>[]): HandleRequestInput_ForUpsertCommand<C, A>;
     withCommandRules(commandRules: EvaluateCommandRule<C>[]): HandleRequestInput_ForUpsertCommand<C, A>;
-    withIndexRules(commandIndexRules: EvaluateCommandIndexRule<C>[]): HandleRequestInput_ForUpsertCommand<C, A>;
+    withIndexRules(indexRules: EvaluateIndexRule<C>[]): HandleRequestInput_ForUpsertCommand<C, A>;
 
-    withAggregateAuthRules(
-        commandAggregateAuthRules: EvaluateCommandAggregateAuthRule<C, A>[]
+    withUpsertAggregateAuthRules(
+        aggregateAuthRules: EvaluateUpsertAggregateAuthRule<C, A>[]
     ): HandleRequestInput_ForUpsertCommand<C, A>;
-    withAggregateRules(
-        commandAggregateRules: EvaluateCommandAggregateRule<C, A>[]
+    withUpsertAggregateRules(
+        aggregateRules: EvaluateUpsertAggregateRule<C, A>[]
     ): HandleRequestInput_ForUpsertCommand<C, A>;
 
     build(): HandleRequestInput<C>;
@@ -140,9 +142,11 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
     private _upsertHandler: HandleUpsertCommand<C, A> | undefined;
     private _commandAuthRules: EvaluateCommandAuthRule<C>[] = [];
     private _commandRules: EvaluateCommandRule<C>[] = [];
-    private _commandAggregateAuthRules: EvaluateCommandAggregateAuthRule<C, A>[] = [];
-    private _commandAggregateRules: EvaluateCommandAggregateRule<C, A>[] = [];
-    private _commandIndexRules: EvaluateCommandIndexRule<C>[] = [];
+    private _updateAggregateAuthRules: EvaluateUpdateAggregateAuthRule<C, A>[] = [];
+    private _updateAggregateRules: EvaluateUpdateAggregateRule<C, A>[] = [];
+    private _upsertAggregateAuthRules: EvaluateUpsertAggregateAuthRule<C, A>[] = [];
+    private _upsertAggregateRules: EvaluateUpsertAggregateRule<C, A>[] = [];
+    private _indexRules: EvaluateIndexRule<C>[] = [];
 
     private _jwtContent: JwtCustomContent | undefined;
 
@@ -290,16 +294,24 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
         this._commandRules = commandRules;
         return this;
     }
-    public withAggregateAuthRules(commandAggregateAuthRules: EvaluateCommandAggregateAuthRule<C, A>[]) {
-        this._commandAggregateAuthRules = commandAggregateAuthRules;
+    public withUpdateAggregateAuthRules(aggregateAuthRules: EvaluateUpdateAggregateAuthRule<C, A>[]) {
+        this._updateAggregateAuthRules = aggregateAuthRules;
         return this;
     }
-    public withAggregateRules(commandAggregateRules: EvaluateCommandAggregateRule<C, A>[]) {
-        this._commandAggregateRules = commandAggregateRules;
+    public withUpdateAggregateRules(aggregateRules: EvaluateUpdateAggregateRule<C, A>[]) {
+        this._updateAggregateRules = aggregateRules;
         return this;
     }
-    public withIndexRules(commandIndexRules: EvaluateCommandIndexRule<C>[]) {
-        this._commandIndexRules = commandIndexRules;
+    public withUpsertAggregateAuthRules(aggregateAuthRules: EvaluateUpsertAggregateAuthRule<C, A>[]) {
+        this._upsertAggregateAuthRules = aggregateAuthRules;
+        return this;
+    }
+    public withUpsertAggregateRules(aggregateRules: EvaluateUpsertAggregateRule<C, A>[]) {
+        this._upsertAggregateRules = aggregateRules;
+        return this;
+    }
+    public withIndexRules(indexRules: EvaluateIndexRule<C>[]) {
+        this._indexRules = indexRules;
         return this;
     }
     public withExistingAggregateStream(
@@ -366,7 +378,7 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
                         validator: validator,
                         commandAuthRules: this._commandAuthRules,
                         commandRules: this._commandRules,
-                        commandIndexRules: this._commandIndexRules,
+                        indexRules: this._indexRules,
                         context: context,
                         metadata: metadata,
                     }),
@@ -397,9 +409,9 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
                         commandAuthRules: this._commandAuthRules,
                         commandRules: this._commandRules,
                         evolvers: evolversSet,
-                        commandAggregateAuthRules: this._commandAggregateAuthRules,
-                        commandAggregateRules: this._commandAggregateRules,
-                        commandIndexRules: this._commandIndexRules,
+                        aggregateAuthRules: this._updateAggregateAuthRules,
+                        aggregateRules: this._updateAggregateRules,
+                        indexRules: this._indexRules,
                         context: context,
                         metadata: metadata,
                     }),
@@ -430,9 +442,9 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
                         commandAuthRules: this._commandAuthRules,
                         commandRules: this._commandRules,
                         evolvers: evolversSet,
-                        commandAggregateAuthRules: this._commandAggregateAuthRules,
-                        commandAggregateRules: this._commandAggregateRules,
-                        commandIndexRules: this._commandIndexRules,
+                        aggregateAuthRules: this._upsertAggregateAuthRules,
+                        aggregateRules: this._upsertAggregateRules,
+                        indexRules: this._indexRules,
                         context: context,
                         metadata: metadata,
                     }),

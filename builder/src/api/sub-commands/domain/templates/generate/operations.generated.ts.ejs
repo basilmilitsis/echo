@@ -81,13 +81,13 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
     <% command.commandRules.forEach(function (rule) { %>
         import { <%=rule.functionName%> as <%=rule.uniqueFunctionName%> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/commandRules/<%= rule.importName %>';
     <% }) %>
-    <% command.commandIndexRules.forEach(function (rule) { %>
+    <% command.indexRules.forEach(function (rule) { %>
         import { <%=rule.functionName%> as <%=rule.uniqueFunctionName%> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/indexRules/<%= rule.importName %>';
     <% }) %>
-    <% command.commandAggregateAuthRules.forEach(function (rule) { %>
+    <% command.aggregateAuthRules.forEach(function (rule) { %>
         import { <%=rule.functionName%> as <%=rule.uniqueFunctionName%> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/aggregateAuthRules/<%= rule.importName %>';
     <% }) %>    
-    <% command.commandAggregateRules.forEach(function (rule) { %>
+    <% command.aggregateRules.forEach(function (rule) { %>
         import { <%=rule.functionName%> as <%=rule.uniqueFunctionName%> } from '@root/domain/<%=aggregateFolder%>/<%= command.commandFolderName %>/aggregateRules/<%= rule.importName %>';
     <% }) %>    
 
@@ -100,7 +100,7 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
                 validator: <%= command.validator.functionName %>,
                 commandAuthRules: [ <%= command.commandAuthRuleFunctionNames %> ],
                 commandRules: [ <%= command.commandRuleFunctionNames %> ],
-                commandIndexRules: [ <%= command.commandIndexRuleFunctionNames %> ],
+                indexRules: [ <%= command.commandIndexRuleFunctionNames %> ],
                 context: context,
                 metadata: metadata,
             });
@@ -115,9 +115,9 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
                 validator: <%= command.validator.functionName %>,
                 commandAuthRules: [ <%= command.commandAuthRuleFunctionNames %> ],
                 commandRules: [ <%= command.commandRuleFunctionNames %> ],
-                commandIndexRules: [ <%= command.commandIndexRuleFunctionNames %> ],
-                commandAggregateAuthRules: [ <%= command.commandAggregateAuthRuleFunctionNames %> ],
-                commandAggregateRules: [ <%= command.commandAggregateRuleFunctionNames %> ],
+                indexRules: [ <%= command.commandIndexRuleFunctionNames %> ],
+                aggregateAuthRules: [ <%= command.commandAggregateAuthRuleFunctionNames %> ],
+                aggregateRules: [ <%= command.commandAggregateRuleFunctionNames %> ],
                 context: context,
                 metadata: metadata,
             });
@@ -132,9 +132,9 @@ export const commandEventEvolvers: EvolverSetsForAggregate<<%= aggregateTypeName
                 validator: <%= command.validator.functionName %>,
                 commandAuthRules: [ <%= command.commandAuthRuleFunctionNames %> ],
                 commandRules: [ <%= command.commandRuleFunctionNames %> ],
-                commandIndexRules: [ <%= command.commandIndexRuleFunctionNames %> ],
-                commandAggregateAuthRules: [ <%= command.commandAggregateAuthRuleFunctionNames %> ],
-                commandAggregateRules: [ <%= command.commandAggregateRuleFunctionNames %> ],
+                indexRules: [ <%= command.commandIndexRuleFunctionNames %> ],
+                aggregateAuthRules: [ <%= command.commandAggregateAuthRuleFunctionNames %> ],
+                aggregateRules: [ <%= command.commandAggregateRuleFunctionNames %> ],
                 context: context,
                 metadata: metadata,
             });

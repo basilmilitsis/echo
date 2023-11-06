@@ -24,10 +24,10 @@ type OperationCommandModel = {
     commandRules: RuleFileInfo[];
     commandRuleFunctionNames: string;
 
-    commandIndexRules: RuleFileInfo[];
+    indexRules: RuleFileInfo[];
     commandIndexRuleFunctionNames: string;
 
-    commandAggregateRules: RuleFileInfo[];
+    aggregateRules: RuleFileInfo[];
     commandAggregateRuleFunctionNames: string;
 };
 type OperationEvolverModel = {
@@ -105,36 +105,36 @@ export const buildModel_operations = (aggregateInfo: AggregateInfo): OperationsM
                     .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
                     .join(',') || '',
 
-            commandIndexRules:
-                command.commandIndexRules.map((x) => ({
+            indexRules:
+                command.indexRules.map((x) => ({
                     functionName: x.functionName,
                     uniqueFunctionName: createUniqueFunctionName(command.commandName, x.functionName),
                     importName: x.importName,
                 })) || [],
             commandIndexRuleFunctionNames:
-                command.commandIndexRules
+                command.indexRules
                     .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
                     .join(',') || '',
 
-            commandAggregateAuthRules:
-                command.commandAggregateAuthRules.map((x) => ({
+            aggregateAuthRules:
+                command.aggregateAuthRules.map((x) => ({
                     functionName: x.functionName,
                     uniqueFunctionName: createUniqueFunctionName(command.commandName, x.functionName),
                     importName: x.importName,
                 })) || [],
             commandAggregateAuthRuleFunctionNames:
-                command.commandAggregateAuthRules
+                command.aggregateAuthRules
                     .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
                     .join(',') || '',
                     
-            commandAggregateRules:
-                command.commandAggregateRules.map((x) => ({
+            aggregateRules:
+                command.aggregateRules.map((x) => ({
                     functionName: x.functionName,
                     uniqueFunctionName: createUniqueFunctionName(command.commandName, x.functionName),
                     importName: x.importName,
                 })) || [],
             commandAggregateRuleFunctionNames:
-                command.commandAggregateRules
+                command.aggregateRules
                     .map((x) => createUniqueFunctionName(command.commandName, x.functionName))
                     .join(',') || '',
         })),

@@ -2,8 +2,8 @@ import { Aggregate } from './Aggregate';
 import { Command } from './Command';
 import { CommandMetadata } from './CommandMetadata';
 
-export type EvaluateCommandAggregateAuthRule<C extends Command, A extends Aggregate> = (
+export type EvaluateUpsertAggregateAuthRule<C extends Command, A extends Aggregate> = (
     command: C,
-    aggregate: A,
+    aggregate: A | undefined,
     metadata: CommandMetadata
 ) => string[];

@@ -24,7 +24,7 @@ describe('when evaluating a command auth rule', () => {
             })
             .withValidator((command) => [])
             .withUpdateHandler((command, aggregate, metadata, context) => [])
-            .withAggregateAuthRules([(command, aggregate, metadata) => {
+            .withUpdateAggregateAuthRules([(command, aggregate, metadata) => {
                 if(command.id !== aggregate.id || command.id !== metadata.credentials?.id) {
                     return ['Command aggregate auth rule failed']
                 }
@@ -58,7 +58,7 @@ describe('when evaluating a command auth rule', () => {
                 console.log(aggregate);
                 return [{ id: '123', type: '', data: {} }];
             })
-            .withAggregateAuthRules([(command, aggregate, metadata) => ['Command aggregate auth rule failed']])
+            .withUpdateAggregateAuthRules([(command, aggregate, metadata) => ['Command aggregate auth rule failed']])
             .build();
 
         // act

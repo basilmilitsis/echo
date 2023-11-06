@@ -1,6 +1,6 @@
 import {
     Command,
-    EvaluateCommandIndexRule,
+    EvaluateIndexRule,
     EvaluateCommandRule,
     HandleCreateCommand,
     ValidateCommand,
@@ -8,7 +8,7 @@ import {
     CommandMetadata,
     EvaluateCommandAuthRule,
 } from './types';
-import { evaluateCommandAuthRules, evaluateCommandIndexRules, evaluateCommandRules, evaluateValidation, raiseEvents } from './commandPipelineSteps';
+import { evaluateCommandAuthRules, evaluateIndexRules, evaluateCommandRules, evaluateValidation, raiseEvents } from './commandPipelineSteps';
 
 export type RunCreateCommandInput<C extends Command> = {
     aggregateName: string,
@@ -17,7 +17,7 @@ export type RunCreateCommandInput<C extends Command> = {
     validator: ValidateCommand<C>,
     commandAuthRules: EvaluateCommandAuthRule<C>[] | undefined,
     commandRules: EvaluateCommandRule<C>[] | undefined,
-    commandIndexRules: EvaluateCommandIndexRule<C>[] | undefined,
+    indexRules: EvaluateIndexRule<C>[] | undefined,
     context: CommandContext,
     metadata: CommandMetadata
 };
@@ -38,7 +38,7 @@ export const runCreateCommand = async <C extends Command>(
     evaluateCommandRules(input.command, input.commandRules, input.context);
 
     //-- command index rules
-    await evaluateCommandIndexRules(input.command, input.commandIndexRules, input.context);
+    await evaluateIndexRules(input.command, input.indexRules, input.context);
 
     //-- handle command
     input.context.logger.localDiagnostic('handle command');

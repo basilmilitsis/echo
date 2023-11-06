@@ -1,6 +1,6 @@
-import { EventStream, EvaluateCommandIndexRule } from "@echo/lib-domain-api";
+import { EventStream, EvaluateIndexRule } from "@echo/lib-domain-api";
 import { <%=commandName%> } from "@root/domain/<%=aggregateFolderName%>/<%=commandFolderName%>/<%=commandFileName%>";
 
-export const <%=ruleFunctionName%>: EvaluateCommandIndexRule<<%=commandName%>> = async (command: <%=commandName%>, eventStream: EventStream): Promise<string[]> => {
+export const <%=ruleFunctionName%>: EvaluateIndexRule<<%=commandName%>> = async (command: <%=commandName%>, eventStream: EventStream): Promise<string[]> => {
     return [];
 }   

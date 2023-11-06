@@ -27,7 +27,7 @@ describe('when evaluating an aggregate rule', () => {
             .withJwt()
             .withValidator((command) => [])
             .withUpdateHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
-            .withAggregateRules([
+            .withUpdateAggregateRules([
                 (command, aggregate) => {
                     if (command.name !== aggregate.name) {
                         return ['Command aggregate rule failed'];
@@ -60,7 +60,7 @@ describe('when evaluating an aggregate rule', () => {
             .withJwt()
             .withValidator((command) => [])
             .withUpdateHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
-            .withAggregateRules([(command, aggregate) => ['Command aggregate rule failed']])
+            .withUpdateAggregateRules([(command, aggregate) => ['Command aggregate rule failed']])
             .build();
 
         // act

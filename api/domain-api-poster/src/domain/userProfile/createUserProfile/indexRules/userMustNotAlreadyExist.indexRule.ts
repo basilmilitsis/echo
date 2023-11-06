@@ -1,7 +1,7 @@
-import { EventStream, EvaluateCommandIndexRule } from '@echo/lib-domain-api';
+import { EventStream, EvaluateIndexRule } from '@echo/lib-domain-api';
 import { CreateUserProfile } from '@root/domain/userProfile/createUserProfile/CreateUserProfile.create.command';
 
-export const userMustNotAlreadyExist: EvaluateCommandIndexRule<CreateUserProfile> = async (
+export const userMustNotAlreadyExist: EvaluateIndexRule<CreateUserProfile> = async (
     command: CreateUserProfile,
     eventStream: EventStream
 ): Promise<string[]> => {
