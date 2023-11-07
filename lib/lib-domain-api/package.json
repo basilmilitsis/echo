@@ -13,8 +13,8 @@
         "build:compile": "tsc --project tsconfig.build.json && tsc-alias",
         "build": "pnpm build:clean && pnpm build:generate && pnpm build:compile",
         "package": ":",
-        "test:unit": "jest",
-        "test:unit:coverage": "jest --collect-coverage",
+        "test": "jest",
+        "test:coverage": "jest --collect-coverage",
         "dev:start": "node --inspect=0.0.0.0:9229 .",
         "dev": "pnpm build && pnpm dev:start",
         "start": "node ."
