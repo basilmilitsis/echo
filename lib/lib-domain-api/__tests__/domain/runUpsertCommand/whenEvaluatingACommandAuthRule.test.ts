@@ -22,8 +22,6 @@ describe('when evaluating a command auth rule', () => {
                 lastName: 'Builder',
                 profilePicture: undefined,
             })
-            .withValidator((command) => [])
-            .withUpsertHandler((command, aggregate, metadata, context) => [])
             .withCommandAuthRules([
                 (command, metadata) => {
                     if (command.id !== metadata.credentials?.id) {
@@ -54,8 +52,6 @@ describe('when evaluating a command auth rule', () => {
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
-            .withJwt()
-            .withValidator((command) => [])
             .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .withCommandAuthRules([(command, metadata) => ['Command auth rule failed']])
             .build();

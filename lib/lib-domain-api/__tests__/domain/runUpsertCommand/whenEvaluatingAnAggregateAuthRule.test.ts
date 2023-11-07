@@ -21,8 +21,6 @@ describe('when evaluating a command auth rule', () => {
                 lastName: 'Builder',
                 profilePicture: undefined,
             })
-            .withValidator((command) => [])
-            .withUpsertHandler((command, aggregate, metadata, context) => [])
             .withUpsertAggregateAuthRules([
                 (command, aggregate, metadata) => {
                     if (command.id !== aggregate?.id || command.id !== metadata.credentials?.id) {
@@ -60,8 +58,6 @@ describe('when evaluating a command auth rule', () => {
                 lastName: 'Builder',
                 profilePicture: undefined,
             })
-            .withValidator((command) => [])
-            .withUpsertHandler((command, aggregate, metadata, context) => [])
             .withUpsertAggregateAuthRules([
                 (command, aggregate, metadata) => {
                     aggregatePassedToRule = aggregate;
@@ -93,10 +89,7 @@ describe('when evaluating a command auth rule', () => {
             .toUpsertAggregate('post')
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
-            .withJwt()
-            .withValidator((command) => [])
             .withUpsertHandler((command, aggregate, metadata, context) => {
-                console.log(aggregate);
                 return [{ id: '123', type: '', data: {} }];
             })
             .withUpsertAggregateAuthRules([(command, aggregate, metadata) => ['Command aggregate auth rule failed']])

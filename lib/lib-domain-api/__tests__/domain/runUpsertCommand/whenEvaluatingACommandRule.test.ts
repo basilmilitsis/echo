@@ -17,9 +17,6 @@ describe('when evaluating a command rule', () => {
             .toUpsertAggregate('post')
             .withCommand({ id: '123', name: 'bob' })
             .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpsertHandler((command, aggregate, metadata, context) => [])
             .withCommandRules([
                 (command) => {
                     if (command.name !== 'bob') {
@@ -49,8 +46,6 @@ describe('when evaluating a command rule', () => {
             .toUpsertAggregate('post')
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
-            .withJwt()
-            .withValidator((command) => [])
             .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .withCommandRules([(command) => ['Command rule failed']])
             .build();

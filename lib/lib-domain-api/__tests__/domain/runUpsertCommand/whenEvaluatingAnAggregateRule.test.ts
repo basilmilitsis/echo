@@ -24,9 +24,6 @@ describe('when evaluating an aggregate rule', () => {
                     .withSpecificUpdateEvolver((state, event) => ({ id: '123', name: 'bob' }))
                     .final()
             )
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .withUpsertAggregateRules([
                 (command, aggregate) => {
                     if (command.name !== aggregate?.name) {
@@ -61,9 +58,7 @@ describe('when evaluating an aggregate rule', () => {
         )
             .toUpsertAggregate('post')
             .withCommand({ id: '123', name: 'bob' })
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
+            .withUpsertHandler((command, aggregate, metadata, context) => [])
             .withUpsertAggregateRules([
                 (command, aggregate) => {
                     aggregatePassedToRule = aggregate;
@@ -92,8 +87,6 @@ describe('when evaluating an aggregate rule', () => {
             .toUpsertAggregate('post')
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
-            .withJwt()
-            .withValidator((command) => [])
             .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .withUpsertAggregateRules([(command, aggregate) => ['Command aggregate rule failed']])
             .build();

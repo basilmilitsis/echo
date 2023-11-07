@@ -24,9 +24,6 @@ describe('when evaluating an aggregate rule', () => {
                     .withSpecificUpdateEvolver((state, event) => ({ id: '123', name: 'bob' }))
                     .final()
             )
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpdateHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .withUpdateAggregateRules([
                 (command, aggregate) => {
                     if (command.name !== aggregate.name) {
@@ -57,8 +54,6 @@ describe('when evaluating an aggregate rule', () => {
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
-            .withJwt()
-            .withValidator((command) => [])
             .withUpdateHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .withUpdateAggregateRules([(command, aggregate) => ['Command aggregate rule failed']])
             .build();

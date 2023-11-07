@@ -17,14 +17,12 @@ describe('when running a validator', () => {
             .toUpsertAggregate('post')
             .withCommand({ id: '123', name: 'bob' })
             .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
-            .withJwt()
             .withValidator((command) => {
                 if (command.name.length < 3) {
                     return ['name is too short'];
                 }
                 return [];
             })
-            .withUpsertHandler((command, aggregate, metadata, context) => [])
             .build();
 
         // act
@@ -46,7 +44,6 @@ describe('when running a validator', () => {
             .toUpsertAggregate('post')
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
-            .withJwt()
             .withValidator((command) => ['validation error'])
             .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .build();

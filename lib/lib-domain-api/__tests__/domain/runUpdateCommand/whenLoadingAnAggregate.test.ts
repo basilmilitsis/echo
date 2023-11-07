@@ -2,6 +2,7 @@ import httpMocks from 'node-mocks-http';
 import { handleRequest } from '@root/api-rest';
 import { createHandleRequestInputBuilder } from '../../RunCommandBuilder';
 import { MockBaseLogger } from '../../MockBaseLogger';
+import { Aggregate, Command } from '..';
 
 describe('when loading an aggregate', () => {
     it('should be able to use all evolver types', async () => {
@@ -11,7 +12,6 @@ describe('when loading an aggregate', () => {
         const baseLogger = new MockBaseLogger();
 
         type TestAggregate = { id: string; sequence: string[] };
-
         let loadedAggregate: TestAggregate | undefined = undefined;
         const input = createHandleRequestInputBuilder<{ id: string }, TestAggregate>(raiseEvents, response, baseLogger)
             .toUpdateAggregate('post')
@@ -40,10 +40,7 @@ describe('when loading an aggregate', () => {
                     }))
                     .final()
             )
-            .withJwt()
-            .withValidator((command) => [])
             .withUpdateHandler((command, aggregate, metadata, context) => {
-                console.log(aggregate);
                 loadedAggregate = aggregate;
                 return [];
             })
@@ -64,29 +61,10 @@ describe('when loading an aggregate', () => {
         const response = httpMocks.createResponse();
         const raiseEvents = jest.fn();
         const baseLogger = new MockBaseLogger();
-
-        type TestAggregate = { id: string; sequence: string[] };
-
-        let loadedAggregate: TestAggregate | undefined = undefined;
-        const input = createHandleRequestInputBuilder<{ id: string }, TestAggregate>(raiseEvents, response, baseLogger)
+        const input = createHandleRequestInputBuilder<Command, Aggregate>(raiseEvents, response, baseLogger)
             .toUpdateAggregate('post')
             .withCommand({ id: '123' })
-            .withExistingEventAndEvolver('post', (build) =>
-                build
-                    .forUpdateEvent('123', 'postUpdated')
-                    .withSpecificUpdateEvolver((aggregate, event) => ({
-                        id: '123',
-                        sequence: aggregate.sequence.concat('c') || ['ERROR'],
-                    }))
-                    .final()
-            )
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpdateHandler((command, aggregate, metadata, context) => {
-                console.log(aggregate);
-                loadedAggregate = aggregate;
-                return [];
-            })
+            .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
             .build();
 
         // act
@@ -101,7 +79,7 @@ describe('when loading an aggregate', () => {
 
         const lastErrorLog = baseLogger.errorMessages[0];
         expect(lastErrorLog.message).toEqual('Error');
-        expect(lastErrorLog.error.message).toEqual('Aggregate Load Error: No state after create & upsert events');        
+        expect(lastErrorLog.error.message).toEqual('Aggregate Load Error: No state after create & upsert events');
     });
 
     it('should return an API Error if there is more than one create event in the stream', async () => {
@@ -109,22 +87,11 @@ describe('when loading an aggregate', () => {
         const response = httpMocks.createResponse();
         const raiseEvents = jest.fn();
         const baseLogger = new MockBaseLogger();
-
-        type TestAggregate = { id: string; sequence: string[] };
-
-        let loadedAggregate: TestAggregate | undefined = undefined;
-        const input = createHandleRequestInputBuilder<{ id: string }, TestAggregate>(raiseEvents, response, baseLogger)
+        const input = createHandleRequestInputBuilder<Command, Aggregate>(raiseEvents, response, baseLogger)
             .toUpdateAggregate('post')
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpdateHandler((command, aggregate, metadata, context) => {
-                console.log(aggregate);
-                loadedAggregate = aggregate;
-                return [];
-            })
             .build();
 
         // act
@@ -147,24 +114,13 @@ describe('when loading an aggregate', () => {
         const response = httpMocks.createResponse();
         const raiseEvents = jest.fn();
         const baseLogger = new MockBaseLogger();
-
-        type TestAggregate = { id: string; sequence: string[] };
-
-        let loadedAggregate: TestAggregate | undefined = undefined;
-        const input = createHandleRequestInputBuilder<{ id: string }, TestAggregate>(raiseEvents, response, baseLogger)
+        const input = createHandleRequestInputBuilder<Command, Aggregate>(raiseEvents, response, baseLogger)
             .toUpdateAggregate('post')
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) =>
                 build.forUpdateEvent('123', 'postUpdated').withNoUpdateEvolver().final()
             )
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpdateHandler((command, aggregate, metadata, context) => {
-                console.log(aggregate);
-                loadedAggregate = aggregate;
-                return [];
-            })
             .build();
 
         // act
@@ -189,24 +145,13 @@ describe('when loading an aggregate', () => {
         const response = httpMocks.createResponse();
         const raiseEvents = jest.fn();
         const baseLogger = new MockBaseLogger();
-
-        type TestAggregate = { id: string; sequence: string[] };
-
-        let loadedAggregate: TestAggregate | undefined = undefined;
-        const input = createHandleRequestInputBuilder<{ id: string }, TestAggregate>(raiseEvents, response, baseLogger)
+        const input = createHandleRequestInputBuilder<Command, Aggregate>(raiseEvents, response, baseLogger)
             .toUpdateAggregate('post')
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) =>
                 build.forUpsertEvent('123', 'postUpdated').withNoUpsertEvolver().final()
             )
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpdateHandler((command, aggregate, metadata, context) => {
-                console.log(aggregate);
-                loadedAggregate = aggregate;
-                return [];
-            })
             .build();
 
         // act

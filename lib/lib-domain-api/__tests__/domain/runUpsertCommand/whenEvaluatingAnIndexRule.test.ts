@@ -18,9 +18,6 @@ describe('when evaluating an index rule', () => {
             .withCommand({ id: '123', userId: 'abc' })
             .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
             .withOtherExistingAggregateStream('user', 'abc')
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpsertHandler((command, aggregate, metadata, context) => [])
             .withIndexRules([
                 async (command, eventStream) => {
                     const stream = await eventStream.findEvents('user', command.userId);
@@ -51,8 +48,6 @@ describe('when evaluating an index rule', () => {
             .toUpsertAggregate('post')
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
-            .withJwt()
-            .withValidator((command) => [])
             .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .withIndexRules([(command, eventStream) => Promise.resolve(['Command index rule failed'])])
             .build();

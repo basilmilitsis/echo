@@ -22,8 +22,6 @@ describe('when handling a command', () => {
                     .withSpecificCreateEvolver((event) => ({ id: '123', name: 'bob' }))
                     .final()
             )
-            .withJwt()
-            .withValidator((command) => [])
             .withUpdateHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .build();
 

@@ -14,8 +14,6 @@ describe('when a command auth rule fails', () => {
         const input = createHandleRequestInputBuilder(raiseEvents, response, baseLogger)
             .toCreateAggregate('post')
             .withCommand({ id: '123' })
-            .withJwt()
-            .withValidator((command: Command) => [])
             .withCreateHandler((command: Command, metadata: CommandMetadata, context: CommandContext) => [
                 { id: '123', type: '', data: {} },
             ])

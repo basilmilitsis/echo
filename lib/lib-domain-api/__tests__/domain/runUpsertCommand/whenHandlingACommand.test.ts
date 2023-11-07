@@ -20,8 +20,6 @@ describe('when running a command handler', () => {
             .withCommand({ id: '123', userId: 'abc' })
             .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
             .withOtherExistingAggregateStream('user', 'abc')
-            .withJwt()
-            .withValidator((command) => [])
             .withUpsertHandler((command, aggregate, metadata, context) => {
                 aggregatePassedToHandler = aggregate;
                 return [];
@@ -53,8 +51,6 @@ describe('when running a command handler', () => {
         )
             .toUpsertAggregate('post')
             .withCommand({ id: '123', name: 'bob' })
-            .withJwt()
-            .withValidator((command) => [])
             .withUpsertHandler((command, aggregate, metadata, context) => {
                 aggregatePassedToRule = aggregate;
                 return [{ id: '123', type: '', data: {} }];
@@ -90,8 +86,6 @@ describe('when running a command handler', () => {
                     .withSpecificCreateEvolver((event) => ({ id: '123', name: 'bob' }))
                     .final()
             )
-            .withJwt()
-            .withValidator((command) => [])
             .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .build();
 

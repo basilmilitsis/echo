@@ -18,14 +18,12 @@ describe('when running a validator', () => {
             .withCommand({ id: '123', name: 'bob' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
-            .withJwt()
             .withValidator((command) => {
                 if (command.name.length < 3) {
                     return ['name is too short'];
                 }
                 return [];
             })
-            .withUpdateHandler((command, aggregate, metadata, context) => [])
             .build();
 
         // act
@@ -48,7 +46,6 @@ describe('when running a validator', () => {
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
-            .withJwt()
             .withValidator((command) => ['validation error'])
             .withUpdateHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .build();

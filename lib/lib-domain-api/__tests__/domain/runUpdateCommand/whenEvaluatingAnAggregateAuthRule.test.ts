@@ -22,8 +22,6 @@ describe('when evaluating a command auth rule', () => {
                 lastName: 'Builder',
                 profilePicture: undefined,
             })
-            .withValidator((command) => [])
-            .withUpdateHandler((command, aggregate, metadata, context) => [])
             .withUpdateAggregateAuthRules([(command, aggregate, metadata) => {
                 if(command.id !== aggregate.id || command.id !== metadata.credentials?.id) {
                     return ['Command aggregate auth rule failed']
@@ -52,10 +50,7 @@ describe('when evaluating a command auth rule', () => {
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
-            .withJwt()
-            .withValidator((command) => [])
             .withUpdateHandler((command, aggregate, metadata, context) => {
-                console.log(aggregate);
                 return [{ id: '123', type: '', data: {} }];
             })
             .withUpdateAggregateAuthRules([(command, aggregate, metadata) => ['Command aggregate auth rule failed']])

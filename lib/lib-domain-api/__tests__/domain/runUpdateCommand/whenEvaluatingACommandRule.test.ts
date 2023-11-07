@@ -18,9 +18,6 @@ describe('when evaluating a command rule', () => {
             .withCommand({ id: '123', name: 'bob' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
-            .withJwt()
-            .withValidator((command) => [])
-            .withUpdateHandler((command, aggregate, metadata, context) => [])
             .withCommandRules([
                 (command) => {
                     if (command.name !== 'bob') {
@@ -51,8 +48,6 @@ describe('when evaluating a command rule', () => {
             .withCommand({ id: '123' })
             .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
             .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
-            .withJwt()
-            .withValidator((command) => [])
             .withUpdateHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .withCommandRules([(command) => ['Command rule failed']])
             .build();

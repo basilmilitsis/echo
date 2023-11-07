@@ -37,7 +37,7 @@ interface HandleRequestInput_ForCommand<C extends Command, A extends Aggregate> 
 }
 
 interface HandleRequestInput_ForCreateCommand<C extends Command, A extends Aggregate> {
-    withJwt(): HandleRequestInput_ForCreateCommand<C, A>;
+    withNoJwt(): HandleRequestInput_ForCreateCommand<C, A>;
     withCustomJwt(jwtContent: JwtCustomContent): HandleRequestInput_ForCreateCommand<C, A>;
     withExistingEventAndEvolver<ED extends CommandEventData, DE extends DomainEvent<string, ED>>(
         aggregateName: string,
@@ -60,7 +60,7 @@ interface HandleRequestInput_ForCreateCommand<C extends Command, A extends Aggre
 }
 
 interface HandleRequestInput_ForUpdateCommand<C extends Command, A extends Aggregate> {
-    withJwt(): HandleRequestInput_ForUpdateCommand<C, A>;
+    withNoJwt(): HandleRequestInput_ForUpdateCommand<C, A>;
     withCustomJwt(jwtContent: JwtCustomContent): HandleRequestInput_ForUpdateCommand<C, A>;
     withExistingEventAndEvolver<ED extends CommandEventData, DE extends DomainEvent<string, ED>>(
         aggregateName: string,
@@ -90,7 +90,7 @@ interface HandleRequestInput_ForUpdateCommand<C extends Command, A extends Aggre
 }
 
 interface HandleRequestInput_ForUpsertCommand<C extends Command, A extends Aggregate> {
-    withJwt(): HandleRequestInput_ForUpsertCommand<C, A>;
+    withNoJwt(): HandleRequestInput_ForUpsertCommand<C, A>;
     withCustomJwt(jwtContent: JwtCustomContent): HandleRequestInput_ForUpsertCommand<C, A>;
     withExistingEventAndEvolver<ED extends CommandEventData, DE extends DomainEvent<string, ED>>(
         aggregateName: string,
@@ -148,7 +148,13 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
     private _upsertAggregateRules: EvaluateUpsertAggregateRule<C, A>[] = [];
     private _indexRules: EvaluateIndexRule<C>[] = [];
 
-    private _jwtContent: JwtCustomContent | undefined;
+    private _jwtContent: JwtCustomContent | undefined = {
+        sub: '1234567890',
+        firstName: 'Bob',
+        lastName: 'Builder',
+        email: 'bob@builder.com',
+        profilePicture: undefined,
+    };
 
     private _evolversSet: EvolverSetsForAggregate<A> | undefined = undefined;
     private _aggregateStreams: Record<string, DomainEvent<string, CommandEventData>[]> = {};
@@ -250,14 +256,8 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
         return this;
     }
 
-    public withJwt() {
-        this._jwtContent = {
-            sub: '1234567890',
-            firstName: 'Bob',
-            lastName: 'Builder',
-            email: 'bob@builder.com',
-            profilePicture: undefined,
-        };
+    public withNoJwt() {
+        this._jwtContent = undefined;
         return this;
     }
 
@@ -330,28 +330,25 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
             // console.log(JSON.stringify(jwtObj, null, 4));
         }
 
+        const aggregateName = this._aggregateName;
+        if (!aggregateName) {
+            throw new Error('aggregate name is required');
+        }
+
         const command = this._command;
         if (!command) {
             throw new Error('command is required');
         }
 
-        const validator = this._validator;
-        if (!validator) {
-            throw new Error('validator is required');
-        }
-
-        const aggregateName = this._aggregateName;
-        if (!aggregateName) {
-            throw new Error('aggregate name is required');
-        }
+        const validator = this._validator || ((command) => []);
 
         const eventStream: EventStream = {
             findEvents: (streamName: string, aggregateId: string) => {
                 return Promise.resolve(this._aggregateStreams[`${streamName}-${aggregateId}`]);
             },
             addEvents: (streamName, aggregateId, events) => {
-                let stream = this._aggregateStreams[`${streamName}-${aggregateId}`]
-                if(!stream) {
+                let stream = this._aggregateStreams[`${streamName}-${aggregateId}`];
+                if (!stream) {
                     stream = [];
                 }
                 stream.push(...events);
@@ -361,10 +358,7 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
         };
 
         if (this._commandType === 'create') {
-            const createHandler = this._createHandler;
-            if (!createHandler) {
-                throw new Error('create handler is not allowed for create command type');
-            }
+            const createHandler = this._createHandler || (() => []);
             if (this._evolversSet) {
                 throw new Error('evolvers should not exist for create handler');
             }
@@ -390,11 +384,8 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
             };
         }
         if (this._commandType === 'update') {
-            const updateHandler = this._updateHandler;
+            const updateHandler = this._updateHandler || (() => []);
             const evolversSet = this._evolversSet;
-            if (!updateHandler) {
-                throw new Error('update handler is not allowed for update command type');
-            }
             if (!evolversSet) {
                 throw new Error('evolvers are required for upsert handler');
             }
@@ -423,10 +414,7 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
             };
         }
         if (this._commandType === 'upsert') {
-            const upsertHandler = this._upsertHandler;
-            if (!upsertHandler) {
-                throw new Error('upsert handler is not allowed for upsert command type');
-            }
+            const upsertHandler = this._upsertHandler || (() => []);
             const evolversSet = this._evolversSet || {
                 aggregateName: aggregateName,
                 createEventEvolverSets: [],

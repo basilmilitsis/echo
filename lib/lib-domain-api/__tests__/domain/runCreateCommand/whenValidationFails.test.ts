@@ -14,7 +14,6 @@ describe('when validation fails', () => {
         const input = createHandleRequestInputBuilder(raiseEvents, response, baseLogger)
             .toCreateAggregate('post')
             .withCommand({ id: '123' })
-            .withJwt()
             .withValidator((command: Command) => ['validation error'])
             .withCreateHandler((command: Command, metadata: CommandMetadata, context: CommandContext) => [
                 { id: '123', type: 'eventType', data: {} },
