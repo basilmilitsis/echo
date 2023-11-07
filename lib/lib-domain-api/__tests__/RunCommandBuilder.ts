@@ -129,9 +129,9 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
     private _raiseEvents: (streamName: string, aggregateId: string, events: DomainEvent<string>[]) => Promise<void>;
     private _response: httpMocks.MockResponse<any>;
     private _baseLogger: BaseLogger;
-    
+
     private _aggregateName: string | undefined;
-    
+
     private _eventIndex: number = 0;
     private _commandType: 'create' | 'update' | 'upsert' | 'unset' = 'unset';
 
@@ -216,30 +216,28 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
 
         if (builder.getEventKind() === 'create') {
             const evolver = builder.buildCreateEvolver();
-            if(evolver) {
+            if (evolver) {
                 this._evolversSet.createEventEvolverSets.push({
                     eventName: event.type,
                     evolver: evolver as any, // TODO: improve typing
-                });    
+                });
             }
-        }
-        else if (builder.getEventKind() === 'update') {
-            const evolver =  builder.buildUpdateEvolver();
-            if(evolver) {
-            this._evolversSet.updateEventEvolverSets.push({
-                eventName: event.type,
-                evolver: evolver as any, // TODO: improve typing
-            });
-        }
-        }
-        else if (builder.getEventKind() === 'upsert') {
+        } else if (builder.getEventKind() === 'update') {
+            const evolver = builder.buildUpdateEvolver();
+            if (evolver) {
+                this._evolversSet.updateEventEvolverSets.push({
+                    eventName: event.type,
+                    evolver: evolver as any, // TODO: improve typing
+                });
+            }
+        } else if (builder.getEventKind() === 'upsert') {
             const evolver = builder.buildUpsertEvolver();
-            if(evolver) {
-            this._evolversSet.upsertEventEvolverSets.push({
-                eventName: event.type,
-                evolver: evolver as any, // TODO: improve typing
-            });
-        }
+            if (evolver) {
+                this._evolversSet.upsertEventEvolverSets.push({
+                    eventName: event.type,
+                    evolver: evolver as any, // TODO: improve typing
+                });
+            }
         }
 
         return this;
@@ -352,7 +350,11 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
                 return Promise.resolve(this._aggregateStreams[`${streamName}-${aggregateId}`]);
             },
             addEvents: (streamName, aggregateId, events) => {
-                this._aggregateStreams[`${streamName}-${aggregateId}`].push(...events);
+                let stream = this._aggregateStreams[`${streamName}-${aggregateId}`]
+                if(!stream) {
+                    stream = [];
+                }
+                stream.push(...events);
                 this._raiseEvents(streamName, aggregateId, events);
                 return Promise.resolve();
             },
@@ -422,13 +424,15 @@ class HandleRequestInputBuilder<C extends Command, A extends Aggregate>
         }
         if (this._commandType === 'upsert') {
             const upsertHandler = this._upsertHandler;
-            const evolversSet = this._evolversSet;
             if (!upsertHandler) {
                 throw new Error('upsert handler is not allowed for upsert command type');
             }
-            if (!evolversSet) {
-                throw new Error('evolvers are required for upsert handler');
-            }
+            const evolversSet = this._evolversSet || {
+                aggregateName: aggregateName,
+                createEventEvolverSets: [],
+                updateEventEvolverSets: [],
+                upsertEventEvolverSets: [],
+            };
             return {
                 requestBody: command,
                 requestHeaders: requestHeaders,

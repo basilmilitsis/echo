@@ -14,10 +14,9 @@ describe('when running a validator', () => {
             raiseEvents,
             response, baseLogger
         )
-            .toUpdateAggregate('post')
+            .toUpsertAggregate('post')
             .withCommand({ id: '123', name: 'bob' })
-            .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
-            .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
+            .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
             .withJwt()
             .withValidator((command) => {
                 if (command.name.length < 3) {
@@ -25,7 +24,7 @@ describe('when running a validator', () => {
                 }
                 return [];
             })
-            .withUpdateHandler((command, aggregate, metadata, context) => [])
+            .withUpsertHandler((command, aggregate, metadata, context) => [])
             .build();
 
         // act
@@ -44,13 +43,12 @@ describe('when running a validator', () => {
         const baseLogger = new MockBaseLogger();
 
         const input = createHandleRequestInputBuilder(raiseEvents, response, baseLogger)
-            .toUpdateAggregate('post')
+            .toUpsertAggregate('post')
             .withCommand({ id: '123' })
-            .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
-            .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
+            .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
             .withJwt()
             .withValidator((command) => ['validation error'])
-            .withUpdateHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
+            .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
             .build();
 
         // act

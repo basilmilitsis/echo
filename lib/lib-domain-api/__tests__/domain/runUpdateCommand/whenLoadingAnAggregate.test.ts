@@ -59,7 +59,7 @@ describe('when loading an aggregate', () => {
         });
     });
 
-    it('should return an API error a create or upsert event is not first in the stream', async () => {
+    it('should return an API error when a create or upsert event is not first in the stream', async () => {
         // assemble
         const response = httpMocks.createResponse();
         const raiseEvents = jest.fn();

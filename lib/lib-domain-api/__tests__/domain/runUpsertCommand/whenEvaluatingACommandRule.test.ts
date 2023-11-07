@@ -3,7 +3,7 @@ import { handleRequest } from '@root/api-rest';
 import { createHandleRequestInputBuilder } from '../../RunCommandBuilder';
 import { MockBaseLogger } from '../../MockBaseLogger';
 
-describe('when running a validator', () => {
+describe('when evaluating a command rule', () => {
     it('should have access to the command', async () => {
         // assemble
         const response = httpMocks.createResponse();
@@ -14,18 +14,20 @@ describe('when running a validator', () => {
             raiseEvents,
             response, baseLogger
         )
-            .toUpdateAggregate('post')
+            .toUpsertAggregate('post')
             .withCommand({ id: '123', name: 'bob' })
-            .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
-            .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
+            .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
             .withJwt()
-            .withValidator((command) => {
-                if (command.name.length < 3) {
-                    return ['name is too short'];
-                }
-                return [];
-            })
-            .withUpdateHandler((command, aggregate, metadata, context) => [])
+            .withValidator((command) => [])
+            .withUpsertHandler((command, aggregate, metadata, context) => [])
+            .withCommandRules([
+                (command) => {
+                    if (command.name !== 'bob') {
+                        return ['Command rule failed'];
+                    }
+                    return [];
+                },
+            ])
             .build();
 
         // act
@@ -44,13 +46,13 @@ describe('when running a validator', () => {
         const baseLogger = new MockBaseLogger();
 
         const input = createHandleRequestInputBuilder(raiseEvents, response, baseLogger)
-            .toUpdateAggregate('post')
+            .toUpsertAggregate('post')
             .withCommand({ id: '123' })
-            .withExistingEventAndEvolver('post', (build) => build.forCreateEvent('123', 'postCreated').final())
-            .withExistingEventAndEvolver('post', (build) => build.forUpdateEvent('123', 'postUpdated').final())
+            .withExistingEventAndEvolver('post', (build) => build.forUpsertEvent('123', 'postCreated').final())
             .withJwt()
-            .withValidator((command) => ['validation error'])
-            .withUpdateHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
+            .withValidator((command) => [])
+            .withUpsertHandler((command, aggregate, metadata, context) => [{ id: '123', type: '', data: {} }])
+            .withCommandRules([(command) => ['Command rule failed']])
             .build();
 
         // act
@@ -59,8 +61,8 @@ describe('when running a validator', () => {
         // assert
         expect(JSON.parse(response._getData())).toEqual({
             result: 'error',
-            type: 'ValidationError',
-            messages: ['validation error'],
+            type: 'CommandRuleError',
+            messages: ['Command rule failed'],
         });
         expect(raiseEvents.mock.calls.length).toBe(0);
     });
