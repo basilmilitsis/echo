@@ -5,7 +5,7 @@
   ],
   "projectSettings": [
     {
-      "projectName": "@echo/lib-domain-api",
+      "projectName": "@echo/builder",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
       "dependenciesToExclude": [
@@ -18,6 +18,18 @@
     },
     {
       "projectName": "@echo/lib-common",
+      "additionalProjectsToInclude": [],
+      "additionalDependenciesToInclude": [],
+      "dependenciesToExclude": [
+        "@types/*"
+      ],
+      "patternsToInclude": [
+        ".build/**",
+        "package.json"
+      ]
+    },
+    {
+      "projectName": "@echo/lib-domain-api",
       "additionalProjectsToInclude": [],
       "additionalDependenciesToInclude": [],
       "dependenciesToExclude": [

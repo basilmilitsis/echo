@@ -41,9 +41,16 @@
       "enableParallelism": true
     },
     {
-      "name": "test:unit",
+      "name": "test",
       "summary": "Run all unit tests",
       "description": "Run all unit tests",
+      "commandKind": "bulk",
+      "enableParallelism": true
+    },
+    {
+      "name": "test:coverage",
+      "summary": "Run all unit tests with coverage",
+      "description": "Run all unit tests with coverage",
       "commandKind": "bulk",
       "enableParallelism": true
     }
